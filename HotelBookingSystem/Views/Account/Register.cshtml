@@ -1,0 +1,198 @@
+﻿@model HotelBookingSystem.ViewModels.Account.RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="register-container">
+    <div class="row">
+        <div class="col-lg-6 register-banner d-none d-lg-block">
+            <div class="overlay"></div>
+            <div class="banner-content">
+                <h1>Đăng ký thành viên</h1>
+                <p>Trải nghiệm đặc quyền và ưu đãi dành riêng cho thành viên Luxury Hotel</p>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 register-form-container">
+            <div class="register-form-wrapper">
+                <div class="register-header text-center">
+                    <a href="/" class="register-logo">
+                        <i class="fas fa-hotel"></i>
+                    </a>
+                    <h2>Tạo tài khoản mới</h2>
+                    <p>Đăng ký để nhận ưu đãi đặc biệt</p>
+                </div>
+
+                <form asp-action="Register" asp-controller="Account" method="post" class="register-form needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="FirstName" class="form-control" placeholder="Tên" required />
+                                <label asp-for="FirstName">Tên</label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập tên của bạn
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="LastName" class="form-control" placeholder="Họ" required />
+                                <label asp-for="LastName">Họ</label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập họ của bạn
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Email" required />
+                        <label asp-for="Email">Email</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <div class="invalid-feedback">
+                            Vui lòng nhập email hợp lệ
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="Số điện thoại" />
+                        <label asp-for="PhoneNumber">Số điện thoại</label>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-3 password-container">
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu" required />
+                        <label asp-for="Password">Mật khẩu</label>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <button type="button" class="password-toggle"><i class="far fa-eye"></i></button>
+                        <div class="invalid-feedback">
+                            Mật khẩu phải có ít nhất 6 ký tự
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3 password-container">
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Xác nhận mật khẩu" required />
+                        <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        <button type="button" class="password-toggle"><i class="far fa-eye"></i></button>
+                        <div class="invalid-feedback">
+                            Mật khẩu xác nhận không khớp
+                        </div>
+                    </div>
+
+                    <div class="password-strength">
+                        <p>Độ mạnh mật khẩu: <span id="password-strength-text">Yếu</span></p>
+                        <div class="progress">
+                            <div id="password-strength-meter" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <ul class="password-hints">
+                            <li class="hint-length"><i class="fas fa-times-circle"></i> Ít nhất 8 ký tự</li>
+                            <li class="hint-uppercase"><i class="fas fa-times-circle"></i> Ít nhất 1 chữ hoa</li>
+                            <li class="hint-lowercase"><i class="fas fa-times-circle"></i> Ít nhất 1 chữ thường</li>
+                            <li class="hint-number"><i class="fas fa-times-circle"></i> Ít nhất 1 số</li>
+                            <li class="hint-special"><i class="fas fa-times-circle"></i> Ít nhất 1 ký tự đặc biệt</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input asp-for="AcceptTerms" class="form-check-input" type="checkbox" required />
+                        <label asp-for="AcceptTerms" class="form-check-label">
+                            Tôi đồng ý với <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">điều khoản sử dụng</a> và <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">chính sách bảo mật</a>
+                        </label>
+                        <span asp-validation-for="AcceptTerms" class="text-danger"></span>
+                        <div class="invalid-feedback">
+                            Bạn phải đồng ý với điều khoản sử dụng
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary">Đăng ký</button>
+                    </div>
+                </form>
+
+                <div class="register-divider">
+                    <span>hoặc đăng ký với</span>
+                </div>
+
+                <div class="social-login">
+                    <button class="btn btn-outline-secondary btn-social google-btn">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button class="btn btn-outline-secondary btn-social facebook-btn">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </button>
+                </div>
+
+                <div class="login-link text-center">
+                    <p>Đã có tài khoản? <a asp-action="Login" asp-controller="Account">Đăng nhập</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Điều khoản sử dụng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Điều khoản chung</h6>
+                <p>Khi sử dụng dịch vụ của Luxury Hotel, bạn đồng ý tuân thủ các điều khoản và điều kiện được quy định tại đây.</p>
+
+                <h6>2. Quy định đặt phòng</h6>
+                <p>Việc đặt phòng chỉ được xác nhận sau khi bạn nhận được email xác nhận từ chúng tôi. Đặt phòng có thể được hủy không mất phí trước 24 giờ so với giờ nhận phòng tiêu chuẩn.</p>
+
+                <h6>3. Thanh toán</h6>
+                <p>Chúng tôi chấp nhận nhiều hình thức thanh toán khác nhau bao gồm tiền mặt, thẻ tín dụng và chuyển khoản ngân hàng.</p>
+
+                <h6>4. Quyền riêng tư</h6>
+                <p>Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn. Thông tin cá nhân sẽ chỉ được sử dụng cho mục đích cung cấp dịch vụ và sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý của bạn.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyModalLabel">Chính sách bảo mật</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Thu thập thông tin</h6>
+                <p>Chúng tôi thu thập thông tin cá nhân như tên, địa chỉ email, số điện thoại và thông tin thanh toán khi bạn đặt phòng hoặc đăng ký tài khoản.</p>
+
+                <h6>2. Sử dụng thông tin</h6>
+                <p>Thông tin cá nhân của bạn được sử dụng để xử lý đặt phòng, cung cấp dịch vụ khách hàng và gửi thông tin về các ưu đãi đặc biệt (nếu bạn chọn nhận).</p>
+
+                <h6>3. Bảo mật thông tin</h6>
+                <p>Chúng tôi áp dụng các biện pháp bảo mật phù hợp để bảo vệ thông tin của bạn khỏi mất mát, truy cập trái phép hoặc tiết lộ.</p>
+
+                <h6>4. Chia sẻ thông tin</h6>
+                <p>Chúng tôi không bán hoặc cho thuê thông tin cá nhân của bạn cho bên thứ ba. Trong một số trường hợp nhất định, chúng tôi có thể chia sẻ thông tin với các đối tác đáng tin cậy để cung cấp dịch vụ cho bạn.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/register.js" asp-append-version="true"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

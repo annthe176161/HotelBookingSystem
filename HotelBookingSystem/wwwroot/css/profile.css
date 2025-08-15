@@ -1,0 +1,676 @@
+﻿/* Profile Page Styles */
+:root {
+    --primary-color: #3a6ea5;
+    --secondary-color: #004e89;
+    --accent-color: #ff6b35;
+    --light-color: #f9f7f7;
+    --dark-color: #112d4e;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+}
+
+/* General Profile Styles */
+.profile-container {
+    background-color: #f5f8fa;
+    min-height: calc(100vh - 80px);
+}
+
+.profile-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.card-title {
+    color: var(--dark-color);
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+/* Profile Header */
+.profile-header {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.profile-avatar-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #fff;
+    font-weight: 600;
+    border: 4px solid #fff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-edit {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: 36px;
+    height: 36px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #fff;
+    transition: all 0.3s ease;
+}
+
+    .profile-avatar-edit:hover {
+        background-color: var(--secondary-color);
+    }
+
+.profile-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 5px;
+}
+
+.profile-email, .profile-member-since {
+    color: #6c757d;
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+.profile-stats {
+    display: flex;
+    margin-top: 15px;
+}
+
+.profile-stat-item {
+    text-align: center;
+    margin-right: 30px;
+}
+
+    .profile-stat-item .stat-value {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .profile-stat-item .stat-label {
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+/* Profile Navigation */
+.profile-nav {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+    .profile-nav .nav-link {
+        color: #495057;
+        padding: 12px 15px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+        .profile-nav .nav-link:hover {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+        }
+
+        .profile-nav .nav-link.active {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .profile-nav .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+/* Profile Content Tabs */
+.profile-content {
+    min-height: 500px;
+}
+
+/* Personal Info Tab */
+#profile-form .form-control:disabled {
+    background-color: #f9f9f9;
+    cursor: not-allowed;
+}
+
+.profile-action-buttons {
+    margin-top: 20px;
+}
+
+/* Booking History Tab */
+.booking-filters {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.booking-item {
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+    .booking-item:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+    }
+
+.booking-header {
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+    .booking-header h5 {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--dark-color);
+    }
+
+.booking-dates {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.booking-status {
+    text-align: right;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+    .status-badge.pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.confirmed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.completed {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .status-badge.cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-badge.current {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+.booking-details {
+    padding: 20px;
+}
+
+.booking-room-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.booking-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+    margin-bottom: 15px;
+}
+
+.booking-info-item .label {
+    font-size: 14px;
+    color: #6c757d;
+    display: block;
+}
+
+.booking-info-item .value {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Reviews Tab */
+.review-item {
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+    .review-item:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+    .review-header h5 {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--dark-color);
+    }
+
+.review-rating {
+    color: var(--accent-color);
+    font-size: 14px;
+}
+
+.review-date {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.review-content {
+    margin-bottom: 15px;
+}
+
+.review-actions {
+    text-align: right;
+}
+
+/* Favorites Tab */
+.favorite-room-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+    .favorite-room-item:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+
+.favorite-room-img {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+    .favorite-room-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+.favorite-room-item:hover .favorite-room-img img {
+    transform: scale(1.1);
+}
+
+.remove-favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: var(--danger-color);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .remove-favorite-btn:hover {
+        background-color: var(--danger-color);
+        color: #fff;
+    }
+
+.favorite-room-price {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: var(--accent-color);
+    color: #fff;
+    padding: 8px 15px;
+    font-weight: 600;
+    border-top-left-radius: 8px;
+}
+
+    .favorite-room-price small {
+        font-weight: 400;
+        font-size: 12px;
+    }
+
+.favorite-room-info {
+    padding: 20px;
+}
+
+    .favorite-room-info h5 {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--dark-color);
+    }
+
+.room-rating {
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.room-features {
+    display: flex;
+    justify-content: space-between;
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+/* Loyalty Points Tab */
+.loyalty-points-card {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+    .loyalty-points-card h4 {
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+.points-display {
+    margin: 20px 0;
+}
+
+.points-value {
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.points-label {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.loyalty-tier {
+    margin-top: 15px;
+}
+
+.tier-label {
+    margin-right: 5px;
+    opacity: 0.9;
+}
+
+.tier-value {
+    font-weight: 600;
+}
+
+    .tier-value.bronze {
+        color: #cd7f32;
+    }
+
+    .tier-value.silver {
+        color: #c0c0c0;
+    }
+
+    .tier-value.gold {
+        color: #ffd700;
+    }
+
+    .tier-value.platinum {
+        color: #e5e4e2;
+    }
+
+.next-tier-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    height: 100%;
+}
+
+.tier-progress-container {
+    margin-top: 20px;
+}
+
+.tier-progress {
+    position: relative;
+    margin: 30px 0;
+}
+
+.tier-markers {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    position: relative;
+}
+
+.tier-marker {
+    font-size: 12px;
+    font-weight: 600;
+    position: relative;
+}
+
+    .tier-marker.silver {
+        color: #6c757d;
+        left: 33%;
+    }
+
+    .tier-marker.gold {
+        color: #daa520;
+        left: 66%;
+    }
+
+    .tier-marker.platinum {
+        color: #6c757d;
+        position: absolute;
+        right: 0;
+    }
+
+.next-tier-info {
+    margin-top: 15px;
+    color: #495057;
+    text-align: center;
+}
+
+.benefits-list {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+    .benefit-item i {
+        color: var(--primary-color);
+        margin-right: 10px;
+        font-size: 18px;
+    }
+
+/* Security Tab */
+.password-strength {
+    margin-top: 5px;
+}
+
+.password-container {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.account-settings-list {
+    margin-top: 20px;
+}
+
+.account-setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+}
+
+    .account-setting-item:last-child {
+        border-bottom: none;
+    }
+
+    .account-setting-item h6 {
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .account-setting-item p {
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+
+    .account-setting-item.border-danger {
+        border-top: 1px dashed var(--danger-color);
+        margin-top: 15px;
+        padding-top: 25px;
+    }
+
+/* Review Modal */
+.rating-input {
+    font-size: 24px;
+    color: #ddd;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+    .rating-input i {
+        cursor: pointer;
+    }
+
+        .rating-input i.fas {
+            color: var(--accent-color);
+        }
+
+        .rating-input i:hover ~ i {
+            color: #ddd;
+        }
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 60px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .profile-header-info {
+        text-align: center;
+    }
+
+    .profile-stats {
+        justify-content: center;
+    }
+
+    .profile-nav {
+        margin-bottom: 20px;
+    }
+
+    .booking-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-stat-item {
+        margin-right: 15px;
+    }
+
+        .profile-stat-item .stat-value {
+            font-size: 18px;
+        }
+
+        .profile-stat-item .stat-label {
+            font-size: 12px;
+        }
+
+    .profile-card {
+        padding: 15px;
+    }
+}
