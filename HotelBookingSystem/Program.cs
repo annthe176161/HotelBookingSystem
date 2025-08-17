@@ -1,5 +1,7 @@
 using HotelBookingSystem.Data;
 using HotelBookingSystem.Models;
+using HotelBookingSystem.Services.Implementations;
+using HotelBookingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +27,8 @@ namespace HotelBookingSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IRoomService, RoomService>();
 
             var app = builder.Build();
 

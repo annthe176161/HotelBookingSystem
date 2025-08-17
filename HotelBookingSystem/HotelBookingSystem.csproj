@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Helpers\" />
-    <Folder Include="Infrastructure\Hubs\" />
-    <Folder Include="Services\Interfaces\" />
-    <Folder Include="Services\Implementations\" />
     <Folder Include="wwwroot\images\avatars\" />
     <Folder Include="wwwroot\images\rooms\" />
   </ItemGroup>

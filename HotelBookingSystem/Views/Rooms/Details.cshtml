@@ -1,4 +1,4 @@
-﻿@model HotelBookingSystem.ViewModels.RoomsViewModel.RoomDetailsViewModel
+﻿@model HotelBookingSystem.ViewModels.Room.RoomDetailsViewModel
 @{
     ViewData["Title"] = Model.Name;
 }
@@ -7,15 +7,19 @@
 <div class="room-detail-banner" style="background-image: url('@Model.MainImageUrl')">
     <div class="overlay"></div>
     <div class="container">
-        <div class="banner-content">
-            <h1>@Model.Name</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Rooms">Phòng</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
-                </ol>
-            </nav>
+        <div class="row">
+            <div class="col-12">
+                <div class="banner-content">
+                    <h1>@Model.Name</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Rooms">Phòng</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -25,40 +29,37 @@
         <div class="row">
             <!-- Main Content -->
             <div class="col-lg-8">
-                <!-- Room Details Overview -->
                 <div class="room-overview">
+                    <!-- Room Header -->
                     <div class="d-flex justify-content-between align-items-start mb-4">
-                        <div>
+                        <div class="flex-grow-1">
                             <h2 class="room-title">@Model.Name</h2>
                             <div class="room-rating">
                                 @for (int i = 1; i <= 5; i++)
                                 {
                                     if (i <= Math.Floor(Model.AverageRating))
                                     {
-                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
                                     }
                                     else if (i - Model.AverageRating < 1 && i - Model.AverageRating > 0)
                                     {
-                                        <i class="fas fa-star-half-alt"></i>
+                                        <i class="fas fa-star-half-alt" aria-hidden="true"></i>
                                     }
                                     else
                                     {
-                                        <i class="far fa-star"></i>
+                                        <i class="far fa-star" aria-hidden="true"></i>
                                     }
                                 }
-                                <span class="rating-value">@Model.AverageRating</span>
+                                <span class="rating-value">@Model.AverageRating.ToString("0.0")</span>
                                 <span class="reviews-count">(@Model.ReviewsCount đánh giá)</span>
-                            </div>
-                            <div class="room-location">
-                                <i class="fas fa-map-marker-alt"></i> Tầng @Model.Floor, @Model.Building
                             </div>
                         </div>
                         <div class="room-actions">
-                            <button class="btn btn-outline-primary favorite-btn" data-room-id="@Model.Id">
-                                <i class="@(Model.IsFavorited ? "fas" : "far") fa-heart"></i> Yêu thích
+                            <button class="btn favorite-btn" data-room-id="@Model.Id" aria-label="Thêm vào yêu thích">
+                                <i class="far fa-heart" aria-hidden="true"></i> Yêu thích
                             </button>
-                            <button class="btn btn-outline-secondary share-btn">
-                                <i class="fas fa-share-alt"></i> Chia sẻ
+                            <button class="btn share-btn" aria-label="Chia sẻ phòng">
+                                <i class="fas fa-share-alt" aria-hidden="true"></i> Chia sẻ
                             </button>
                         </div>
                     </div>
@@ -68,226 +69,133 @@
                         <div class="main-image">
                             <img src="@Model.MainImageUrl" alt="@Model.Name" id="main-room-image">
                         </div>
-                        <div class="thumbnails">
-                            @foreach (var image in Model.ImageUrls)
+                        @if (Model.ImageUrls.Count > 1)
+                        {
+                            <div class="thumbnails">
+                                @foreach (var image in Model.ImageUrls)
+                                {
+                                    <div class="thumbnail @(image == Model.MainImageUrl ? "active" : "")" role="button" tabindex="0">
+                                        <img src="@image" alt="@Model.Name" onclick="changeMainImage('@image')">
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Room Description -->
+                <div class="room-description">
+                    <h3>Mô tả phòng</h3>
+                    <p>@Html.Raw(Model.Description)</p>
+                </div>
+
+                <!-- Room Features -->
+                <div class="room-features-section">
+                    <h3>Tiện nghi phòng</h3>
+                    <div class="room-features">
+                        <div class="row">
+                            @foreach (var feature in Model.Features)
                             {
-                                <div class="thumbnail @(image == Model.MainImageUrl ? "active" : "")">
-                                    <img src="@image" alt="@Model.Name" onclick="changeMainImage('@image')">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="feature-item" tabindex="0">
+                                        <i class="@feature.Icon" aria-hidden="true"></i>
+                                        <span>@feature.Name</span>
+                                    </div>
                                 </div>
                             }
                         </div>
                     </div>
+                </div>
 
-                    <!-- Room Description -->
-                    <div class="room-description">
-                        <h3>Mô tả</h3>
-                        <p>@Html.Raw(Model.Description)</p>
-                    </div>
-
-                    <!-- Room Features -->
-                    <div class="room-features-section">
-                        <h3>Tiện nghi phòng</h3>
-                        <div class="room-features">
-                            <div class="row">
-                                @foreach (var feature in Model.Features)
-                                {
-                                    <div class="col-md-4 col-6">
-                                        <div class="feature-item">
-                                            <i class="@feature.Icon"></i>
-                                            <span>@feature.Name</span>
-                                        </div>
-                                    </div>
-                                }
+                <!-- Room Specifications -->
+                <div class="room-specs">
+                    <h3>Thông tin phòng</h3>
+                    <div class="specs-grid">
+                        <div class="spec-item" tabindex="0">
+                            <i class="fas fa-users" aria-hidden="true"></i>
+                            <div class="spec-info">
+                                <span class="spec-label">Sức chứa</span>
+                                <span class="spec-value">@Model.Capacity người</span>
+                            </div>
+                        </div>
+                        <div class="spec-item" tabindex="0">
+                            <i class="fas fa-tag" aria-hidden="true"></i>
+                            <div class="spec-info">
+                                <span class="spec-label">Loại phòng</span>
+                                <span class="spec-value">@Model.RoomType</span>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Room Specifications -->
-                    <div class="room-specs">
-                        <h3>Thông số kỹ thuật</h3>
-                        <div class="specs-grid">
-                            <div class="spec-item">
-                                <i class="fas fa-ruler-combined"></i>
-                                <div class="spec-info">
-                                    <span class="spec-label">Diện tích</span>
-                                    <span class="spec-value">@Model.Size m²</span>
+                <!-- Room Policies -->
+                <div class="room-policies">
+                    <h3>Chính sách phòng</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-smoking-ban" aria-hidden="true"></i>
                                 </div>
-                            </div>
-                            <div class="spec-item">
-                                <i class="fas fa-users"></i>
-                                <div class="spec-info">
-                                    <span class="spec-label">Sức chứa</span>
-                                    <span class="spec-value">@Model.Capacity người</span>
-                                </div>
-                            </div>
-                            <div class="spec-item">
-                                <i class="fas fa-bed"></i>
-                                <div class="spec-info">
-                                    <span class="spec-label">Loại giường</span>
-                                    <span class="spec-value">@Model.BedType</span>
-                                </div>
-                            </div>
-                            <div class="spec-item">
-                                <i class="fas fa-mountain"></i>
-                                <div class="spec-info">
-                                    <span class="spec-label">Hướng nhìn</span>
-                                    <span class="spec-value">@Model.View</span>
+                                <div class="policy-content">
+                                    <h5>Không hút thuốc</h5>
+                                    <p>Không được phép hút thuốc trong phòng</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Room Policies -->
-                    <div class="room-policies">
-                        <h3>Chính sách phòng</h3>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="policy-item">
-                                    <div class="policy-icon">
-                                        <i class="fas fa-smoking-ban"></i>
-                                    </div>
-                                    <div class="policy-content">
-                                        <h5>Không hút thuốc</h5>
-                                        <p>Không được hút thuốc trong phòng</p>
-                                    </div>
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-paw" aria-hidden="true"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h5>Không mang thú cưng</h5>
+                                    <p>Không cho phép mang thú cưng vào phòng</p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="policy-item">
-                                    <div class="policy-icon">
-                                        <i class="fas fa-paw"></i>
-                                    </div>
-                                    <div class="policy-content">
-                                        <h5>Không mang thú cưng</h5>
-                                        <p>Không được mang thú cưng vào phòng</p>
-                                    </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-clock" aria-hidden="true"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h5>Giờ nhận phòng</h5>
+                                    <p>Từ 14:00 - 22:00</p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="policy-item">
-                                    <div class="policy-icon">
-                                        <i class="fas fa-clock"></i>
-                                    </div>
-                                    <div class="policy-content">
-                                        <h5>Nhận phòng</h5>
-                                        <p>Từ 14:00 - 22:00</p>
-                                    </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="policy-item">
-                                    <div class="policy-icon">
-                                        <i class="fas fa-sign-out-alt"></i>
-                                    </div>
-                                    <div class="policy-content">
-                                        <h5>Trả phòng</h5>
-                                        <p>Trước 12:00</p>
-                                    </div>
+                                <div class="policy-content">
+                                    <h5>Giờ trả phòng</h5>
+                                    <p>Trước 12:00</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Reviews Section -->
+                <!-- Reviews Section -->
+                @if (Model.Reviews.Any())
+                {
                     <div class="room-reviews">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h3>Đánh giá từ khách hàng (@Model.ReviewsCount)</h3>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortReviews" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Sắp xếp theo
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="sortReviews">
-                                    <li><button class="dropdown-item active">Mới nhất</button></li>
-                                    <li><button class="dropdown-item">Điểm cao nhất</button></li>
-                                    <li><button class="dropdown-item">Điểm thấp nhất</button></li>
-                                </ul>
-                            </div>
                         </div>
 
-                        <div class="reviews-summary">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="total-rating">
-                                        <div class="big-rating">@Model.AverageRating</div>
-                                        <div class="rating-stars">
-                                            @for (int i = 1; i <= 5; i++)
-                                            {
-                                                if (i <= Math.Floor(Model.AverageRating))
-                                                {
-                                                    <i class="fas fa-star"></i>
-                                                }
-                                                else if (i - Model.AverageRating < 1 && i - Model.AverageRating > 0)
-                                                {
-                                                    <i class="fas fa-star-half-alt"></i>
-                                                }
-                                                else
-                                                {
-                                                    <i class="far fa-star"></i>
-                                                }
-                                            }
-                                        </div>
-                                        <div class="rating-count">Dựa trên @Model.ReviewsCount đánh giá</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="rating-breakdown">
-                                        <div class="rating-item">
-                                            <div class="rating-label">5 <i class="fas fa-star"></i></div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-success" style="width: @Model.RatingDistribution[5]%"></div>
-                                            </div>
-                                            <div class="rating-percent">@Model.RatingDistribution[5]%</div>
-                                        </div>
-                                        <div class="rating-item">
-                                            <div class="rating-label">4 <i class="fas fa-star"></i></div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-success" style="width: @Model.RatingDistribution[4]%"></div>
-                                            </div>
-                                            <div class="rating-percent">@Model.RatingDistribution[4]%</div>
-                                        </div>
-                                        <div class="rating-item">
-                                            <div class="rating-label">3 <i class="fas fa-star"></i></div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-warning" style="width: @Model.RatingDistribution[3]%"></div>
-                                            </div>
-                                            <div class="rating-percent">@Model.RatingDistribution[3]%</div>
-                                        </div>
-                                        <div class="rating-item">
-                                            <div class="rating-label">2 <i class="fas fa-star"></i></div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-warning" style="width: @Model.RatingDistribution[2]%"></div>
-                                            </div>
-                                            <div class="rating-percent">@Model.RatingDistribution[2]%</div>
-                                        </div>
-                                        <div class="rating-item">
-                                            <div class="rating-label">1 <i class="fas fa-star"></i></div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-danger" style="width: @Model.RatingDistribution[1]%"></div>
-                                            </div>
-                                            <div class="rating-percent">@Model.RatingDistribution[1]%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Individual Reviews -->
                         <div class="reviews-list">
-                            @foreach (var review in Model.Reviews)
+                            @foreach (var review in Model.Reviews.Take(5))
                             {
-                                <div class="review-item">
+                                <div class="review-item" tabindex="0">
                                     <div class="review-header">
                                         <div class="reviewer-info">
-                                            @if (!string.IsNullOrEmpty(review.UserAvatarUrl))
-                                            {
-                                                <img src="@review.UserAvatarUrl" alt="@review.UserName" class="reviewer-avatar">
-                                            }
-                                            else
-                                            {
-                                                <div class="reviewer-avatar-placeholder">
-                                                    @review.UserName[0]
-                                                </div>
-                                            }
+                                            <div class="reviewer-avatar-placeholder">
+                                                @review.UserName[0]
+                                            </div>
                                             <div>
                                                 <h5>@review.UserName</h5>
                                                 <div class="review-date">@review.Date.ToString("dd/MM/yyyy")</div>
@@ -296,7 +204,7 @@
                                         <div class="review-rating">
                                             @for (int i = 1; i <= 5; i++)
                                             {
-                                                <i class="@(i <= review.Rating ? "fas" : "far") fa-star"></i>
+                                                <i class="@(i <= review.Rating ? "fas" : "far") fa-star" aria-hidden="true"></i>
                                             }
                                         </div>
                                     </div>
@@ -304,57 +212,54 @@
                                         <p>@review.Comment</p>
                                     </div>
                                     <div class="review-actions">
-                                        <button class="btn btn-sm btn-outline-secondary"><i class="far fa-thumbs-up me-1"></i> Hữu ích</button>
+                                        <button class="btn btn-sm btn-outline-secondary">
+                                            <i class="far fa-thumbs-up me-1" aria-hidden="true"></i> Hữu ích
+                                        </button>
                                     </div>
                                 </div>
                             }
                         </div>
 
-                        <!-- Pagination if needed -->
                         @if (Model.ReviewsCount > 5)
                         {
-                            <div class="reviews-pagination mt-4">
+                            <div class="text-center mt-4">
                                 <button class="btn btn-outline-primary">Xem thêm đánh giá</button>
                             </div>
                         }
                     </div>
-                </div>
+                }
             </div>
 
             <!-- Booking Sidebar -->
             <div class="col-lg-4">
                 <div class="booking-sidebar">
                     <div class="price-container">
-                        @if (Model.OriginalPrice > Model.PricePerNight)
-                        {
-                            <div class="original-price">@Model.OriginalPrice.ToString("N0") VNĐ</div>
-                        }
                         <div class="current-price">@Model.PricePerNight.ToString("N0") VNĐ</div>
                         <div class="price-unit">/đêm</div>
                     </div>
 
                     <form id="booking-form">
-                        <div class="form-group mb-3">
+                        <div class="form-group">
                             <label for="checkin-date">Ngày nhận phòng</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                <input type="date" class="form-control" id="checkin-date" name="checkin">
+                                <span class="input-group-text"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
+                                <input type="date" class="form-control" id="checkin-date" name="checkin" required>
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
+                        <div class="form-group">
                             <label for="checkout-date">Ngày trả phòng</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                <input type="date" class="form-control" id="checkout-date" name="checkout">
+                                <span class="input-group-text"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
+                                <input type="date" class="form-control" id="checkout-date" name="checkout" required>
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
+                        <div class="form-group">
                             <label for="guests">Số lượng khách</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user-friends"></i></span>
-                                <select class="form-control" id="guests" name="guests">
+                                <span class="input-group-text"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
+                                <select class="form-control" id="guests" name="guests" required>
                                     @for (int i = 1; i <= Model.Capacity; i++)
                                     {
                                         <option value="@i">@i người</option>
@@ -364,10 +269,10 @@
                             <small class="form-text text-muted">Tối đa @Model.Capacity người</small>
                         </div>
 
-                        <div class="booking-summary mt-4">
+                        <div class="booking-summary">
                             <div class="summary-item">
-                                <span>Giá phòng x <span id="nights-count">3</span> đêm</span>
-                                <span id="room-total-price">@((Model.PricePerNight * 3).ToString("N0")) VNĐ</span>
+                                <span>Giá phòng x <span id="nights-count">1</span> đêm</span>
+                                <span id="room-total-price">@Model.PricePerNight.ToString("N0") VNĐ</span>
                             </div>
                             <div class="summary-item">
                                 <span>Phí dịch vụ</span>
@@ -379,32 +284,35 @@
                             </div>
                             <div class="summary-total">
                                 <span>Tổng cộng</span>
-                                <span id="total-price">@((Model.PricePerNight * 3m * 1.18m).ToString("N0")) VNĐ</span>
+                                <span id="total-price">@((Model.PricePerNight * 1.18m).ToString("N0")) VNĐ</span>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Đặt phòng ngay</button>
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-calendar-check me-2" aria-hidden="true"></i>
+                            Đặt phòng ngay
+                        </button>
                     </form>
 
-                    <div class="booking-features mt-4">
+                    <div class="booking-features">
                         <div class="booking-feature-item">
-                            <i class="fas fa-calendar-check"></i>
+                            <i class="fas fa-calendar-check" aria-hidden="true"></i>
                             <span>Xác nhận đặt phòng ngay</span>
                         </div>
                         <div class="booking-feature-item">
-                            <i class="fas fa-ban"></i>
+                            <i class="fas fa-ban" aria-hidden="true"></i>
                             <span>Miễn phí hủy trước 72 giờ</span>
                         </div>
                         <div class="booking-feature-item">
-                            <i class="fas fa-shield-alt"></i>
+                            <i class="fas fa-shield-alt" aria-hidden="true"></i>
                             <span>Thanh toán an toàn</span>
                         </div>
                     </div>
 
-                    <div class="booking-help mt-4">
-                        <p>Bạn cần giúp đỡ đặt phòng?</p>
+                    <div class="booking-help">
+                        <p>Bạn cần hỗ trợ đặt phòng?</p>
                         <div class="help-contact">
-                            <i class="fas fa-phone-alt"></i>
+                            <i class="fas fa-phone-alt" aria-hidden="true"></i>
                             <span>+84 123 456 789</span>
                         </div>
                     </div>
@@ -413,51 +321,53 @@
         </div>
 
         <!-- Similar Rooms -->
-        <div class="similar-rooms-section">
-            <h3>Phòng tương tự</h3>
-            <div class="row">
-                @foreach (var room in Model.SimilarRooms)
-                {
-                    <div class="col-md-4">
-                        <div class="similar-room-card">
-                            <div class="room-img">
-                                <img src="@room.ImageUrl" alt="@room.Name">
-                                <div class="room-price">
-                                    <span>@room.Price.ToString("N0") VNĐ</span>
-                                    <small>/đêm</small>
+        @if (Model.SimilarRooms.Any())
+        {
+            <div class="similar-rooms-section">
+                <h3>Phòng tương tự</h3>
+                <div class="row">
+                    @foreach (var room in Model.SimilarRooms)
+                    {
+                        <div class="col-lg-3 col-md-6">
+                            <div class="similar-room-card" tabindex="0">
+                                <div class="room-img">
+                                    <img src="@room.ImageUrl" alt="@room.Name">
+                                    <div class="room-price">
+                                        <span>@room.Price.ToString("N0") VNĐ</span>
+                                        <small>/đêm</small>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="room-info">
-                                <h4>@room.Name</h4>
-                                <div class="room-rating">
-                                    @for (int i = 1; i <= 5; i++)
-                                    {
-                                        if (i <= Math.Floor(room.Rating))
+                                <div class="room-info">
+                                    <h4>@room.Name</h4>
+                                    <div class="room-rating">
+                                        @for (int i = 1; i <= 5; i++)
                                         {
-                                            <i class="fas fa-star"></i>
+                                            if (i <= Math.Floor(room.Rating))
+                                            {
+                                                <i class="fas fa-star" aria-hidden="true"></i>
+                                            }
+                                            else if (i - room.Rating < 1 && i - room.Rating > 0)
+                                            {
+                                                <i class="fas fa-star-half-alt" aria-hidden="true"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="far fa-star" aria-hidden="true"></i>
+                                            }
                                         }
-                                        else if (i - room.Rating < 1 && i - room.Rating > 0)
-                                        {
-                                            <i class="fas fa-star-half-alt"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="far fa-star"></i>
-                                        }
-                                    }
-                                    <span>(@room.Rating)</span>
+                                        <span>(@room.Rating.ToString("0.0"))</span>
+                                    </div>
+                                    <a href="@Url.Action("Details", "Rooms", new { id = room.Id })"
+                                       class="btn btn-outline-primary btn-sm">
+                                        Xem chi tiết
+                                    </a>
                                 </div>
-                                <div class="room-features">
-                                    <span><i class="fas fa-ruler-combined"></i> @room.Size m²</span>
-                                    <span><i class="fas fa-users"></i> @room.Capacity người</span>
-                                </div>
-                                <a href="@Url.Action("Details", "Rooms", new { id = room.Id })" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
@@ -467,27 +377,31 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="shareModalLabel">Chia sẻ phòng này</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body">
                 <div class="share-buttons">
-                    <a href="#" class="share-btn facebook">
-                        <i class="fab fa-facebook-f"></i> Facebook
+                    <a href="#" class="share-btn facebook" aria-label="Chia sẻ lên Facebook">
+                        <i class="fab fa-facebook-f" aria-hidden="true"></i> Facebook
                     </a>
-                    <a href="#" class="share-btn twitter">
-                        <i class="fab fa-twitter"></i> Twitter
+                    <a href="#" class="share-btn twitter" aria-label="Chia sẻ lên Twitter">
+                        <i class="fab fa-twitter" aria-hidden="true"></i> Twitter
                     </a>
-                    <a href="#" class="share-btn whatsapp">
-                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    <a href="#" class="share-btn whatsapp" aria-label="Chia sẻ qua WhatsApp">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp
                     </a>
-                    <a href="#" class="share-btn email">
-                        <i class="fas fa-envelope"></i> Email
+                    <a href="#" class="share-btn email" aria-label="Chia sẻ qua Email">
+                        <i class="fas fa-envelope" aria-hidden="true"></i> Email
                     </a>
                 </div>
                 <div class="copy-link mt-3">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="share-link" value="@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path" readonly>
-                        <button class="btn btn-outline-secondary" type="button" id="copy-link-btn">Sao chép</button>
+                        <input type="text" class="form-control" id="share-link"
+                               value="@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path"
+                               readonly aria-label="Đường link chia sẻ">
+                        <button class="btn btn-outline-secondary" type="button" id="copy-link-btn">
+                            Sao chép
+                        </button>
                     </div>
                 </div>
             </div>
@@ -497,15 +411,6 @@
 
 @section Scripts {
     <script src="~/js/room-details.js" asp-append-version="true"></script>
-    <script>
-        function changeMainImage(imageUrl) {
-            document.getElementById('main-room-image').src = imageUrl;
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
-            });
-            document.querySelector(`.thumbnail img[src='${imageUrl}']`).parentElement.classList.add('active');
-        }
-    </script>
 }
 
 @section Styles {
