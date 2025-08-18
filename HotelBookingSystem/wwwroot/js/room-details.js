@@ -89,21 +89,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function updatePriceDisplay(price, nights) {
         const nightsElement = document.getElementById('nights-count');
         const roomTotalElement = document.getElementById('room-total-price');
-        const serviceFeeElement = document.getElementById('service-fee');
-        const taxFeeElement = document.getElementById('tax-fee');
         const totalPriceElement = document.getElementById('total-price');
 
         if (nightsElement) nightsElement.textContent = nights;
 
         const roomTotal = price * nights;
-        const serviceFee = Math.round(roomTotal * 0.1);
-        const taxFee = Math.round(roomTotal * 0.08);
-        const totalPrice = roomTotal + serviceFee + taxFee;
 
         if (roomTotalElement) roomTotalElement.textContent = formatCurrency(roomTotal);
-        if (serviceFeeElement) serviceFeeElement.textContent = formatCurrency(serviceFee);
-        if (taxFeeElement) taxFeeElement.textContent = formatCurrency(taxFee);
-        if (totalPriceElement) totalPriceElement.textContent = formatCurrency(totalPrice);
+        if (totalPriceElement) totalPriceElement.textContent = formatCurrency(roomTotal);
     }
 
     function formatCurrency(value) {

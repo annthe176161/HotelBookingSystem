@@ -274,17 +274,10 @@
                                 <span>Giá phòng x <span id="nights-count">1</span> đêm</span>
                                 <span id="room-total-price">@Model.PricePerNight.ToString("N0") VNĐ</span>
                             </div>
-                            <div class="summary-item">
-                                <span>Phí dịch vụ</span>
-                                <span id="service-fee">@((Model.PricePerNight * 0.1m).ToString("N0")) VNĐ</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Thuế</span>
-                                <span id="tax-fee">@((Model.PricePerNight * 0.08m).ToString("N0")) VNĐ</span>
-                            </div>
-                            <div class="summary-total">
-                                <span>Tổng cộng</span>
-                                <span id="total-price">@((Model.PricePerNight * 1.18m).ToString("N0")) VNĐ</span>
+                            <div class="summary-total text-center" style="flex-direction: column; align-items: center;">
+                                <span style="font-size: 1.2rem; font-weight: 700;">Tổng cộng</span>
+                                <span id="total-price" style="font-size: 1.5rem; font-weight: 700; color: #e74c3c;">@Model.PricePerNight.ToString("N0") VNĐ</span>
+                                <small class="text-muted d-block mt-2" style="font-size: 0.95rem;">Giá đã bao gồm thuế và phí dịch vụ</small>
                             </div>
                         </div>
 
