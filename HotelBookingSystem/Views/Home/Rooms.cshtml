@@ -218,7 +218,7 @@
                                             
                                             <div class="room-actions">
                                                 <a href="@Url.Action("Details", "Rooms", new { id = room.Id })" 
-                                                   class="btn btn-outline-primary btn-sm mb-2 w-100"
+                                                   class="btn btn-outline-primary"
                                                    aria-label="Xem chi tiết phòng @room.Name">
                                                     <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
                                                     Chi tiết phòng
@@ -229,7 +229,7 @@
                                                        checkout = Model.CheckOutDate?.ToString("yyyy-MM-dd"),
                                                        guests = Model.Guests 
                                                    })" 
-                                                   class="btn btn-primary btn-sm w-100"
+                                                   class="btn btn-primary"
                                                    aria-label="Đặt phòng @room.Name ngay">
                                                     <i class="fas fa-calendar-check me-1" aria-hidden="true"></i>
                                                     Đặt ngay
