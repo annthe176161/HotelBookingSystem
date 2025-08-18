@@ -30,11 +30,54 @@ namespace HotelBookingSystem.Data
 
                 // Cập nhật dữ liệu Rooms thành tiếng Việt
                 await UpdateRoomsToVietnameseAsync(context, logger);
+
+                // Seed Default Test User
+                await SeedDefaultTestUserAsync(userManager, roleManager, logger);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
                 throw;
+            }
+        }
+
+        private static async Task SeedDefaultTestUserAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger logger)
+        {
+            const string userEmail = "test.user@example.com";
+            logger.LogInformation("Checking if default test user '{UserEmail}' exists...", userEmail);
+
+            var testUser = await userManager.FindByEmailAsync(userEmail);
+            if (testUser == null)
+            {
+                logger.LogInformation("Creating default test user '{UserEmail}'...", userEmail);
+                testUser = new ApplicationUser
+                {
+                    UserName = userEmail,
+                    Email = userEmail,
+                    EmailConfirmed = true,
+                    FullName = "Test User",
+                    PhoneNumber = "0123456789"
+                };
+
+                var result = await userManager.CreateAsync(testUser, "Password@123");
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("Default test user created successfully.");
+                    // Gán vai trò "Guest"
+                    if (await roleManager.RoleExistsAsync("Guest"))
+                    {
+                        await userManager.AddToRoleAsync(testUser, "Guest");
+                        logger.LogInformation("Assigned 'Guest' role to default test user.");
+                    }
+                }
+                else
+                {
+                    logger.LogError("Failed to create default test user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+            else
+            {
+                logger.LogInformation("Default test user '{UserEmail}' already exists.", userEmail);
             }
         }
 

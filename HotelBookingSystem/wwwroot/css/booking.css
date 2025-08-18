@@ -185,6 +185,16 @@
         background-color: rgba(58, 110, 165, 0.05);
     }
 
+    .payment-method-item.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #f8f9fa;
+    }
+
+    .payment-method-item.disabled .form-check-label {
+        cursor: not-allowed;
+    }
+
     .payment-method-item .form-check-input {
         margin-top: 1.2em;
     }
