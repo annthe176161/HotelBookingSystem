@@ -20,12 +20,9 @@ namespace HotelBookingSystem.Services.Implementations
         {
             var query = _context.Rooms.Include(r => r.Reviews).AsQueryable();
 
-            // Filtering logic (as implemented before)
-            int totalGuests = searchModel.Adults + searchModel.Children;
-            if (totalGuests > 1) query = query.Where(r => r.Capacity >= totalGuests);
+            // Filtering logic
+            if (searchModel.Guests > 0) query = query.Where(r => r.Capacity >= searchModel.Guests);
             if (!string.IsNullOrEmpty(searchModel.RoomType)) query = query.Where(r => r.RoomType == searchModel.RoomType);
-            if (searchModel.MinPrice.HasValue) query = query.Where(r => r.PricePerNight >= searchModel.MinPrice.Value);
-            if (searchModel.MaxPrice.HasValue) query = query.Where(r => r.PricePerNight <= searchModel.MaxPrice.Value);
 
             // Sorting logic
             switch (searchModel.SortBy?.ToLower())
@@ -63,19 +60,14 @@ namespace HotelBookingSystem.Services.Implementations
                 TotalRooms = totalRooms,
                 PageSize = searchModel.PageSize,
                 TotalPages = (int)Math.Ceiling(totalRooms / (double)searchModel.PageSize),
-                RoomTypes = await _context.Rooms.Select(r => r.RoomType).Distinct().ToListAsync(),
-                LowestPrice = allMatchingRooms.Any() ? allMatchingRooms.Min(r => r.PricePerNight) : 0,
-                HighestPrice = allMatchingRooms.Any() ? allMatchingRooms.Max(r => r.PricePerNight) : 0
+                RoomTypes = await _context.Rooms.Select(r => r.RoomType).Distinct().ToListAsync()
             };
 
             // Copy search parameters back to the model
             viewModel.CheckInDate = searchModel.CheckInDate;
             viewModel.CheckOutDate = searchModel.CheckOutDate;
-            viewModel.Adults = searchModel.Adults;
-            viewModel.Children = searchModel.Children;
+            viewModel.Guests = searchModel.Guests;
             viewModel.RoomType = searchModel.RoomType;
-            viewModel.MinPrice = searchModel.MinPrice ?? viewModel.LowestPrice;
-            viewModel.MaxPrice = searchModel.MaxPrice ?? viewModel.HighestPrice;
             viewModel.SortBy = searchModel.SortBy;
 
             return viewModel;

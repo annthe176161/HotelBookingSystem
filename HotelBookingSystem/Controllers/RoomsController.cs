@@ -21,7 +21,7 @@ namespace HotelBookingSystem.Controllers
             // Set default values if not provided
             searchModel.CurrentPage = searchModel.CurrentPage > 0 ? searchModel.CurrentPage : 1;
             searchModel.PageSize = searchModel.PageSize > 0 ? searchModel.PageSize : 9;
-            searchModel.Adults = searchModel.Adults > 0 ? searchModel.Adults : 1;
+            searchModel.Guests = searchModel.Guests > 0 ? searchModel.Guests : 1;
 
             var viewModel = await _roomService.GetFilteredRoomsAsync(searchModel);
             return View(viewModel);

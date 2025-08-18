@@ -260,30 +260,33 @@
 
 /* Room Cards */
 .room-list {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+    margin-top: 20px;
 }
 
-.room-card-horizontal {
+/* Vertical Room Cards */
+.room-card-vertical {
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: all 0.3s ease;
     border: 1px solid transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-    .room-card-horizontal:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    .room-card-vertical:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         border-color: #667eea;
     }
 
+/* Room Image */
 .room-img {
     position: relative;
     overflow: hidden;
-    height: 280px;
+    height: 200px;
 }
 
     .room-img img {
@@ -293,29 +296,68 @@
         transition: transform 0.3s ease;
     }
 
-.room-card-horizontal:hover .room-img img {
+.room-card-vertical:hover .room-img img {
     transform: scale(1.05);
 }
 
-.room-img::after {
-    content: '';
+/* Price Badge */
+.room-price-badge {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
-.room-card-horizontal:hover .room-img::after {
-    opacity: 1;
+    .room-price-badge .price {
+        font-size: 1rem;
+        font-weight: 700;
+        display: block;
+        line-height: 1.2;
+    }
+
+    .room-price-badge .per-night {
+        font-size: 0.75rem;
+        opacity: 0.9;
+    }
+
+/* Room Card Body */
+.room-card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Room Info */
-.room-info {
-    padding: 30px !important;
+/* Room Header */
+.room-header {
+    margin-bottom: 15px;
+}
+
+.room-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+    .room-title a {
+        color: #2c3e50;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+        .room-title a:hover {
+            color: #667eea;
+        }
+
+.room-type {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .room-title {
@@ -348,20 +390,23 @@
 /* Price Section */
 .room-price {
     text-align: right;
+    margin-bottom: 10px;
 }
 
     .room-price .price {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         font-weight: 700;
         color: #e74c3c;
         display: block;
-        line-height: 1;
+        line-height: 1.2;
+        white-space: nowrap;
     }
 
     .room-price .per-night {
         color: #6c757d;
         font-size: 0.85rem;
         font-weight: 500;
+        white-space: nowrap;
     }
 
 /* Rating */
@@ -434,17 +479,19 @@
 
 /* Action Buttons */
 .room-actions {
-    margin-top: 25px;
+    margin-top: auto; /* Push to bottom */
+    padding-top: 20px;
 }
 
     .room-actions .btn {
         border-radius: 10px;
-        padding: 12px 25px;
+        padding: 12px 20px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        white-space: nowrap;
     }
 
     .room-actions .btn-outline-primary {
@@ -583,10 +630,26 @@
 
     .room-info {
         padding: 20px !important;
+        min-height: auto;
+    }
+
+    .room-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .room-title-section {
+        margin-bottom: 15px;
+        margin-right: 0 !important;
+    }
+
+    .room-price-section {
+        text-align: left !important;
+        max-width: none;
     }
 
     .room-price .price {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
     .room-actions {
@@ -687,9 +750,56 @@
         display: none;
     }
 
-    .room-card-horizontal {
-        box-shadow: none;
-        border: 1px solid #ddd;
+    .room-card-vertical {
         margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .room-img {
+        height: 180px;
+    }
+
+    .room-card-body {
+        padding: 15px;
+    }
+
+    .room-title {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .room-actions .btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Medium devices (tablets) */
+@media (max-width: 768px) {
+    .room-card-vertical {
+        margin-bottom: 20px;
+    }
+
+    .room-price-badge {
+        top: 10px;
+        right: 10px;
+        padding: 6px 10px;
+    }
+
+    .room-price-badge .price {
+        font-size: 0.9rem;
+    }
+
+    .room-card-body {
+        padding: 15px;
+    }
+
+    .room-title {
+        font-size: 1rem;
+    }
+
+    .feature-item {
+        font-size: 0.8rem;
+        margin-right: 10px;
     }
 }
