@@ -3,8 +3,41 @@
     ViewData["Title"] = "Trang chủ";
 }
 
-<!-- Hero Section -->
+<!-- Hero Section with Image Slider -->
 <section id="hero" class="hero-section">
+    <div class="hero-slider">
+        <div class="hero-slide active" style="background-image: url('/images/hero/hero1.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('/images/hero/hero2.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('/images/hero/hero3.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('/images/hero/phonghero.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+    </div>
+    
+    <!-- Hero Navigation Dots -->
+    <div class="hero-dots">
+        <span class="dot active" data-slide="0"></span>
+        <span class="dot" data-slide="1"></span>
+        <span class="dot" data-slide="2"></span>
+        <span class="dot" data-slide="3"></span>
+    </div>
+    
+    <!-- Hero Navigation Arrows -->
+    <div class="hero-nav">
+        <button class="hero-nav-btn prev" onclick="changeSlide(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="hero-nav-btn next" onclick="changeSlide(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
     <div class="hero-content">
         <div class="hero-text">
             <h1>Chào mừng đến với Luxury Hotel</h1>
