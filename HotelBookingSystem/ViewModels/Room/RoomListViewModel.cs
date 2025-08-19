@@ -7,7 +7,7 @@
         // Filter & Search Parameters
         public DateTime? CheckInDate { get; set; }
         public DateTime? CheckOutDate { get; set; }
-        public int Guests { get; set; } = 1;
+        public int Guests { get; set; } = 0; // Changed to 0 to show all rooms by default
         public string? RoomType { get; set; }
         public string SortBy { get; set; } = "recommended";
 

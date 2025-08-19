@@ -33,39 +33,19 @@
                         <input type="hidden" name="page" value="1" />
                         <input type="hidden" name="sortBy" value="@Model.SortBy" />
                         
-                        <!-- Check-in/Check-out Date -->
-                        <div class="filter-group">
-                            <h5><i class="fas fa-calendar-alt me-2"></i>Thời gian lưu trú</h5>
-                            <div class="form-group mb-3">
-                                <label for="checkin">Nhận phòng</label>
-                                <input type="date" class="form-control" name="checkin" id="checkin" 
-                                       value="@Model.CheckInDate?.ToString("yyyy-MM-dd")" 
-                                       min="@DateTime.Today.ToString("yyyy-MM-dd")" 
-                                       aria-describedby="checkin-help">
-                                <small id="checkin-help" class="form-text text-muted">Chọn ngày nhận phòng</small>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="checkout">Trả phòng</label>
-                                <input type="date" class="form-control" name="checkout" id="checkout" 
-                                       value="@Model.CheckOutDate?.ToString("yyyy-MM-dd")" 
-                                       min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
-                                       aria-describedby="checkout-help">
-                                <small id="checkout-help" class="form-text text-muted">Chọn ngày trả phòng</small>
-                            </div>
-                        </div>
-                        
                         <!-- Guests -->
                         <div class="filter-group">
                             <h5><i class="fas fa-users me-2"></i>Số lượng khách</h5>
                             <div class="form-group mb-3">
                                 <label for="guests">Số lượng khách</label>
                                 <select class="form-control" name="guests" id="guests" aria-describedby="guests-help">
+                                    @Html.Raw("<option value=\"0\"" + (Model.Guests == 0 ? " selected" : "") + ">Tất cả phòng</option>")
                                     @for (int i = 1; i <= 10; i++)
                                     {
-                                        <option value="@i" selected="@(Model.Guests == i ? "selected" : null)">@i người</option>
+                                        @Html.Raw("<option value=\"" + i + "\"" + (Model.Guests == i ? " selected" : "") + ">" + i + " người</option>")
                                     }
                                 </select>
-                                <small id="guests-help" class="form-text text-muted">Tổng số khách (bao gồm trẻ em)</small>
+                                <small id="guests-help" class="form-text text-muted">Chọn số lượng khách hoặc "Tất cả" để xem tất cả phòng</small>
                             </div>
                         </div>
                         
@@ -74,10 +54,10 @@
                             <h5><i class="fas fa-bed me-2"></i>Loại phòng</h5>
                             <div class="form-group mb-3">
                                 <select class="form-control" name="roomType" id="roomTypeSelect" aria-describedby="roomtype-help">
-                                    <option value="">Tất cả loại phòng</option>
+                                    @Html.Raw("<option value=\"\"" + (string.IsNullOrWhiteSpace(Model.RoomType) ? " selected" : "") + ">Tất cả loại phòng</option>")
                                     @foreach (var type in Model.RoomTypes)
                                     {
-                                        <option value="@type" selected=@(Model.RoomType == type ? "selected" : null)>@type</option>
+                                        @Html.Raw("<option value=\"" + type + "\"" + (!string.IsNullOrWhiteSpace(Model.RoomType) && Model.RoomType == type ? " selected" : "") + ">" + type + "</option>")
                                     }
                                 </select>
                                 <small id="roomtype-help" class="form-text text-muted">Chọn loại phòng phù hợp</small>
@@ -253,8 +233,6 @@
                                                href="@Url.Action("Rooms", new { 
                                                    page = Model.CurrentPage - 1, 
                                                    sortBy = Model.SortBy, 
-                                                   checkin = Model.CheckInDate?.ToString("yyyy-MM-dd"), 
-                                                   checkout = Model.CheckOutDate?.ToString("yyyy-MM-dd"), 
                                                    guests = Model.Guests, 
                                                    roomType = Model.RoomType 
                                                })"
@@ -271,8 +249,6 @@
                                                href="@Url.Action("Rooms", new { 
                                                    page = i, 
                                                    sortBy = Model.SortBy, 
-                                                   checkin = Model.CheckInDate?.ToString("yyyy-MM-dd"), 
-                                                   checkout = Model.CheckOutDate?.ToString("yyyy-MM-dd"), 
                                                    guests = Model.Guests, 
                                                    roomType = Model.RoomType 
                                                })"
@@ -290,8 +266,6 @@
                                                href="@Url.Action("Rooms", new { 
                                                    page = Model.CurrentPage + 1, 
                                                    sortBy = Model.SortBy, 
-                                                   checkin = Model.CheckInDate?.ToString("yyyy-MM-dd"), 
-                                                   checkout = Model.CheckOutDate?.ToString("yyyy-MM-dd"), 
                                                    guests = Model.Guests, 
                                                    roomType = Model.RoomType 
                                                })"
@@ -307,13 +281,15 @@
                     else
                     {
                         <div class="no-rooms-found text-center py-5" role="status" aria-live="polite">
-                            <i class="fas fa-bed fa-4x mb-3 text-muted" aria-hidden="true"></i>
-                            <h3>Không tìm thấy phòng nào</h3>
-                            <p class="text-muted mb-4">Không có phòng nào phù hợp với tiêu chí tìm kiếm của bạn. Hãy thử điều chỉnh bộ lọc hoặc thay đổi ngày lưu trú.</p>
-                            <a href="@Url.Action("Rooms", "Home")" class="btn btn-primary" aria-label="Xóa bộ lọc và xem tất cả phòng">
-                                <i class="fas fa-refresh me-2" aria-hidden="true"></i>
-                                Xem tất cả phòng
-                            </a>
+                            <div class="d-flex flex-column align-items-center">
+                                <i class="fas fa-bed fa-4x mb-3 text-muted" aria-hidden="true"></i>
+                                <h3>Không tìm thấy phòng nào</h3>
+                                <p class="text-muted mb-4">Không có phòng nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
+                                <a href="@Url.Action("Rooms", "Home")" class="btn btn-primary d-inline-flex align-items-center" aria-label="Xóa bộ lọc và xem tất cả phòng">
+                                    <i class="fas fa-refresh me-2" aria-hidden="true"></i>
+                                    Xem tất cả phòng
+                                </a>
+                            </div>
                         </div>
                     }
                 </div>

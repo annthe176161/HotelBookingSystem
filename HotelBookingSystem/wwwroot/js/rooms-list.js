@@ -1,47 +1,32 @@
 ﻿// Room List Page JavaScript
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize components
-  initializeDateInputs();
   initializeFilters();
   initializeSorting();
   initializeLoadingStates();
   initializeImageLazyLoading();
   initializeAccessibility();
+  ensureCorrectDropdownValues();
 
-  // Initialize date inputs with defaults
-  function initializeDateInputs() {
-    const checkinInput = document.querySelector('input[name="checkin"]');
-    const checkoutInput = document.querySelector('input[name="checkout"]');
-
-    if (checkinInput && checkoutInput) {
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
-      // Set minimum dates
-      checkinInput.min = formatDate(today);
-      checkoutInput.min = formatDate(tomorrow);
-
-      // Set default values if empty
-      if (!checkinInput.value) {
-        checkinInput.value = formatDate(today);
+  // Ensure dropdown values are displayed correctly
+  function ensureCorrectDropdownValues() {
+    const roomTypeSelect = document.querySelector('select[name="roomType"]');
+    const guestsSelect = document.querySelector('select[name="guests"]');
+    
+    // Force refresh dropdown display
+    if (roomTypeSelect) {
+      const currentValue = roomTypeSelect.value;
+      roomTypeSelect.value = currentValue;
+      
+      // If current value is empty or null, ensure first option is selected
+      if (!currentValue || currentValue === '') {
+        roomTypeSelect.selectedIndex = 0;
       }
-      if (!checkoutInput.value) {
-        checkoutInput.value = formatDate(tomorrow);
-      }
-
-      // Update checkout min date when checkin changes
-      checkinInput.addEventListener("change", function () {
-        const newCheckinDate = new Date(this.value);
-        const newMinCheckoutDate = new Date(newCheckinDate);
-        newMinCheckoutDate.setDate(newMinCheckoutDate.getDate() + 1);
-
-        checkoutInput.min = formatDate(newMinCheckoutDate);
-
-        if (new Date(checkoutInput.value) <= newCheckinDate) {
-          checkoutInput.value = formatDate(newMinCheckoutDate);
-        }
-      });
+    }
+    
+    if (guestsSelect) {
+      const currentValue = guestsSelect.value;
+      guestsSelect.value = currentValue;
     }
   }
 
@@ -177,15 +162,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function clearAllFilters() {
     const form = document.getElementById("filterForm");
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Reset form fields
-    form.querySelector('input[name="checkin"]').value = formatDate(today);
-    form.querySelector('input[name="checkout"]').value = formatDate(tomorrow);
-    form.querySelector('select[name="guests"]').value = "2";
-    form.querySelector('select[name="roomType"]').value = "";
+    // Reset form fields to show all rooms
+    const guestsSelect = form.querySelector('select[name="guests"]');
+    const roomTypeSelect = form.querySelector('select[name="roomType"]');
+    
+    if (guestsSelect) {
+      guestsSelect.value = "0"; // Set to "Tất cả phòng"
+      guestsSelect.selectedIndex = 0; // Ensure first option is selected
+    }
+    if (roomTypeSelect) {
+      roomTypeSelect.value = ""; // Reset room type filter
+      roomTypeSelect.selectedIndex = 0; // Ensure first option ("Tất cả loại phòng") is selected
+    }
+
+    // Clear any hidden inputs for page and sorting
+    const pageInput = form.querySelector('input[name="page"]');
+    const sortByInput = form.querySelector('input[name="sortBy"]');
+    
+    if (pageInput) {
+      pageInput.value = "1";
+    }
+    if (sortByInput) {
+      sortByInput.value = "recommended";
+    }
+
+    // Force trigger change events to ensure UI updates
+    if (guestsSelect) {
+      guestsSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    if (roomTypeSelect) {
+      roomTypeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    }
 
     showLoadingState();
     form.submit();

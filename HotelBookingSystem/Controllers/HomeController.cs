@@ -26,6 +26,12 @@ namespace HotelBookingSystem.Controllers
 
         public async Task<IActionResult> Rooms(RoomListViewModel searchModel)
         {
+            // Normalize empty strings to null for proper filtering
+            if (string.IsNullOrWhiteSpace(searchModel.RoomType))
+            {
+                searchModel.RoomType = null;
+            }
+            
             // The controller just calls the service. All logic is in the service.
             var viewModel = await _roomService.GetFilteredRoomsAsync(searchModel);
             return View(viewModel);

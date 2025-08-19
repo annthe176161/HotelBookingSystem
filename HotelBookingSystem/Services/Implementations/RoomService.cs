@@ -21,8 +21,15 @@ namespace HotelBookingSystem.Services.Implementations
             var query = _context.Rooms.Include(r => r.Reviews).AsQueryable();
 
             // Filtering logic
-            if (searchModel.Guests > 0) query = query.Where(r => r.Capacity >= searchModel.Guests);
-            if (!string.IsNullOrEmpty(searchModel.RoomType)) query = query.Where(r => r.RoomType == searchModel.RoomType);
+            // Only filter by guests if > 0, otherwise show all rooms
+            if (searchModel.Guests > 0) 
+            {
+                query = query.Where(r => r.Capacity >= searchModel.Guests);
+            }
+            if (!string.IsNullOrEmpty(searchModel.RoomType)) 
+            {
+                query = query.Where(r => r.RoomType == searchModel.RoomType);
+            }
 
             // Sorting logic
             switch (searchModel.SortBy?.ToLower())
