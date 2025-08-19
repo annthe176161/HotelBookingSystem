@@ -4,74 +4,307 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/booking-scoped.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Simple, clean booking page styles */
+        .simple-booking-page {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .booking-container {
+            width: 100%;
+            margin: 0;
+            background: white;
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+        }
+        
+        .booking-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .booking-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .booking-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .booking-content {
+            padding: 40px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section-title {
+            color: #495057;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-label {
+            color: #495057;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-group-text {
+            background: #667eea;
+            color: white;
+            border: 2px solid #667eea;
+            font-weight: 500;
+        }
+        
+        .payment-methods {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .payment-method {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .payment-method:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .payment-method.active {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .payment-method.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .payment-icon {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .payment-info h6 {
+            margin: 0 0 5px 0;
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        .payment-info p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .booking-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .summary-title {
+            color: #495057;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .room-preview img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .room-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        
+        .room-type {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 16px;
+            color: #667eea;
+        }
+        
+        .contact-support {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .contact-support .phone {
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        @@media (max-width: 768px) {
+            .booking-content {
+                padding: 20px 15px;
+            }
+            
+            .booking-header {
+                padding: 20px 15px;
+            }
+            
+            .booking-header h1 {
+                font-size: 24px;
+            }
+        }
+        
+        @@media (min-width: 1400px) {
+            .booking-content {
+                max-width: 1600px;
+                padding: 40px 80px;
+            }
+            
+            .form-section {
+                padding: 30px 40px;
+            }
+        }
+        
+        @@media (min-width: 1900px) {
+            .booking-content {
+                max-width: 1800px;
+                padding: 40px 100px;
+            }
+        }
+    </style>
 }
 
-<div class="booking-page">
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="booking-header fade-in-up">
-        <h1><i class="fas fa-bed"></i> Đặt phòng khách sạn</h1>
-        <p>Hoàn tất thông tin dưới đây để đặt phòng của bạn</p>
-    </div>
-
-    <!-- Progress Steps -->
-    <div class="booking-steps fade-in-up">
-        <div class="booking-step active">
-            <div class="step-number">1</div>
-            <div class="step-text">Thông tin đặt phòng</div>
+<div class="simple-booking-page">
+    <div class="booking-container">
+        <!-- Simple Header -->
+        <div class="booking-header">
+            <h1>Đặt phòng khách sạn</h1>
+            <p>Vui lòng điền thông tin để hoàn tất đặt phòng</p>
         </div>
-        <div class="step-connector"></div>
-        <div class="booking-step">
-            <div class="step-number">2</div>
-            <div class="step-text">Thanh toán</div>
-        </div>
-        <div class="step-connector"></div>
-        <div class="booking-step">
-            <div class="step-number">3</div>
-            <div class="step-text">Xác nhận</div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Main Booking Form -->
-            <div class="booking-form-container fade-in-up">
-
-    <div class="row">
-                <form method="post" asp-action="Create" asp-controller="Bookings">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+        
+        <!-- Main Content -->
+        <div class="booking-content">
+            <div class="row">
+                <div class="col-lg-8 col-xl-9">
+                    <form method="post" asp-action="Create" asp-controller="Bookings">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                         <input type="hidden" asp-for="RoomId" />
 
-                        <!-- Stay Details Section -->
+                        <!-- Thông tin lưu trú -->
                         <div class="form-section">
-                            <h3 class="section-title"><i class="fas fa-calendar-check"></i> Thông tin lưu trú</h3>
+                            <h3 class="section-title">
+                                <i class="fas fa-calendar-check text-primary"></i>
+                                Thông tin lưu trú
+                            </h3>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                                     <label asp-for="CheckInDate" class="form-label">Ngày nhận phòng</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                         <input asp-for="CheckInDate" type="date" class="form-control" required />
                                     </div>
                                     <span asp-validation-for="CheckInDate" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-3">
                                     <label asp-for="CheckOutDate" class="form-label">Ngày trả phòng</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                         <input asp-for="CheckOutDate" type="date" class="form-control" required />
                                     </div>
                                     <span asp-validation-for="CheckOutDate" class="text-danger"></span>
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                                     <label asp-for="GuestCount" class="form-label">Số khách</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-users"></i></span>
@@ -88,33 +321,34 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <label asp-for="SpecialRequests" class="form-label">Yêu cầu đặc biệt</label>
-                                    <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="Vui lòng cho chúng tôi biết nếu bạn có yêu cầu đặc biệt (không đảm bảo)"></textarea>
-                                </div>
+                            <div class="mb-3">
+                                <label asp-for="SpecialRequests" class="form-label">Yêu cầu đặc biệt (không bắt buộc)</label>
+                                <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="Ví dụ: Phòng tầng cao, gần thang máy..."></textarea>
                             </div>
                         </div>
 
-                        <!-- Guest Information Section -->
+                        <!-- Thông tin khách hàng -->
                         <div class="form-section">
-                            <h3 class="section-title"><i class="fas fa-user-friends"></i> Thông tin khách hàng</h3>
+                            <h3 class="section-title">
+                                <i class="fas fa-user text-primary"></i>
+                                Thông tin khách hàng
+                            </h3>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                                     <label asp-for="FirstName" class="form-label">Tên</label>
                                     <input asp-for="FirstName" type="text" class="form-control" required />
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-3">
                                     <label asp-for="LastName" class="form-label">Họ</label>
                                     <input asp-for="LastName" type="text" class="form-control" required />
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                                     <label asp-for="Email" class="form-label">Email</label>
                                     <div class="input-group">
                                         <span class="input-group-text">@@</span>
@@ -122,7 +356,7 @@
                                     </div>
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-3">
                                     <label asp-for="Phone" class="form-label">Số điện thoại</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
@@ -133,294 +367,197 @@
                             </div>
                         </div>
 
-                        <!-- Payment Method Section -->
+                        <!-- Phương thức thanh toán -->
                         <div class="form-section">
-                            <h3 class="section-title"><i class="fas fa-credit-card"></i> Phương thức thanh toán</h3>
+                            <h3 class="section-title">
+                                <i class="fas fa-credit-card text-primary"></i>
+                                Phương thức thanh toán
+                            </h3>
 
                             <div class="payment-methods">
-                                <div class="payment-method-item active">
-                                    <input type="radio" id="hotel-payment" name="PaymentMethod" value="Hotel" checked />
-                                    <label for="hotel-payment" class="payment-method-label">
+                                <div class="payment-method active">
+                                    <input type="radio" id="hotel-payment" name="PaymentMethod" value="Hotel" checked style="display: none;" />
+                                    <label for="hotel-payment" style="cursor: pointer; display: flex; align-items: center; gap: 15px; width: 100%; margin: 0;">
                                         <div class="payment-icon">
-                                            <i class="fas fa-building"></i>
+                                            <i class="fas fa-hotel"></i>
                                         </div>
                                         <div class="payment-info">
-                                            <div class="payment-title">Thanh toán tại khách sạn</div>
-                                            <div class="payment-description">Thanh toán trực tiếp tại quầy lễ tân khi nhận phòng</div>
+                                            <h6>Thanh toán tại khách sạn</h6>
+                                            <p>Thanh toán trực tiếp tại quầy lễ tân khi nhận phòng</p>
                                         </div>
-                                        <div class="payment-status">
-                                            <span class="badge bg-success">Khuyến nghị</span>
-                                        </div>
+                                        <span class="badge bg-success ms-auto">Khuyến nghị</span>
                                     </label>
                                 </div>
 
-                                <div class="payment-method-item disabled">
-                                    <input type="radio" id="credit-card" name="PaymentMethod" value="CreditCard" disabled />
-                                    <label for="credit-card" class="payment-method-label">
-                                        <div class="payment-icon">
-                                            <i class="fas fa-credit-card"></i>
-                                        </div>
-                                        <div class="payment-info">
-                                            <div class="payment-title">Thẻ tín dụng</div>
-                                            <div class="payment-description">Thanh toán bằng thẻ tín dụng (Sắp có)</div>
-                                        </div>
-                                        <div class="payment-status">
-                                            <span class="badge bg-secondary">Sắp có</span>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div class="payment-method-item disabled">
-                                    <input type="radio" id="bank-transfer" name="PaymentMethod" value="BankTransfer" disabled />
-                                    <label for="bank-transfer" class="payment-method-label">
-                                        <div class="payment-icon">
-                                            <i class="fas fa-university"></i>
-                                        </div>
-                                        <div class="payment-info">
-                                            <div class="payment-title">Chuyển khoản ngân hàng</div>
-                                            <div class="payment-description">Chuyển khoản qua ngân hàng (Sắp có)</div>
-                                        </div>
-                                        <div class="payment-status">
-                                            <span class="badge bg-secondary">Sắp có</span>
-                                        </div>
-                                    </label>
+                                <div class="payment-method disabled">
+                                    <div class="payment-icon" style="background: #6c757d;">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h6>Thẻ tín dụng</h6>
+                                        <p>Thanh toán online bằng thẻ tín dụng</p>
+                                    </div>
+                                    <span class="badge bg-secondary ms-auto">Sắp có</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Terms and Conditions -->
-                        <div class="form-section mb-4">
-                            <div class="terms-agreement">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="terms-agreement" required>
-                                    <label class="form-check-label" for="terms-agreement">
-                                        Tôi đồng ý với <a href="#" class="text-primary">Điều khoản và điều kiện</a> của khách sạn
-                                    </label>
-                                </div>
+                        <!-- Điều khoản -->
+                        <div class="form-section">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms-agreement" required>
+                                <label class="form-check-label" for="terms-agreement">
+                                    Tôi đồng ý với <a href="#" class="text-primary">Điều khoản và điều kiện</a> của khách sạn
+                                </label>
                             </div>
                         </div>
 
-                        <!-- Form Actions -->
-                        <div class="d-flex justify-content-between align-items-center mt-5">
+                        <!-- Nút hành động -->
+                        <div class="d-flex justify-content-between align-items-center">
                             <a href="javascript:history.back()" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Quay lại
                             </a>
                             <button type="submit" class="btn-submit">
-                                <i class="fas fa-check me-2"></i>Hoàn tất đặt phòng
+                                <i class="fas fa-check"></i>
+                                Hoàn tất đặt phòng
                             </button>
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
 
-        <!-- Booking Summary -->
-        <div class="col-lg-4">
-            <div class="booking-summary slide-in-right">
-                <div class="summary-card">
-                    <div class="summary-header">
+                <!-- Sidebar - Tóm tắt đặt phòng -->
+                <div class="col-lg-4 col-xl-3">
+                    <div class="booking-summary">
                         <h5 class="summary-title">Tóm tắt đặt phòng</h5>
-                        <p class="summary-subtitle">Kiểm tra thông tin trước khi xác nhận</p>
-                    </div>
-                    
-                    <!-- Room Preview -->
-                    <div class="room-preview"
-                        <div class="room-image mb-3">
-                            <img src="@Model.RoomImageUrl" alt="@Model.RoomName" class="img-fluid rounded">
+                        
+                        <!-- Thông tin phòng -->
+                        <div class="room-preview">
+                            <img src="@Model.RoomImageUrl" alt="@Model.RoomName" class="img-fluid">
+                            <h6 class="room-name">@Model.RoomName</h6>
+                            <p class="room-type">@Model.RoomType</p>
                         </div>
-                        <img src="https://via.placeholder.com/300x180?text=Hotel+Room" 
-                             alt="@Model.RoomName" class="room-image">
-                        <h6 class="room-name">@Model.RoomName</h6>
-                        <p class="room-type">@Model.RoomType</p>
-                    </div>
 
-                    <!-- Stay Details -->
-                    <div class="summary-details">
-                        <div class="summary-row">
-                            <span class="summary-label">Ngày nhận phòng:</span>
-                            <span class="summary-value" id="summary-checkin">Chưa chọn</span>
+                        <!-- Chi tiết đặt phòng -->
+                        <div class="summary-details">
+                            <div class="summary-row">
+                                <span>Ngày nhận phòng:</span>
+                                <span id="summary-checkin">Chưa chọn</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Ngày trả phòng:</span>
+                                <span id="summary-checkout">Chưa chọn</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Số đêm:</span>
+                                <span id="summary-nights">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Số khách:</span>
+                                <span id="summary-guests">Chưa chọn</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Giá phòng/đêm:</span>
+                                <span>@Model.RoomPrice.ToString("C0")</span>
+                            </div>
+                            <div class="summary-row">
+                                <span><strong>Tổng cộng:</strong></span>
+                                <span><strong id="summary-total">0₫</strong></span>
+                            </div>
                         </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Ngày trả phòng:</span>
-                            <span class="summary-value" id="summary-checkout">Chưa chọn</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Số đêm:</span>
-                            <span class="summary-value" id="summary-nights">0</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Số khách:</span>
-                            <span class="summary-value" id="summary-guests">Chưa chọn</span>
-                        </div>
-                    </div>
 
-                        <div class="summary-row">
-                            <span class="summary-label">Giá phòng/đêm:</span>
-                            <span class="summary-value">@Model.RoomPrice.ToString("C0")</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Số đêm:</span>
-                            <span class="summary-value" id="summary-nights-price">0</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label"><strong>Tổng cộng:</strong></span>
-                            <span class="summary-value price-highlight"><strong id="summary-total">0đ</strong></span>
-                        </div>
-                    </div>
-
-                    <!-- Contact Info -->
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <div class="text-center">
-                            <i class="fas fa-headset text-primary mb-2" style="font-size: 1.5rem;"></i>
-                            <p class="mb-1"><small>Cần hỗ trợ?</small></p>
-                            <p class="mb-0"><strong class="text-primary">(024) 3825 0888</strong></p>
+                        <!-- Hỗ trợ khách hàng -->
+                        <div class="contact-support">
+                            <i class="fas fa-headset text-primary mb-2" style="font-size: 24px;"></i>
+                            <p class="mb-1">Cần hỗ trợ?</p>
+                            <p class="phone">(024) 3825 0888</p>
                         </div>
                     </div>
                 </div>
             </div>
-            </div>
         </div>
     </div>
-</div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Enhanced animations and interactions
-            function addUpdateAnimation(element) {
-                element.addClass('updating');
-                setTimeout(() => element.removeClass('updating'), 300);
-            }
-            
-            // Auto-fill dates and calculate price with animations
+            // Cập nhật tóm tắt đặt phòng
             function updateSummary() {
                 const checkinDate = $('#CheckInDate').val();
                 const checkoutDate = $('#CheckOutDate').val();
                 const guestCount = $('#GuestCount').val();
                 
-                const checkinSummary = $('#summary-checkin');
-                const checkoutSummary = $('#summary-checkout');
-                const guestsSummary = $('#summary-guests');
-                const nightsSummary = $('#summary-nights');
-                const totalSummary = $('#summary-total');
+                // Cập nhật ngày
+                $('#summary-checkin').text(checkinDate ? new Date(checkinDate).toLocaleDateString('vi-VN') : 'Chưa chọn');
+                $('#summary-checkout').text(checkoutDate ? new Date(checkoutDate).toLocaleDateString('vi-VN') : 'Chưa chọn');
+                $('#summary-guests').text(guestCount ? guestCount + ' khách' : 'Chưa chọn');
                 
-                // Update with animations
-                checkinSummary.text(checkinDate ? new Date(checkinDate).toLocaleDateString('vi-VN') : 'Chưa chọn');
-                addUpdateAnimation(checkinSummary);
-                
-                checkoutSummary.text(checkoutDate ? new Date(checkoutDate).toLocaleDateString('vi-VN') : 'Chưa chọn');
-                addUpdateAnimation(checkoutSummary);
-                
-                guestsSummary.text(guestCount ? guestCount + ' khách' : 'Chưa chọn');
-                addUpdateAnimation(guestsSummary);
-                
+                // Tính toán số đêm và tổng tiền
                 if (checkinDate && checkoutDate) {
                     const nights = Math.floor((new Date(checkoutDate) - new Date(checkinDate)) / (1000 * 60 * 60 * 24));
-
                     if (nights > 0) {
-                        nightsSummary.text(nights);
-                        addUpdateAnimation(nightsSummary);
-                        
-                        $('#summary-nights-price').text('x' + nights);
-
+                        $('#summary-nights').text(nights);
                         const pricePerNight = parseFloat('@Model.RoomPrice');
                         const totalPrice = pricePerNight * nights;
-                        totalSummary.text(totalPrice.toLocaleString('vi-VN') + 'đ');
-                        addUpdateAnimation(totalSummary);
+                        $('#summary-total').text(totalPrice.toLocaleString('vi-VN') + '₫');
                     } else {
-                        nightsSummary.text('0');
-                        $('#summary-nights-price').text('x0');
-                        totalSummary.text('0đ');
+                        $('#summary-nights').text('0');
+                        $('#summary-total').text('0₫');
                     }
                 } else {
-                    nightsSummary.text('0');
-                    $('#summary-nights-price').text('x0');
-                    totalSummary.text('0đ');
+                    $('#summary-nights').text('0');
+                    $('#summary-total').text('0₫');
                 }
             }
 
-            // Enhanced form validation
-            function validateForm() {
-                let isValid = true;
-                const requiredFields = ['CheckInDate', 'CheckOutDate', 'GuestCount', 'FirstName', 'LastName', 'Email', 'Phone'];
-                
-                requiredFields.forEach(fieldName => {
-                    const field = $(`#${fieldName}`);
-                    const value = field.val().trim();
-                    
-                    if (!value) {
-                        field.addClass('is-invalid');
-                        isValid = false;
-                    } else {
-                        field.removeClass('is-invalid');
-                    }
-                });
-                
-                return isValid;
-            }
-
-            // Event handlers
-            $('#CheckInDate, #CheckOutDate, #GuestCount').on('change', updateSummary);
-
-            // Enhanced date validation
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const todayString = today.toISOString().split('T')[0];
-            $('#CheckInDate').attr('min', todayString);
-
+            // Ràng buộc ngày
+            const today = new Date().toISOString().split('T')[0];
+            $('#CheckInDate').attr('min', today);
+            
             $('#CheckInDate').on('change', function() {
                 const checkinDate = new Date(this.value);
-                if (!isNaN(checkinDate.getTime())) {
-                    const minCheckout = new Date(checkinDate);
-                    minCheckout.setDate(checkinDate.getDate() + 1);
-                    $('#CheckOutDate').attr('min', minCheckout.toISOString().split('T')[0]);
-
-                    const currentCheckoutDate = new Date($('#CheckOutDate').val());
-                    if (currentCheckoutDate < minCheckout) {
-                        $('#CheckOutDate').val(minCheckout.toISOString().split('T')[0]);
-                        $('#CheckOutDate').trigger('change');
-                    }
+                const minCheckout = new Date(checkinDate);
+                minCheckout.setDate(checkinDate.getDate() + 1);
+                $('#CheckOutDate').attr('min', minCheckout.toISOString().split('T')[0]);
+                
+                // Nếu ngày checkout nhỏ hơn minimum, reset
+                const currentCheckout = new Date($('#CheckOutDate').val());
+                if (currentCheckout <= checkinDate) {
+                    $('#CheckOutDate').val('');
                 }
+                updateSummary();
             });
 
-            // Form submission with loading state
+            // Event listeners
+            $('#CheckInDate, #CheckOutDate, #GuestCount').on('change', updateSummary);
+            
+            // Validation form
             $('form').on('submit', function(e) {
-                if (!validateForm()) {
+                const checkinDate = $('#CheckInDate').val();
+                const checkoutDate = $('#CheckOutDate').val();
+                
+                if (!checkinDate || !checkoutDate) {
                     e.preventDefault();
+                    alert('Vui lòng chọn ngày nhận phòng và trả phòng');
                     return false;
                 }
                 
-                const submitBtn = $('.btn-submit');
-                submitBtn.addClass('btn-loading');
-                submitBtn.prop('disabled', true);
-            });
-
-            // Real-time validation
-            $('input, select, textarea').on('blur', function() {
-                const field = $(this);
-                if (field.prop('required') && !field.val().trim()) {
-                    field.addClass('is-invalid');
-                } else {
-                    field.removeClass('is-invalid');
+                const nights = Math.floor((new Date(checkoutDate) - new Date(checkinDate)) / (1000 * 60 * 60 * 24));
+                if (nights <= 0) {
+                    e.preventDefault();
+                    alert('Ngày trả phòng phải sau ngày nhận phòng');
+                    return false;
                 }
             });
-
-            // Payment method selection enhancement
-            $('.payment-method-item input[type="radio"]').on('change', function() {
-                $('.payment-method-item').removeClass('active');
-                $(this).closest('.payment-method-item').addClass('active');
+            
+            // Payment method selection
+            $('.payment-method input[type="radio"]').on('change', function() {
+                $('.payment-method').removeClass('active');
+                $(this).closest('.payment-method').addClass('active');
             });
-
+            
             // Initial setup
             updateSummary();
-            
-            // Add loading animation to page elements
-            $('.fade-in-up').each(function(index) {
-                $(this).css('animation-delay', (index * 0.1) + 's');
-            });
-            
-            $('.slide-in-right').css('animation-delay', '0.3s');
         });
     </script>
 }
