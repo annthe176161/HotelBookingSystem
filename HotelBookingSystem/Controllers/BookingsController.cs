@@ -22,6 +22,22 @@ namespace HotelBookingSystem.Controllers
             _userManager = userManager;
         }
 
+        // Action để hiển thị danh sách booking của khách hàng
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchTerm = "", string status = "")
+        {
+            // Lấy user mặc định để test (có thể thay đổi khi có login)
+            var user = await _userManager.FindByEmailAsync("test.user@example.com");
+            if (user == null)
+            {
+                TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var viewModel = await _bookingService.GetCustomerBookingsAsync(user.Id, searchTerm, status);
+            return View(viewModel);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Create(int roomId, DateTime? checkin, DateTime? checkout, int guests = 1)
         {

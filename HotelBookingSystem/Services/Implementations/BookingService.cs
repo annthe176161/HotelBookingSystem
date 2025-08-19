@@ -93,5 +93,86 @@ namespace HotelBookingSystem.Services.Implementations
                 .OrderByDescending(b => b.CreatedDate)
                 .ToListAsync();
         }
+
+        public async Task<CustomerBookingsViewModel> GetCustomerBookingsAsync(string userId, string searchTerm = "", string status = "")
+        {
+            var query = _context.Bookings
+                .Include(b => b.Room)
+                .Include(b => b.BookingStatus)
+                .Include(b => b.Payment)
+                    .ThenInclude(p => p.PaymentStatus)
+                .Where(b => b.UserId == userId);
+
+            // Apply search filter
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(b => 
+                    b.Room.Name.Contains(searchTerm) ||
+                    b.Room.RoomType.Contains(searchTerm) ||
+                    b.Id.ToString().Contains(searchTerm));
+            }
+
+            // Apply status filter
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(b => b.BookingStatus.Name == status);
+            }
+
+            var bookings = await query
+                .OrderByDescending(b => b.CreatedDate)
+                .ToListAsync();
+
+            var customerBookings = bookings.Select(b => new CustomerBookingItem
+            {
+                Id = b.Id,
+                BookingNumber = $"#BK{b.Id.ToString().PadLeft(6, '0')}",
+                CheckIn = b.CheckIn,
+                CheckOut = b.CheckOut,
+                Guests = b.Guests,
+                TotalPrice = b.TotalPrice,
+                CreatedDate = b.CreatedDate,
+                CompletedDate = b.CompletedDate,
+                
+                // Room Information
+                RoomId = b.RoomId,
+                RoomName = b.Room.Name,
+                RoomType = b.Room.RoomType,
+                RoomImageUrl = b.Room.ImageUrl,
+                RoomPricePerNight = b.Room.PricePerNight,
+                
+                // Status Information
+                Status = b.BookingStatus.Name,
+                StatusColor = GetStatusColor(b.BookingStatus.Name),
+                
+                // Payment Information
+                PaymentStatus = b.Payment?.PaymentStatus?.Name ?? "Pending",
+                PaymentMethod = b.Payment?.PaymentMethod ?? "N/A"
+            }).ToList();
+
+            var viewModel = new CustomerBookingsViewModel
+            {
+                SearchTerm = searchTerm,
+                Status = status,
+                Bookings = customerBookings,
+                TotalBookings = customerBookings.Count,
+                CompletedBookings = customerBookings.Count(b => b.Status == "Completed"),
+                CancelledBookings = customerBookings.Count(b => b.Status == "Cancelled"),
+                PendingBookings = customerBookings.Count(b => b.Status == "Confirmed" || b.Status == "Pending")
+            };
+
+            return viewModel;
+        }
+
+        private string GetStatusColor(string status)
+        {
+            return status switch
+            {
+                "Confirmed" => "success",
+                "Pending" => "warning", 
+                "Cancelled" => "danger",
+                "Completed" => "primary",
+                _ => "secondary"
+            };
+        }
     }
 }
