@@ -10,5 +10,7 @@ namespace HotelBookingSystem.Services.Interfaces
         Task<Models.Booking?> GetBookingByIdAsync(int bookingId);
         Task<List<Models.Booking>> GetUserBookingsAsync(string userId);
         Task<CustomerBookingsViewModel> GetCustomerBookingsAsync(string userId, string searchTerm = "", string status = "");
+        Task<BookingDetailsViewModel?> GetBookingDetailsAsync(int bookingId, string userId);
+        Task<bool> CancelBookingAsync(int bookingId, string userId);
     }
 }

@@ -294,86 +294,49 @@ namespace HotelBookingSystem.Controllers
                 };
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            // Cho mục đích demo, tạo dữ liệu mẫu
-            var viewModel = new BookingDetailsViewModel
+            // Lấy user mặc định để test
+            var user = await _userManager.FindByEmailAsync("test.user@example.com");
+            if (user == null)
             {
-                Id = id,
-                BookingNumber = $"B{id:D3}-2023",
-                Status = "Đã xác nhận",
-                BookingDate = DateTime.Now.AddDays(-5),
-
-                // Thông tin phòng
-                RoomId = 1,
-                RoomName = "Phòng Deluxe Hướng Biển",
-                RoomType = "Deluxe",
-                RoomDescription = "Phòng sang trọng với tầm nhìn tuyệt đẹp ra biển và các tiện nghi hiện đại.",
-                RoomImageUrl = "/images/rooms/deluxe-ocean.jpg",
-                RoomRating = 4.8,
-                RoomCapacity = 2,
-                RoomSize = 45,
-                BedType = "1 Giường King",
-                Floor = "3",
-                Building = "Tòa chính",
-
-                // Thông tin lưu trú
-                CheckInDate = DateTime.Now.AddDays(3),
-                CheckOutDate = DateTime.Now.AddDays(6),
-                GuestsCount = 2,
-                SpecialRequests = "Tôi muốn phòng trên tầng cao và xa thang máy.",
-
-                // Thông tin khách hàng
-                GuestName = "Nguyễn Văn A",
-                GuestEmail = "nguyenvana@example.com",
-                GuestPhone = "0912345678",
-
-                // Thông tin thanh toán
-                RoomPrice = 6000000,
-                ServiceFee = 600000,
-                TaxFee = 480000,
-                Discount = 0,
-                TotalPrice = 7080000,
-                PaymentMethod = "Thanh toán tại khách sạn",
-                PaymentStatus = "Chờ thanh toán",
-                PaymentDetails = null,
-
-                // Chính sách hủy phòng
-                IsCancellable = true,
-                FreeCancellationDeadline = DateTime.Now.AddDays(1),
-
-                // Đánh giá
-                CanReview = false,
-                HasReview = false,
-
-                // Lịch sử hoạt động
-                BookingActivities = new List<BookingActivityViewModel>
-        {
-            new BookingActivityViewModel
-            {
-                Date = DateTime.Now.AddDays(-5),
-                Title = "Đã tạo đặt phòng",
-                Description = "Đơn đặt phòng đã được tạo thành công.",
-                Type = "create"
-            },
-            new BookingActivityViewModel
-            {
-                Date = DateTime.Now.AddDays(-4),
-                Title = "Đã xác nhận đặt phòng",
-                Description = "Đơn đặt phòng đã được xác nhận.",
-                Type = "confirm"
-            },
-            new BookingActivityViewModel
-            {
-                Date = DateTime.Now.AddDays(-3),
-                Title = "Cập nhật yêu cầu đặc biệt",
-                Description = "Thêm yêu cầu đặc biệt về vị trí phòng.",
-                Type = "update"
+                TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
+                return RedirectToAction("Index", "Home");
             }
-        }
-            };
+
+            var viewModel = await _bookingService.GetBookingDetailsAsync(id, user.Id);
+            if (viewModel == null)
+            {
+                TempData["Error"] = "Không tìm thấy đặt phòng hoặc bạn không có quyền xem.";
+                return RedirectToAction("Index");
+            }
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            // Lấy user mặc định để test
+            var user = await _userManager.FindByEmailAsync("test.user@example.com");
+            if (user == null)
+            {
+                TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var result = await _bookingService.CancelBookingAsync(id, user.Id);
+            
+            if (result)
+            {
+                TempData["Success"] = "Đặt phòng đã được hủy thành công.";
+            }
+            else
+            {
+                TempData["Error"] = "Không thể hủy đặt phòng. Vui lòng kiểm tra lại.";
+            }
+
+            return RedirectToAction("Details", new { id });
         }
     }
 }

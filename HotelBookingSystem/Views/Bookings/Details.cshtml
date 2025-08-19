@@ -3,6 +3,8 @@
     ViewData["Title"] = $"Chi tiết đặt phòng #{Model.BookingNumber}";
 }
 
+<link rel="stylesheet" href="~/css/booking-details.css" asp-append-version="true" />
+
 <!-- Booking Details Banner -->
 <div class="booking-details-banner">
     <div class="overlay"></div>
@@ -367,8 +369,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không, giữ đặt phòng</button>
-                    <form asp-controller="Bookings" asp-action="Cancel" method="post">
-                        <input type="hidden" name="bookingId" value="@Model.Id" />
+                    <form asp-controller="Bookings" asp-action="Cancel" method="post" style="display: inline;">
+                        <input type="hidden" name="id" value="@Model.Id" />
                         <input type="hidden" id="cancelReasonInput" name="reason" value="" />
                         <button type="submit" class="btn btn-danger" id="confirm-cancel">Xác nhận hủy</button>
                     </form>

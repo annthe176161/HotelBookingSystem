@@ -209,5 +209,125 @@ namespace HotelBookingSystem.Services.Implementations
                 _ => "secondary"
             };
         }
+
+        public async Task<BookingDetailsViewModel?> GetBookingDetailsAsync(int bookingId, string userId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.Room)
+                .Include(b => b.BookingStatus)
+                .Include(b => b.Payment)
+                .ThenInclude(p => p!.PaymentStatus)
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
+
+            if (booking == null)
+                return null;
+
+            var nightCount = (booking.CheckOut - booking.CheckIn).Days;
+            var canCancel = booking.BookingStatus.Name != "Hoàn thành" && booking.BookingStatus.Name != "Đã hủy";
+
+            return new BookingDetailsViewModel
+            {
+                Id = booking.Id,
+                BookingNumber = $"BK{booking.Id:D6}",
+                Status = booking.BookingStatus.Name,
+                BookingDate = booking.CreatedDate,
+
+                // Thông tin phòng
+                RoomId = booking.RoomId,
+                RoomName = booking.Room.Name,
+                RoomType = booking.Room.RoomType,
+                RoomDescription = booking.Room.Description,
+                RoomImageUrl = booking.Room.ImageUrl ?? "/images/rooms/default.jpg",
+                RoomRating = booking.Room.AverageRating,
+                RoomCapacity = booking.Room.Capacity,
+                RoomSize = 45, // Có thể thêm field này vào Room model sau
+                BedType = "1 Giường King", // Có thể thêm field này vào Room model sau
+                Floor = "3", // Có thể thêm field này vào Room model sau
+                Building = "Tòa chính", // Có thể thêm field này vào Room model sau
+
+                // Thông tin lưu trú
+                CheckInDate = booking.CheckIn,
+                CheckOutDate = booking.CheckOut,
+                GuestsCount = booking.Guests,
+                SpecialRequests = "", // Có thể thêm field này vào Booking model sau
+
+                // Thông tin khách hàng
+                GuestName = booking.User.FullName ?? "N/A",
+                GuestEmail = booking.User.Email ?? "N/A",
+                GuestPhone = booking.User.PhoneNumber ?? "N/A",
+
+                // Thông tin thanh toán
+                RoomPrice = booking.Room.PricePerNight * nightCount,
+                ServiceFee = 0, // Có thể thêm logic tính phí dịch vụ
+                TaxFee = 0, // Có thể thêm logic tính thuế
+                Discount = 0, // Có thể thêm logic giảm giá
+                TotalPrice = booking.TotalPrice,
+                PaymentMethod = booking.Payment?.PaymentMethod ?? "Thanh toán tại khách sạn",
+                PaymentStatus = booking.Payment?.PaymentStatus?.Name ?? "Pending",
+                PaymentDetails = null,
+
+                // Chính sách hủy phòng
+                IsCancellable = canCancel,
+                FreeCancellationDeadline = booking.CheckIn.AddDays(-1), // Có thể hủy miễn phí trước 1 ngày
+
+                // Đánh giá
+                CanReview = booking.BookingStatus.Name == "Hoàn thành" && booking.CheckOut < DateTime.Now,
+                HasReview = false, // Có thể thêm logic kiểm tra review
+
+                // Lịch sử hoạt động
+                BookingActivities = new List<BookingActivityViewModel>
+                {
+                    new BookingActivityViewModel
+                    {
+                        Date = booking.CreatedDate,
+                        Title = "Đã tạo đặt phòng",
+                        Description = "Đơn đặt phòng đã được tạo thành công.",
+                        Type = "create"
+                    }
+                }
+            };
+        }
+
+        public async Task<bool> CancelBookingAsync(int bookingId, string userId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.BookingStatus)
+                .Include(b => b.Payment)
+                .ThenInclude(p => p!.PaymentStatus)
+                .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
+
+            if (booking == null)
+                return false;
+
+            // Chỉ cho phép hủy nếu booking chưa hoàn thành
+            if (booking.BookingStatus.Name == "Hoàn thành")
+                return false;
+
+            // Lấy trạng thái "Đã hủy"
+            var cancelledStatus = await _context.BookingStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Đã hủy");
+
+            if (cancelledStatus == null)
+                return false;
+
+            // Cập nhật trạng thái booking
+            booking.BookingStatusId = cancelledStatus.Id;
+
+            // Cập nhật trạng thái payment nếu có
+            if (booking.Payment != null)
+            {
+                var cancelledPaymentStatus = await _context.PaymentStatuses
+                    .FirstOrDefaultAsync(s => s.Name == "Cancelled");
+
+                if (cancelledPaymentStatus != null)
+                {
+                    booking.Payment.PaymentStatusId = cancelledPaymentStatus.Id;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
