@@ -3,262 +3,257 @@
     ViewData["Title"] = "Đặt phòng của tôi";
 }
 
-<div class="container-fluid px-4 py-4">
-    <div class="row">
-        <div class="col-12">
-            <!-- Page Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h3 text-gray-800 mb-0">Đặt phòng của tôi</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Đặt phòng của tôi</li>
-                        </ol>
-                    </nav>
+<link rel="stylesheet" href="~/css/booking-list.css" asp-append-version="true" />
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="page-title">
+                    <i class="fas fa-calendar-alt me-3"></i>
+                    Đặt phòng của tôi
+                </h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                        <li class="breadcrumb-item active">Đặt phòng của tôi</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="@Url.Action("Index", "Rooms")" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Đặt phòng mới
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card stats-primary">
+                <div class="stats-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>@Model.TotalBookings</h3>
+                    <p>Tổng số đặt phòng</p>
                 </div>
             </div>
-
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Tổng số đặt phòng
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalBookings</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card stats-success">
+                <div class="stats-icon">
+                    <i class="fas fa-check-circle"></i>
                 </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        Đã hoàn thành
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CompletedBookings</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-check-circle fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        Đang chờ
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingBookings</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-clock fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-danger shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                        Đã hủy
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CancelledBookings</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-times-circle fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stats-content">
+                    <h3>@Model.CompletedBookings</h3>
+                    <p>Đã hoàn thành</p>
                 </div>
             </div>
-
-            <!-- Search and Filter -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tìm kiếm và lọc</h6>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card stats-warning">
+                <div class="stats-icon">
+                    <i class="fas fa-clock"></i>
                 </div>
-                <div class="card-body">
-                    <form method="get" asp-action="Index">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="searchTerm" class="form-label">Tìm kiếm</label>
-                                <input type="text" 
-                                       class="form-control" 
-                                       id="searchTerm" 
-                                       name="searchTerm" 
-                                       value="@Model.SearchTerm"
-                                       placeholder="Tìm kiếm theo tên phòng, loại phòng hoặc mã đặt phòng...">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="status" class="form-label">Trạng thái</label>
-                                <select class="form-select" id="status" name="status">
-                                    <option value="">Tất cả trạng thái</option>
-                                    <option value="Pending" selected="@(Model.Status == "Pending")">Đang chờ</option>
-                                    <option value="Confirmed" selected="@(Model.Status == "Confirmed")">Đã xác nhận</option>
-                                    <option value="Completed" selected="@(Model.Status == "Completed")">Đã hoàn thành</option>
-                                    <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Đã hủy</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2 mb-3 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search"></i> Tìm kiếm
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="stats-content">
+                    <h3>@Model.PendingBookings</h3>
+                    <p>Đang chờ</p>
                 </div>
             </div>
-
-            <!-- Bookings List -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Danh sách đặt phòng</h6>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card stats-danger">
+                <div class="stats-icon">
+                    <i class="fas fa-times-circle"></i>
                 </div>
-                <div class="card-body">
-                    @if (Model.Bookings.Any())
+                <div class="stats-content">
+                    <h3>@Model.CancelledBookings</h3>
+                    <p>Đã hủy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-search me-2"></i>
+                Tìm kiếm và lọc
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="searchTerm" class="form-label">Tìm kiếm</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="searchTerm" 
+                               name="searchTerm" 
+                               value="@Model.SearchTerm"
+                               placeholder="Tìm kiếm theo tên phòng, loại phòng hoặc mã đặt phòng...">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="status" class="form-label">Trạng thái</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="Pending" selected="@(Model.Status == "Pending")">Đang chờ</option>
+                            <option value="Confirmed" selected="@(Model.Status == "Confirmed")">Đã xác nhận</option>
+                            <option value="Completed" selected="@(Model.Status == "Completed")">Đã hoàn thành</option>
+                            <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Đã hủy</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bookings List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list me-2"></i>
+                Danh sách đặt phòng
+            </h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Bookings.Any())
+            {
+                <div class="row">
+                    @foreach (var booking in Model.Bookings)
                     {
-                        <div class="row">
-                            @foreach (var booking in Model.Bookings)
-                            {
-                                <div class="col-lg-6 col-xl-4 mb-4">
-                                    <div class="card h-100 shadow-sm border-0">
-                                        <!-- Room Image -->
-                                        <div class="position-relative">
-                                            <img src="@(string.IsNullOrEmpty(booking.RoomImageUrl) ? "https://via.placeholder.com/350x200?text=Hotel+Room" : booking.RoomImageUrl)" 
-                                                 class="card-img-top" 
-                                                 alt="@booking.RoomName"
-                                                 style="height: 200px; object-fit: cover;">
-                                            <div class="position-absolute top-0 end-0 m-2">
-                                                <span class="badge bg-@booking.StatusColor">@booking.Status</span>
-                                            </div>
-                                            <div class="position-absolute top-0 start-0 m-2">
-                                                <span class="badge bg-dark">@booking.FormattedBookingNumber</span>
+                        <div class="col-lg-6 col-xl-4 mb-4">
+                            <div class="booking-card">
+                                <!-- Room Image -->
+                                <div class="booking-image">
+                                    <img src="@(string.IsNullOrEmpty(booking.RoomImageUrl) ? "https://via.placeholder.com/350x200?text=Hotel+Room" : booking.RoomImageUrl)" 
+                                         alt="@booking.RoomName">
+                                    <div class="booking-status">
+                                        <span class="status-badge status-@booking.StatusColor.ToLower()">@booking.Status</span>
+                                    </div>
+                                    <div class="booking-number">
+                                        <span class="number-badge">@booking.FormattedBookingNumber</span>
+                                    </div>
+                                </div>
+
+                                <div class="booking-content">
+                                    <!-- Room Info -->
+                                    <h5 class="room-name">@booking.RoomName</h5>
+                                    <p class="room-type">@booking.RoomType</p>
+                                    
+                                    <!-- Booking Details -->
+                                    <div class="booking-dates">
+                                        <div class="date-item">
+                                            <i class="fas fa-calendar-check text-success"></i>
+                                            <div>
+                                                <strong>Nhận phòng</strong>
+                                                <span>@booking.FormattedCheckIn</span>
                                             </div>
                                         </div>
-
-                                        <div class="card-body">
-                                            <!-- Room Info -->
-                                            <h5 class="card-title text-primary">@booking.RoomName</h5>
-                                            <p class="text-muted small mb-2">@booking.RoomType</p>
-                                            
-                                            <!-- Booking Details -->
-                                            <div class="row text-sm mb-3">
-                                                <div class="col-6">
-                                                    <i class="fas fa-calendar-check text-success"></i>
-                                                    <strong>Nhận phòng:</strong><br>
-                                                    <span class="text-muted">@booking.FormattedCheckIn</span>
-                                                </div>
-                                                <div class="col-6">
-                                                    <i class="fas fa-calendar-times text-danger"></i>
-                                                    <strong>Trả phòng:</strong><br>
-                                                    <span class="text-muted">@booking.FormattedCheckOut</span>
-                                                </div>
+                                        <div class="date-item">
+                                            <i class="fas fa-calendar-times text-danger"></i>
+                                            <div>
+                                                <strong>Trả phòng</strong>
+                                                <span>@booking.FormattedCheckOut</span>
                                             </div>
+                                        </div>
+                                    </div>
 
-                                            <div class="row text-sm mb-3">
-                                                <div class="col-6">
-                                                    <i class="fas fa-moon text-info"></i>
-                                                    <strong>Số đêm:</strong> @booking.NightCount
-                                                </div>
-                                                <div class="col-6">
-                                                    <i class="fas fa-users text-secondary"></i>
-                                                    <strong>Khách:</strong> @booking.Guests
-                                                </div>
-                                            </div>
+                                    <div class="booking-info">
+                                        <div class="info-item">
+                                            <i class="fas fa-moon text-info"></i>
+                                            <span><strong>@booking.NightCount</strong> đêm</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-users text-secondary"></i>
+                                            <span><strong>@booking.Guests</strong> khách</span>
+                                        </div>
+                                    </div>
 
-                                            <!-- Price -->
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <div>
-                                                    <small class="text-muted">Tổng tiền:</small><br>
-                                                    <span class="h5 text-primary mb-0">@booking.FormattedTotalPrice</span>
-                                                </div>
-                                                <div class="text-end">
-                                                    <small class="text-muted">Thanh toán:</small><br>
-                                                    <span class="badge bg-@(booking.PaymentStatus == "Completed" ? "success" : "warning")">
-                                                        @booking.PaymentStatus
-                                                    </span>
-                                                </div>
-                                            </div>
+                                    <!-- Price and Payment -->
+                                    <div class="price-section">
+                                        <div class="total-price">
+                                            <span class="price-label">Tổng tiền:</span>
+                                            <span class="price-value">@booking.FormattedTotalPrice</span>
+                                        </div>
+                                        <div class="payment-status">
+                                            <span class="payment-badge payment-@(booking.PaymentStatus.ToLower())">
+                                                @booking.PaymentStatus
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                            <!-- Booking Date -->
-                                            <div class="text-muted small mb-3">
-                                                <i class="fas fa-clock"></i> Đặt lúc: @booking.FormattedCreatedDate
-                                            </div>
+                                    <!-- Booking Date -->
+                                    <div class="booking-date">
+                                        <i class="fas fa-clock"></i>
+                                        <span>Đặt lúc: @booking.FormattedCreatedDate</span>
+                                    </div>
 
-                                            <!-- Action Buttons -->
-                                            <div class="d-grid gap-2">
-                                                @if (booking.IsUpcoming)
-                                                {
-                                                    <span class="badge bg-info">Sắp tới</span>
-                                                }
-                                                else if (booking.IsActive)
-                                                {
-                                                    <span class="badge bg-success">Đang diễn ra</span>
-                                                }
-                                                else if (booking.IsPast && booking.Status == "Completed")
-                                                {
-                                                    <span class="badge bg-secondary">Đã kết thúc</span>
-                                                }
+                                    <!-- Action Buttons -->
+                                    <div class="booking-actions">
+                                        @if (booking.IsUpcoming)
+                                        {
+                                            <span class="status-info status-upcoming">Sắp tới</span>
+                                        }
+                                        else if (booking.IsActive)
+                                        {
+                                            <span class="status-info status-active">Đang diễn ra</span>
+                                        }
+                                        else if (booking.IsPast && booking.Status == "Completed")
+                                        {
+                                            <span class="status-info status-completed">Đã kết thúc</span>
+                                        }
 
-                                                @if (booking.CanCancel)
-                                                {
-                                                    <button class="btn btn-outline-danger btn-sm" onclick="confirmCancel(@booking.Id)">
-                                                        <i class="fas fa-times"></i> Hủy đặt phòng
-                                                    </button>
-                                                }
+                                        <div class="action-buttons">
+                                            @if (booking.CanCancel)
+                                            {
+                                                <button class="btn btn-outline-danger btn-sm" onclick="confirmCancel(@booking.Id)">
+                                                    <i class="fas fa-times"></i> Hủy đặt phòng
+                                                </button>
+                                            }
 
-                                                @if (booking.CanReview)
-                                                {
-                                                    <a href="#" class="btn btn-outline-primary btn-sm">
-                                                        <i class="fas fa-star"></i> Đánh giá
-                                                    </a>
-                                                }
-
-                                                <a href="@Url.Action("Details", new { id = booking.Id })" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-eye"></i> Xem chi tiết
+                                            @if (booking.CanReview)
+                                            {
+                                                <a href="#" class="btn btn-outline-warning btn-sm">
+                                                    <i class="fas fa-star"></i> Đánh giá
                                                 </a>
-                                            </div>
+                                            }
+
+                                            <a href="@Url.Action("Details", new { id = booking.Id })" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-eye"></i> Chi tiết
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-5">
-                            <i class="fas fa-calendar-times fa-4x text-gray-300 mb-3"></i>
-                            <h4 class="text-gray-500">Không có đặt phòng nào</h4>
-                            <p class="text-gray-400">Bạn chưa có đặt phòng nào. Hãy khám phá các phòng của chúng tôi!</p>
-                            <a href="@Url.Action("Index", "Rooms")" class="btn btn-primary">
-                                <i class="fas fa-bed"></i> Xem phòng
-                            </a>
+                            </div>
                         </div>
                     }
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h4>Không có đặt phòng nào</h4>
+                    <p>Bạn chưa có đặt phòng nào. Hãy khám phá các phòng của chúng tôi!</p>
+                    <a href="@Url.Action("Index", "Rooms")" class="btn btn-primary">
+                        <i class="fas fa-bed me-2"></i>Xem phòng
+                    </a>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -273,84 +268,4 @@
             }
         }
     </script>
-}
-
-@section Styles {
-    <style>
-        /* Additional styles for booking list cards */
-        .border-left-primary {
-            border-left: 0.25rem solid #4e73df !important;
-        }
-        .border-left-success {
-            border-left: 0.25rem solid #1cc88a !important;
-        }
-        .border-left-warning {
-            border-left: 0.25rem solid #f6c23e !important;
-        }
-        .border-left-danger {
-            border-left: 0.25rem solid #e74a3b !important;
-        }
-        
-        .text-xs {
-            font-size: 0.7rem;
-        }
-        
-        .text-gray-800 {
-            color: #5a5c69 !important;
-        }
-        
-        .text-gray-300 {
-            color: #dddfeb !important;
-        }
-        
-        .text-gray-500 {
-            color: #858796 !important;
-        }
-        
-        .text-gray-400 {
-            color: #b7b9cc !important;
-        }
-        
-        .card-img-top {
-            border-radius: 0.375rem 0.375rem 0 0;
-        }
-        
-        .badge {
-            font-size: 0.75em;
-        }
-        
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            border-radius: 0.2rem;
-        }
-        
-        .text-sm {
-            font-size: 0.875rem;
-        }
-        
-        .bg-primary {
-            background-color: #4e73df !important;
-        }
-        
-        .bg-success {
-            background-color: #1cc88a !important;
-        }
-        
-        .bg-warning {
-            background-color: #f6c23e !important;
-        }
-        
-        .bg-danger {
-            background-color: #e74a3b !important;
-        }
-        
-        .bg-info {
-            background-color: #36b9cc !important;
-        }
-        
-        .bg-secondary {
-            background-color: #858796 !important;
-        }
-    </style>
 }
