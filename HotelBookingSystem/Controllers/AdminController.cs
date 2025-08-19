@@ -97,7 +97,7 @@ namespace HotelBookingSystem.Controllers
             TotalSpending = 64500000,
             Status = "active",
             UserType = "vip",
-            Address = "123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh",
+            Address = "123 Phố Hàng Bài, Hoàn Kiếm, Hà Nội",
             LoyaltyPoints = 1450,
             LastLoginDate = DateTime.Now.AddHours(-2)
         },
@@ -114,7 +114,7 @@ namespace HotelBookingSystem.Controllers
             TotalSpending = 52800000,
             Status = "active",
             UserType = "vip",
-            Address = "456 Lê Lợi, Quận 1, TP. Hồ Chí Minh",
+            Address = "456 Phố Tràng Tiền, Hoàn Kiếm, Hà Nội",
             LoyaltyPoints = 1280,
             LastLoginDate = DateTime.Now.AddDays(-1)
         },
@@ -131,7 +131,7 @@ namespace HotelBookingSystem.Controllers
             TotalSpending = 48200000,
             Status = "active",
             UserType = "vip",
-            Address = "789 Điện Biên Phủ, Quận 3, TP. Hồ Chí Minh",
+            Address = "789 Phố Bà Triệu, Hai Bà Trưng, Hà Nội",
             LoyaltyPoints = 950,
             LastLoginDate = DateTime.Now.AddDays(-3)
         },
@@ -148,7 +148,7 @@ namespace HotelBookingSystem.Controllers
             TotalSpending = 12500000,
             Status = "inactive",
             UserType = "normal",
-            Address = "101 Võ Văn Ngân, Thủ Đức, TP. Hồ Chí Minh",
+            Address = "101 Phố Láng Hạ, Đống Đa, Hà Nội",
             LoyaltyPoints = 250,
             LastLoginDate = DateTime.Now.AddDays(-10)
         },
@@ -165,7 +165,7 @@ namespace HotelBookingSystem.Controllers
             TotalSpending = 3200000,
             Status = "pending",
             UserType = "normal",
-            Address = "202 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh",
+            Address = "202 Phố Hoàn Kiếm, Hoàn Kiếm, Hà Nội",
             LoyaltyPoints = 80,
             LastLoginDate = DateTime.Now.AddDays(-5)
         }

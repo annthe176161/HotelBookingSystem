@@ -153,26 +153,50 @@
 
 /* Stats Section */
 .stats-section {
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, #3a6ea5 0%, #004e89 100%);
     color: white;
     padding: 60px 0;
+    position: relative;
+}
+
+.stats-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+
+.stats-section .container {
+    position: relative;
+    z-index: 2;
 }
 
 .stat-item {
     text-align: center;
     padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
 }
 
 .stat-number {
     font-size: 48px;
     font-weight: 700;
     margin-bottom: 10px;
-    color: var(--accent-color);
+    color: #ff6b35;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .stat-label {
     font-size: 18px;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 /* Section Styles */
@@ -789,10 +813,16 @@ section {
     margin-bottom: 30px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .testimonial-content {
     margin-bottom: 20px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
 }
 
     .testimonial-content p {

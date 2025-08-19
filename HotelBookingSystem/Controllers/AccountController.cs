@@ -26,10 +26,10 @@ namespace HotelBookingSystem.Controllers
                 PhoneNumber = "0987654321",
                 Birthdate = new DateTime(1990, 1, 1),
                 Gender = "male",
-                Address = "123 Nguyễn Văn Linh",
-                City = "Hồ Chí Minh",
-                State = "TP.HCM",
-                ZipCode = "70000",
+                Address = "123 Phố Hàng Bài",
+                City = "Hà Nội",
+                State = "Hà Nội",
+                ZipCode = "10000",
                 CreatedAt = DateTime.Now.AddMonths(-6),
                 BookingsCount = 5,
                 ReviewsCount = 3,
@@ -151,7 +151,7 @@ namespace HotelBookingSystem.Controllers
                     new LoginActivityViewModel
                     {
                         Device = "Windows Chrome 115.0.5790",
-                        Location = "Hồ Chí Minh, Việt Nam",
+                        Location = "Hà Nội, Việt Nam",
                         IpAddress = "203.113.148.XX",
                         Time = DateTime.Now.AddHours(-1),
                         Status = "Current"
@@ -159,7 +159,7 @@ namespace HotelBookingSystem.Controllers
                     new LoginActivityViewModel
                     {
                         Device = "iPhone Safari iOS 16.5",
-                        Location = "Hồ Chí Minh, Việt Nam",
+                        Location = "Hà Nội, Việt Nam",
                         IpAddress = "42.116.83.XX",
                         Time = DateTime.Now.AddDays(-2),
                         Status = "Success"
