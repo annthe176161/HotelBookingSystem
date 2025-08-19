@@ -53,25 +53,60 @@ namespace HotelBookingSystem.Services.Implementations
                 throw new InvalidOperationException("Không tìm thấy trạng thái đặt phòng.");
             }
 
+            // Lấy trạng thái thanh toán mặc định (Đang xử lý)
+            var pendingPaymentStatus = await _context.PaymentStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Đang xử lý");
+
+            if (pendingPaymentStatus == null)
+            {
+                throw new InvalidOperationException("Không tìm thấy trạng thái thanh toán.");
+            }
+
             // Tính toán tổng giá
             var totalPrice = await CalculateTotalPriceAsync(model.RoomId, model.CheckInDate, model.CheckOutDate);
 
-            var booking = new Models.Booking
+            // Sử dụng transaction để đảm bảo tính nhất quán dữ liệu
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                RoomId = model.RoomId,
-                CheckIn = model.CheckInDate,
-                CheckOut = model.CheckOutDate,
-                Guests = model.GuestCount,
-                TotalPrice = totalPrice,
-                CreatedDate = DateTime.Now,
-                BookingStatusId = pendingStatus.Id,
-                UserId = userId
-            };
+                // Tạo booking
+                var booking = new Models.Booking
+                {
+                    RoomId = model.RoomId,
+                    CheckIn = model.CheckInDate,
+                    CheckOut = model.CheckOutDate,
+                    Guests = model.GuestCount,
+                    TotalPrice = totalPrice,
+                    CreatedDate = DateTime.Now,
+                    BookingStatusId = pendingStatus.Id,
+                    UserId = userId
+                };
 
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
+                _context.Bookings.Add(booking);
+                await _context.SaveChangesAsync();
 
-            return booking;
+                // Tạo payment record
+                var payment = new Payment
+                {
+                    BookingId = booking.Id,
+                    Amount = totalPrice,
+                    PaymentDate = DateTime.Now,
+                    PaymentMethod = "Thanh toán tại khách sạn", // Có thể thay đổi theo yêu cầu
+                    TransactionId = $"TXN{booking.Id:D8}{DateTime.Now:yyyyMMddHHmmss}", // Tạo transaction ID
+                    PaymentStatusId = pendingPaymentStatus.Id
+                };
+
+                _context.Payments.Add(payment);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                return booking;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<Models.Booking?> GetBookingByIdAsync(int bookingId)
