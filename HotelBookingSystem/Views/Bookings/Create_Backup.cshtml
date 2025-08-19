@@ -5,28 +5,278 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/booking-page.css" />
+    <style>
+        /* Simple, clean booking page styles */
+        .simple-booking-page {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .booking-container {
+            width: 100%;
+            margin: 0;
+            background: white;
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+        }
+        
+        .booking-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .booking-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .booking-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .booking-content {
+            padding: 40px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section-title {
+            color: #495057;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-label {
+            color: #495057;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-group-text {
+            background: #667eea;
+            color: white;
+            border: 2px solid #667eea;
+            font-weight: 500;
+        }
+        
+        .payment-methods {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .payment-method {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .payment-method:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .payment-method.active {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .payment-method.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .payment-icon {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .payment-info h6 {
+            margin: 0 0 5px 0;
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        .payment-info p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .booking-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .summary-title {
+            color: #495057;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .room-preview img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .room-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        
+        .room-type {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 16px;
+            color: #667eea;
+        }
+        
+        .contact-support {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .contact-support .phone {
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        @@media (max-width: 768px) {
+            .booking-content {
+                padding: 20px 15px;
+            }
+            
+            .booking-header {
+                padding: 20px 15px;
+            }
+            
+            .booking-header h1 {
+                font-size: 24px;
+            }
+        }
+        
+        @@media (min-width: 1400px) {
+            .booking-content {
+                max-width: 1600px;
+                padding: 40px 80px;
+            }
+            
+            .form-section {
+                padding: 30px 40px;
+            }
+        }
+        
+        @@media (min-width: 1900px) {
+            .booking-content {
+                max-width: 1800px;
+                padding: 40px 100px;
+            }
+        }
+    </style>
 }
 
 <div class="simple-booking-page">
     <div class="booking-container">
-        <!-- Header -->
+        <!-- Simple Header -->
         <div class="booking-header">
-            <h1><i class="fas fa-hotel me-3"></i>Đặt phòng khách sạn</h1>
-            <p>Hoàn tất thông tin để đặt phòng @Model.RoomName</p>
+            <h1>Đặt phòng khách sạn</h1>
+            <p>Vui lòng điền thông tin để hoàn tất đặt phòng</p>
         </div>
 
-        <!-- Content -->
+        
+        <!-- Main Content -->
         <div class="booking-content">
             <div class="row">
-                <!-- Main Form -->
                 <div class="col-lg-8 col-xl-9">
-                    <form asp-action="Create" method="post" novalidate>
+                    <form method="post" asp-action="Create" asp-controller="Bookings">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                         <input type="hidden" asp-for="RoomId" />
-                        <input type="hidden" asp-for="RoomName" />
-                        <input type="hidden" asp-for="RoomType" />
-                        <input type="hidden" asp-for="RoomImageUrl" />
-                        <input type="hidden" asp-for="RoomPrice" />
-                        <input type="hidden" asp-for="MaxGuests" />
 
                         <!-- Progress Indicator -->
                         <div class="booking-progress-container mb-4">
@@ -81,7 +331,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="CheckInDate" class="form-label">Ngày nhận phòng</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                         <input asp-for="CheckInDate" type="date" class="form-control" required />
                                     </div>
                                     <span asp-validation-for="CheckInDate" class="text-danger"></span>
@@ -89,7 +339,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="CheckOutDate" class="form-label">Ngày trả phòng</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                         <input asp-for="CheckOutDate" type="date" class="form-control" required />
                                     </div>
                                     <span asp-validation-for="CheckOutDate" class="text-danger"></span>
@@ -115,11 +365,11 @@
                                     </div>
                                     <span asp-validation-for="GuestCount" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="SpecialRequests" class="form-label">Yêu cầu đặc biệt (tùy chọn)</label>
-                                    <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="VD: Phòng tầng cao, giường đôi, gần thang máy..."></textarea>
-                                    <span asp-validation-for="SpecialRequests" class="text-danger"></span>
-                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="SpecialRequests" class="form-label">Yêu cầu đặc biệt (không bắt buộc)</label>
+                                <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="Ví dụ: Phòng tầng cao, gần thang máy..."></textarea>
                             </div>
                         </div>
 
@@ -186,27 +436,25 @@
                                     <input type="radio" id="hotel-payment" name="PaymentMethod" value="Hotel" checked style="display: none;" />
                                     <label for="hotel-payment" style="cursor: pointer; display: flex; align-items: center; gap: 15px; width: 100%; margin: 0;">
                                         <div class="payment-icon">
-                                            <i class="fas fa-building"></i>
+                                            <i class="fas fa-hotel"></i>
                                         </div>
-                                        <div>
-                                            <h5 class="mb-1">Thanh toán tại khách sạn</h5>
-                                            <p class="mb-0 text-muted">Thanh toán trực tiếp khi nhận phòng</p>
-                                            <small class="text-success"><i class="fas fa-check-circle"></i> Được khuyến nghị</small>
+                                        <div class="payment-info">
+                                            <h6>Thanh toán tại khách sạn</h6>
+                                            <p>Thanh toán trực tiếp tại quầy lễ tân khi nhận phòng</p>
                                         </div>
+                                        <span class="badge bg-success ms-auto">Khuyến nghị</span>
                                     </label>
                                 </div>
-                                <div class="payment-method">
-                                    <input type="radio" id="online-payment" name="PaymentMethod" value="Online" style="display: none;" />
-                                    <label for="online-payment" style="cursor: pointer; display: flex; align-items: center; gap: 15px; width: 100%; margin: 0;">
-                                        <div class="payment-icon">
-                                            <i class="fas fa-globe"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="mb-1">Thanh toán trực tuyến</h5>
-                                            <p class="mb-0 text-muted">Thẻ tín dụng/ghi nợ, ví điện tử</p>
-                                            <span class="badge bg-secondary ms-auto">Sắp có</span>
-                                        </div>
-                                    </label>
+
+                                <div class="payment-method disabled">
+                                    <div class="payment-icon" style="background: #6c757d;">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h6>Thẻ tín dụng</h6>
+                                        <p>Thanh toán online bằng thẻ tín dụng</p>
+                                    </div>
+                                    <span class="badge bg-secondary ms-auto">Sắp có</span>
                                 </div>
                             </div>
                         </div>
@@ -270,7 +518,7 @@
                             </div>
                             <div class="summary-row">
                                 <span><strong>Tổng cộng:</strong></span>
-                                <span><strong id="summary-total">0 VNĐ</strong></span>
+                                <span><strong id="summary-total">0₫</strong></span>
                             </div>
                         </div>
 
@@ -290,7 +538,7 @@
                         <div class="helpful-info-card mt-4">
                             <div class="card-header">
                                 <h6 class="mb-0">
-                                    <i class="fas fa-info-circle text-white me-2"></i>
+                                    <i class="fas fa-info-circle text-primary me-2"></i>
                                     Thông tin hữu ích
                                 </h6>
                             </div>
@@ -344,7 +592,7 @@
                         <div class="cancellation-policy-card mt-4">
                             <div class="card-header">
                                 <h6 class="mb-0">
-                                    <i class="fas fa-calendar-times text-white me-2"></i>
+                                    <i class="fas fa-calendar-times text-warning me-2"></i>
                                     Chính sách hủy phòng
                                 </h6>
                             </div>
@@ -466,7 +714,7 @@
                         $('#summary-nights').text(nights);
                         const pricePerNight = parseFloat('@Model.RoomPrice');
                         const totalPrice = pricePerNight * nights;
-                        $('#summary-total').text(totalPrice.toLocaleString('vi-VN') + ' VNĐ');
+                        $('#summary-total').text(totalPrice.toLocaleString('vi-VN') + '₫');
                         
                         // Hiện thông báo tiết kiệm nếu ở nhiều đêm
                         if (nights >= 3) {
@@ -474,11 +722,11 @@
                         }
                     } else {
                         $('#summary-nights').text('0');
-                        $('#summary-total').text('0 VNĐ');
+                        $('#summary-total').text('0₫');
                     }
                 } else {
                     $('#summary-nights').text('0');
-                    $('#summary-total').text('0 VNĐ');
+                    $('#summary-total').text('0₫');
                 }
             }
 
@@ -582,14 +830,62 @@
                 $(this).closest('.payment-method').addClass('active');
             });
 
+            // Thêm tooltip cho các trường thông tin
+            $('[data-bs-toggle="tooltip"]').tooltip();
+
             // Animation cho form sections
             $('.form-section').each(function(index) {
                 $(this).css('animation-delay', (index * 0.1) + 's').addClass('fade-in');
             });
+
+            // Progress indicator functionality
+            function updateProgress() {
+                const checkinDate = $('#CheckInDate').val();
+                const checkoutDate = $('#CheckOutDate').val();
+                const guestCount = $('#GuestCount').val();
+                const firstName = $('#FirstName').val();
+                const lastName = $('#LastName').val();
+                const email = $('#Email').val();
+                const phone = $('#Phone').val();
+                const termsAccepted = $('#terms-agreement').is(':checked');
+
+                // Step 1: Accommodation info
+                if (checkinDate && checkoutDate && guestCount) {
+                    $('.step-item[data-step="1"]').addClass('completed').removeClass('active');
+                    $('.step-item[data-step="2"]').addClass('active');
+                } else {
+                    $('.step-item[data-step="1"]').addClass('active').removeClass('completed');
+                    $('.step-item[data-step="2"], .step-item[data-step="3"], .step-item[data-step="4"]').removeClass('active completed');
+                    return;
+                }
+
+                // Step 2: Customer info (always completed since readonly)
+                if (firstName && lastName && email && phone) {
+                    $('.step-item[data-step="2"]').addClass('completed').removeClass('active');
+                    $('.step-item[data-step="3"]').addClass('active');
+                } else {
+                    $('.step-item[data-step="2"]').addClass('active').removeClass('completed');
+                    $('.step-item[data-step="3"], .step-item[data-step="4"]').removeClass('active completed');
+                    return;
+                }
+
+                // Step 3: Payment method (always Hotel payment - completed)
+                $('.step-item[data-step="3"]').addClass('completed').removeClass('active');
+                $('.step-item[data-step="4"]').addClass('active');
+
+                // Step 4: Terms acceptance
+                if (termsAccepted) {
+                    $('.step-item[data-step="4"]').addClass('completed').removeClass('active');
+                }
+            }
+
+            // Update progress when form fields change
+            $('#CheckInDate, #CheckOutDate, #GuestCount, #terms-agreement').on('change', updateProgress);
             
             // Initial setup
             updateSummary();
             checkRoomAvailability();
+            updateProgress();
         });
 
         // Function để chấp nhận điều khoản từ modal
@@ -628,4 +924,421 @@
             }
         });
     </script>
+
+    <style>
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @@keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .discount-notification {
+            border-left: 4px solid #28a745;
+        }
+
+        .availability-status {
+            border-left: 4px solid #007bff;
+        }
+
+        .contact-support .support-hours {
+            margin-top: 5px;
+        }
+
+        /* Styles for cancellation policy card */
+        .cancellation-policy-card {
+            background: white;
+            border: 1px solid #e3e6f0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .cancellation-policy-card .card-header {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: white;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+
+        .cancellation-policy-card .card-body {
+            padding: 20px;
+        }
+
+        .policy-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .policy-item-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .policy-item-card.success {
+            border-left-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .policy-item-card.warning {
+            border-left-color: #ffc107;
+            background: #fffdf5;
+        }
+
+        .policy-item-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .policy-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .policy-item-card.success .policy-icon {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .policy-item-card.warning .policy-icon {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        }
+
+        .policy-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .policy-text strong {
+            color: #495057;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .policy-text span {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        /* Progress indicator styles */
+        .booking-progress-container {
+            margin-bottom: 25px;
+        }
+
+        .booking-progress-card {
+            background: white;
+            border: 1px solid #e3e6f0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .progress-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e3e6f0;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 30px 40px;
+            background: #f8f9fa;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .step-connector {
+            height: 3px;
+            background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 100%);
+            flex: 1;
+            margin: 0 15px;
+            margin-top: -25px;
+            border-radius: 2px;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e9ecef;
+            border: 3px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            color: #6c757d;
+        }
+
+        .step-item.active .step-circle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .step-item.completed .step-circle {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .step-item.completed ~ .step-connector {
+            background: #28a745;
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #6c757d;
+            white-space: nowrap;
+            margin-top: 5px;
+        }
+
+        .step-item.active .step-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Responsive styles */
+        @@media (max-width: 768px) {
+            .progress-steps {
+                padding: 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .step-item {
+                width: 100%;
+                flex-direction: row;
+                text-align: left;
+                justify-content: flex-start;
+            }
+            
+            .step-connector {
+                display: none;
+            }
+            
+            .step-circle {
+                margin-bottom: 0;
+                margin-right: 15px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .step-label {
+                font-size: 14px;
+                margin-top: 0;
+                align-self: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .policy-list {
+                gap: 10px;
+            }
+
+            .info-card, .policy-item-card {
+                padding: 12px;
+            }
+
+            .info-icon, .policy-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+        }
+            }
+        }
+
+        .terms-content h6 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .terms-content ul {
+            margin-bottom: 15px;
+        }
+
+        .terms-content li {
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+
+        /* Cải thiện giao diện readonly fields */
+        .form-control.bg-light {
+            cursor: not-allowed;
+            border-color: #e9ecef;
+        }
+
+        .alert-info .alert-link {
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .alert-info .alert-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Styles for helpful info cards */
+        .helpful-info-card {
+            background: white;
+            border: 1px solid #e3e6f0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .helpful-info-card .card-header {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+
+        .helpful-info-card .card-body {
+            padding: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .info-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            color: white;
+            font-size: 18px;
+        }
+
+        .info-icon {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .info-icon.wifi {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+
+        .info-icon.parking {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+
+        .info-icon.breakfast {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        }
+
+        .info-content h6 {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .info-content p {
+            color: #6c757d;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Animation styles */
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .policy-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+
+        .policy-item i {
+            font-size: 14px;
+        }
+
+        /* Responsive improvements */
+        @@media (max-width: 768px) {
+            .modal-lg {
+                max-width: 95%;
+            }
+            
+            .alert.position-fixed {
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+            }
+
+            .info-items {
+                gap: 8px;
+            }
+
+            .info-item {
+                padding: 8px;
+            }
+        }
+    </style>
 }

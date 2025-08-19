@@ -12,18 +12,18 @@ document.addEventListener("DOMContentLoaded", function () {
   function ensureCorrectDropdownValues() {
     const roomTypeSelect = document.querySelector('select[name="roomType"]');
     const guestsSelect = document.querySelector('select[name="guests"]');
-    
+
     // Force refresh dropdown display
     if (roomTypeSelect) {
       const currentValue = roomTypeSelect.value;
       roomTypeSelect.value = currentValue;
-      
+
       // If current value is empty or null, ensure first option is selected
-      if (!currentValue || currentValue === '') {
+      if (!currentValue || currentValue === "") {
         roomTypeSelect.selectedIndex = 0;
       }
     }
-    
+
     if (guestsSelect) {
       const currentValue = guestsSelect.value;
       guestsSelect.value = currentValue;
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Reset form fields to show all rooms
     const guestsSelect = form.querySelector('select[name="guests"]');
     const roomTypeSelect = form.querySelector('select[name="roomType"]');
-    
+
     if (guestsSelect) {
       guestsSelect.value = "0"; // Set to "Tất cả phòng"
       guestsSelect.selectedIndex = 0; // Ensure first option is selected
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Clear any hidden inputs for page and sorting
     const pageInput = form.querySelector('input[name="page"]');
     const sortByInput = form.querySelector('input[name="sortBy"]');
-    
+
     if (pageInput) {
       pageInput.value = "1";
     }
@@ -189,10 +189,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Force trigger change events to ensure UI updates
     if (guestsSelect) {
-      guestsSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      guestsSelect.dispatchEvent(new Event("change", { bubbles: true }));
     }
     if (roomTypeSelect) {
-      roomTypeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      roomTypeSelect.dispatchEvent(new Event("change", { bubbles: true }));
     }
 
     showLoadingState();

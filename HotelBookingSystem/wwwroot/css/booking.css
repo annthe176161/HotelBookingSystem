@@ -277,6 +277,8 @@ textarea.form-control {
     cursor: pointer;
     transition: all 0.3s ease;
     background: var(--white);
+    position: relative;
+    overflow: hidden;
 }
 
 .payment-method-item:hover .payment-method-label {
@@ -287,8 +289,20 @@ textarea.form-control {
 
 .payment-method-item.active .payment-method-label {
     border-color: var(--primary-color);
-    background: rgba(37, 99, 235, 0.05);
-    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.03) 100%);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2), inset 0 1px 3px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.payment-method-item.active .payment-method-label::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .payment-method-item.disabled .payment-method-label {
@@ -350,9 +364,6 @@ textarea.form-control {
 
 .bg-secondary {
     background: var(--secondary-color) !important;
-}
-    margin-bottom: 10px;
-    transition: all 0.3s ease;
 }
 
 .step-text {
@@ -500,21 +511,46 @@ textarea.form-control {
 
 /* Booking Summary */
 .booking-summary {
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
     position: sticky;
-    top: 20px;
+    top: 1.25rem;
+    overflow: hidden;
+}
+
+.booking-summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--info-color), var(--success-color));
 }
 
 .summary-title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 1.25rem;
+    font-weight: 700;
     color: var(--dark-color);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+    text-align: center;
+    position: relative;
+}
+
+.summary-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--info-color));
 }
 
 .room-info {
@@ -689,6 +725,38 @@ textarea.form-control {
     .section-title {
         font-size: 18px;
     }
+    
+    /* Fix card truncation */
+    .booking-content .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .booking-content .col-lg-8,
+    .booking-content .col-lg-4 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .section-card {
+        margin-bottom: 1rem;
+        overflow: visible;
+    }
+    
+    .summary-row {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .summary-row span:first-child {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    .summary-row span:last-child {
+        display: block;
+        font-weight: 600;
+    }
 }
 
 @media (max-width: 576px) {
@@ -707,13 +775,58 @@ textarea.form-control {
     .payment-method-item .form-check-label {
         flex-direction: column;
     }
-
+    
+    /* Enhanced mobile layout */
+    .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    
+    .booking-progress-container {
+        margin-left: -8px;
+        margin-right: -8px;
+        border-radius: 0;
+    }
+    
+    .progress-steps {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+    }
+    
+    .step-item {
+        flex: 1 1 calc(50% - 0.25rem);
+        min-width: 100px;
+        max-width: 120px;
+    }
+    
+    .payment-method-label {
+        padding: 1rem 0.75rem;
+    }
+    
     .payment-icon {
+        width: 35px;
+        height: 35px;
+        margin-right: 0.5rem;
+        font-size: 1rem;
+    }
+    
+    .booking-summary {
+        position: relative;
+        top: 0;
+        margin-top: 1.5rem;
+    }
+    
+    .summary-row span {
+        font-size: 0.9rem;
+    }
+    
+    .payment-method-item .payment-icon {
         margin-bottom: 10px;
         margin-right: 0;
     }
 
-    .payment-info {
+    .payment-method-item .payment-info {
         text-align: center;
     }
 }
