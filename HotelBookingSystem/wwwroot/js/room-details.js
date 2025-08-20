@@ -217,6 +217,26 @@ document.addEventListener('DOMContentLoaded', function () {
         bookingForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
+            // Check if user is authenticated
+            if (!window.isUserAuthenticated) {
+                // Show notification and redirect to login
+                showNotification('Bạn cần đăng nhập để đặt phòng', 'warning');
+                
+                // Get current URL with parameters for return URL
+                const checkin = document.getElementById('checkin-date').value;
+                const checkout = document.getElementById('checkout-date').value;
+                const guests = document.getElementById('guests').value;
+                const roomId = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop();
+                
+                const bookingUrl = `/Bookings/Create?roomId=${roomId}&checkin=${checkin}&checkout=${checkout}&guests=${guests}`;
+                const loginUrl = `${window.loginUrl}?returnUrl=${encodeURIComponent(bookingUrl)}`;
+                
+                setTimeout(() => {
+                    window.location.href = loginUrl;
+                }, 1500);
+                return;
+            }
+
             const checkin = document.getElementById('checkin-date').value;
             const checkout = document.getElementById('checkout-date').value;
             const guests = document.getElementById('guests').value;

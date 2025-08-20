@@ -124,6 +124,13 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        // Global variables for authentication status
+        window.isUserAuthenticated = @Json.Serialize(User.Identity.IsAuthenticated);
+        window.loginUrl = "@Url.Action("Login", "Account")";
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>
