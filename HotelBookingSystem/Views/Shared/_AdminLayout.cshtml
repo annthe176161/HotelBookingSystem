@@ -213,9 +213,12 @@
                                     <i class="fas fa-list me-2"></i>Nhật ký hoạt động
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger" href="/Account/Logout">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                                </a>
+                                <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                                    <button type="submit" class="dropdown-item text-danger"
+                                        style="border: none; background: none; width: 100%; text-align: left;">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </button>
+                                </form>
                             </div>
                         </li>
                     </ul>

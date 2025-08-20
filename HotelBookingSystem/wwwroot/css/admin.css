@@ -620,6 +620,104 @@ body {
     }
 }
 
+/* User Profile Dropdown Styling */
+.user-dropdown-menu {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    min-width: 220px;
+    font-size: 0.875rem;
+}
+
+/* User Profile Header */
+.user-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 1rem;
+    margin: 0;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar-header {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-details {
+    color: white;
+}
+
+.user-name-header {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.user-role {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* User Dropdown Items */
+.user-dropdown-menu .dropdown-item {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--dark-color);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    border: none;
+    background: none;
+}
+
+.user-dropdown-menu .dropdown-item:hover {
+    background-color: var(--light-color);
+    color: var(--primary-color);
+    padding-left: 1.25rem;
+    transform: translateX(2px);
+}
+
+.user-dropdown-menu .dropdown-item i {
+    font-size: 0.8rem;
+    width: 16px;
+    margin-right: 0.75rem;
+    text-align: center;
+    color: var(--primary-color);
+}
+
+.user-dropdown-menu .dropdown-item.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.user-dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: rgba(231, 74, 59, 0.1);
+    color: var(--danger-color) !important;
+}
+
+.user-dropdown-menu .dropdown-item.text-danger i {
+    color: var(--danger-color) !important;
+}
+
+/* User Dropdown Dividers */
+.user-dropdown-menu .dropdown-divider {
+    margin: 0.5rem 0;
+    border-top: 1px solid #eee;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 992px) {
     .admin-sidebar {
