@@ -12,7 +12,7 @@ namespace HotelBookingSystem.Services.Implementations
         private readonly ILogger<BookingStatusService> _logger;
 
         public BookingStatusService(
-            ApplicationDbContext context, 
+            ApplicationDbContext context,
             IEmailService emailService,
             ILogger<BookingStatusService> logger)
         {
@@ -231,7 +231,7 @@ namespace HotelBookingSystem.Services.Implementations
                 }
 
                 // Chỉ gửi nhắc nhở nếu chưa thanh toán hoặc thanh toán thất bại
-                if (booking.Payment == null || 
+                if (booking.Payment == null ||
                     booking.Payment.PaymentStatus?.Name?.ToLower().Contains("pending") == true ||
                     booking.Payment.PaymentStatus?.Name?.ToLower().Contains("chờ") == true ||
                     booking.Payment.PaymentStatus?.Name?.ToLower().Contains("failed") == true ||
