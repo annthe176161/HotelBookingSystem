@@ -24,6 +24,14 @@ namespace HotelBookingSystem.Controllers
             _adminBookingService = adminBookingService;
         }
 
+        [HttpGet("")]
+        [HttpGet("Index")]
+        public IActionResult Index()
+        {
+            // Chuyển hướng đến Dashboard
+            return RedirectToAction("Dashboard");
+        }
+
         [HttpGet("Dashboard")]
         public IActionResult Dashboard()
         {
