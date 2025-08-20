@@ -22,9 +22,9 @@
                     <p>Đăng nhập để truy cập tài khoản của bạn</p>
                 </div>
 
-                <form asp-action="Login" asp-controller="Account" method="post" class="login-form">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+                <form asp-route-returnUrl="@(ViewData["ReturnUrl"])"  asp-action="Login" asp-controller="Account" method="post" class="login-form">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+					@Html.AntiForgeryToken()
                     <div class="form-floating mb-3">
                         <input asp-for="Email" class="form-control" placeholder="Email" required />
                         <label asp-for="Email">Email</label>

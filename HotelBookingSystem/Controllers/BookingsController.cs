@@ -2,12 +2,14 @@
 using HotelBookingSystem.Models;
 using HotelBookingSystem.ViewModels.Account;
 using HotelBookingSystem.ViewModels.Booking;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingSystem.Controllers
 {
+    [Authorize]
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;

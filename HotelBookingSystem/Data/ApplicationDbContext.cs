@@ -82,6 +82,21 @@ namespace HotelBookingSystem.Data
                 .WithMany(u => u.Reviews)
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.Entity<ApplicationUser>(u =>
+            {
+                u.Property(x => x.Gender).HasConversion<int>();
+                u.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+                // (tuỳ chọn) lặp lại max length bằng Fluent API cho đồng nhất
+                u.Property(x => x.FullName).HasMaxLength(150);
+                u.Property(x => x.FirstName).HasMaxLength(100);
+                u.Property(x => x.LastName).HasMaxLength(100);
+                u.Property(x => x.Address).HasMaxLength(200);
+                u.Property(x => x.City).HasMaxLength(100);
+                u.Property(x => x.State).HasMaxLength(100);
+                u.Property(x => x.ZipCode).HasMaxLength(20);
+                u.Property(x => x.ProfilePictureUrl).HasMaxLength(500);
+            });
         }
     }
 }
