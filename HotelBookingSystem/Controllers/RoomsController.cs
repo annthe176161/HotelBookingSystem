@@ -1,7 +1,6 @@
 ﻿using HotelBookingSystem.Data;
 using HotelBookingSystem.Services.Interfaces;
 using HotelBookingSystem.ViewModels.Room;
-using HotelBookingSystem.ViewModels.RoomsViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

@@ -2,7 +2,6 @@ using HotelBookingSystem.Data;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Interfaces;
 using HotelBookingSystem.ViewModels.Room;
-using HotelBookingSystem.ViewModels.RoomsViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
