@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,6 +16,7 @@
     <link rel="stylesheet" href="~/css/rooms-list.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
+
 <body>
     <header>
         <!-- Top Header with contact info and social media -->
@@ -41,8 +43,8 @@
                         <i class="fas fa-hotel logo-icon"></i> Luxury Hotel
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
+                        data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse">
@@ -73,7 +75,7 @@
                             {
                                 <div class="dropdown">
                                     <button class="btn user-account-btn" type="button" id="userDropdown"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-user-circle user-icon"></i>
                                         <span class="user-name">@User.Identity.Name</span>
                                         <i class="fas fa-chevron-down dropdown-arrow"></i>
@@ -89,11 +91,15 @@
                                                 <i class="fas fa-history"></i> Lịch sử đặt phòng
                                             </a>
                                         </li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-heart"></i> Yêu thích</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-heart"></i> Yêu thích</a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li>
                                             <form asp-controller="Account" asp-action="Logout" method="post">
-                                                <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+                                                <button type="submit" class="dropdown-item"><i
+                                                        class="fas fa-sign-out-alt"></i> Đăng xuất</button>
                                             </form>
                                         </li>
                                     </ul>
@@ -122,9 +128,9 @@
 
     <script>
         // Highlight active navigation menu item
-        $(document).ready(function() {
+        $(document).ready(function () {
             var path = window.location.pathname;
-            $(".navbar-nav .nav-link").each(function() {
+            $(".navbar-nav .nav-link").each(function () {
                 var href = $(this).attr('href');
                 if (path === href) {
                     $(this).addClass('active-link');
@@ -135,4 +141,5 @@
         });
     </script>
 </body>
+
 </html>
