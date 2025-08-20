@@ -6,6 +6,8 @@ namespace HotelBookingSystem.ViewModels.Booking
     {
         public string SearchTerm { get; set; } = "";
         public string Status { get; set; } = "";
+        public string RoomType { get; set; } = "";
+        public string PaymentStatus { get; set; } = "";
         public List<CustomerBookingItem> Bookings { get; set; } = new List<CustomerBookingItem>();
         public int TotalBookings { get; set; }
         public int CompletedBookings { get; set; }
@@ -51,6 +53,6 @@ namespace HotelBookingSystem.ViewModels.Booking
         public string FormattedCheckIn => CheckIn.ToString("dd/MM/yyyy");
         public string FormattedCheckOut => CheckOut.ToString("dd/MM/yyyy");
         public string FormattedCreatedDate => CreatedDate.ToString("dd/MM/yyyy HH:mm");
-        public string FormattedTotalPrice => TotalPrice.ToString("C0");
+        public string FormattedTotalPrice => TotalPrice.ToString("N0") + " VNĐ";
     }
 }

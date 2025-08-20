@@ -24,7 +24,7 @@ namespace HotelBookingSystem.Controllers
 
         // Action để hiển thị danh sách booking của khách hàng
         [HttpGet]
-        public async Task<IActionResult> Index(string searchTerm = "", string status = "")
+        public async Task<IActionResult> Index(string searchTerm = "", string status = "", string roomType = "", string paymentStatus = "")
         {
             // Lấy user mặc định để test (có thể thay đổi khi có login)
             var user = await _userManager.FindByEmailAsync("test.user@example.com");
@@ -34,7 +34,26 @@ namespace HotelBookingSystem.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var viewModel = await _bookingService.GetCustomerBookingsAsync(user.Id, searchTerm, status);
+            // Lấy danh sách status từ DB để hiển thị trong dropdown
+            var bookingStatuses = await _context.BookingStatuses
+                .Select(s => new { s.Id, s.Name })
+                .ToListAsync();
+            
+            var paymentStatuses = await _context.PaymentStatuses
+                .Select(s => new { s.Id, s.Name })
+                .ToListAsync();
+                
+            var roomTypes = await _context.Rooms
+                .Select(r => r.RoomType)
+                .Distinct()
+                .OrderBy(rt => rt)
+                .ToListAsync();
+
+            ViewBag.BookingStatuses = bookingStatuses;
+            ViewBag.PaymentStatuses = paymentStatuses;
+            ViewBag.RoomTypes = roomTypes;
+
+            var viewModel = await _bookingService.GetCustomerBookingsAsync(user.Id, searchTerm, status, roomType, paymentStatus);
             return View(viewModel);
         }
 

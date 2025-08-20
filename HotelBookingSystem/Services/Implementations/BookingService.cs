@@ -129,7 +129,7 @@ namespace HotelBookingSystem.Services.Implementations
                 .ToListAsync();
         }
 
-        public async Task<CustomerBookingsViewModel> GetCustomerBookingsAsync(string userId, string searchTerm = "", string status = "")
+        public async Task<CustomerBookingsViewModel> GetCustomerBookingsAsync(string userId, string searchTerm = "", string status = "", string roomType = "", string paymentStatus = "")
         {
             var query = _context.Bookings
                 .Include(b => b.Room)
@@ -151,6 +151,18 @@ namespace HotelBookingSystem.Services.Implementations
             if (!string.IsNullOrEmpty(status))
             {
                 query = query.Where(b => b.BookingStatus.Name == status);
+            }
+            
+            // Apply room type filter
+            if (!string.IsNullOrEmpty(roomType))
+            {
+                query = query.Where(b => b.Room.RoomType == roomType);
+            }
+            
+            // Apply payment status filter
+            if (!string.IsNullOrEmpty(paymentStatus))
+            {
+                query = query.Where(b => b.Payment != null && b.Payment.PaymentStatus.Name == paymentStatus);
             }
 
             var bookings = await query
@@ -188,6 +200,8 @@ namespace HotelBookingSystem.Services.Implementations
             {
                 SearchTerm = searchTerm,
                 Status = status,
+                RoomType = roomType,
+                PaymentStatus = paymentStatus,
                 Bookings = customerBookings,
                 TotalBookings = customerBookings.Count,
                 CompletedBookings = customerBookings.Count(b => b.Status == "Completed"),
