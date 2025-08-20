@@ -1,0 +1,156 @@
+﻿@model HotelBookingSystem.ViewModels.Admin.RoomDetailsViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa phòng";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-rooms">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <h1 class="h3 mb-0">Chỉnh sửa phòng</h1>
+            <a href="/Admin/Rooms" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="editRoomForm" method="post" enctype="multipart/form-data" asp-action="EditRoom" asp-controller="Admin" asp-route-id="@Model.Room.Id">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                <input type="hidden" asp-for="Room.Id" />
+                <input type="hidden" asp-for="Room.ImageUrl" />
+                <input type="hidden" asp-for="Room.ImagePublicId" />
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Thông tin cơ bản</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="Room.Name" class="form-label"></label>
+                            <input asp-for="Room.Name" class="form-control" required />
+                            <span asp-validation-for="Room.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Room.RoomType" class="form-label"></label>
+                            <select asp-for="Room.RoomType" class="form-select" required>
+                                <option value="" disabled>Chọn loại phòng</option>
+                                <option value="Standard">Standard</option>
+                                <option value="Deluxe">Deluxe</option>
+                                <option value="Suite">Suite</option>
+                                <option value="Executive">Executive</option>
+                                <option value="Presidential">Presidential</option>
+                            </select>
+                            <span asp-validation-for="Room.RoomType" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Room.PricePerNight" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Room.PricePerNight" class="form-control" type="number" min="0" step="100000" required />
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="Room.PricePerNight" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Room.Capacity" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="Room.Capacity" class="form-control" type="number" min="1" max="20" required />
+                                <span class="input-group-text">người</span>
+                            </div>
+                            <span asp-validation-for="Room.Capacity" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Thông tin bổ sung</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="Room.IsAvailable" class="form-label"></label>
+                            <select asp-for="Room.IsAvailable" class="form-select">
+                                <option value="true">Trống</option>
+                                <option value="false">Không khả dụng</option>
+                            </select>
+                            <span asp-validation-for="Room.IsAvailable" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Room.IsActivated" class="form-label"></label>
+                            <select asp-for="Room.IsActivated" class="form-select">
+                                <option value="true">Đang kích hoạt</option>
+                                 <option value="false">Đã vô hiệu</option>
+                            </select>
+                            <span asp-validation-for="Room.IsActivated" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Room.Description" class="form-label"></label>
+                            <textarea asp-for="Room.Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Room.Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Ảnh hiện tại</label>
+                        <div class="mb-2">
+                            <img src="@Model.Room.ImageUrl" alt="Ảnh hiện tại" class="img-fluid rounded" style="max-height:300px;" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Ảnh mới</label>
+                        <div class="mb-2">
+                            <img id="editPreview" src="#" alt="Preview" class="img-fluid rounded d-none" style="max-height:300px;" />
+                        </div>
+                        <input asp-for="Room.ImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(this, 'editPreview')" />
+                        <div class="form-text">Để trống nếu không muốn thay ảnh.</div>
+                        <span asp-validation-for="Room.ImageFile" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions text-end">
+                    <a href="/Admin/Rooms" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Cập nhật phòng
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove("d-none");
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = "#";
+                preview.classList.add("d-none");
+            }
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+}

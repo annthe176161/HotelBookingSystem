@@ -1,0 +1,80 @@
+﻿@model HotelBookingSystem.ViewModels.Admin.UserDetailsViewModel
+@{
+    ViewData["Title"] = "Chỉnh sửa khách hàng";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-rooms">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <h1 class="h3 mb-0">Chỉnh sửa khách hàng</h1>
+            <a href="/Admin/Users" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="EditUser" asp-controller="Admin" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="User.Id" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Thông tin cơ bản</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="User.FullName" class="form-label"></label>
+                            <input asp-for="User.FullName" class="form-control" required readonly />
+                            <span asp-validation-for="User.FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="User.Email" class="form-label"></label>
+                            <input asp-for="User.Email" class="form-control" required readonly />
+                            <span asp-validation-for="User.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="User.PhoneNumber" class="form-label"></label>
+                            <input asp-for="User.PhoneNumber" class="form-control" readonly />
+                            <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Trạng thái</h5>
+
+                        <div class="mb-3">
+                            <label asp-for="User.IsActivated" class="form-label"></label>
+                            <select asp-for="User.IsActivated" class="form-select">
+                                <option value="true">Đang kích hoạt</option>
+                                <option value="false">Đã vô hiệu</option>
+                            </select>
+                            <span asp-validation-for="User.IsActivated" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="User.EmailConfirmed" class="form-check-input" id="emailConfirmed" />
+                            <label class="form-check-label" for="emailConfirmed">Đánh dấu email đã xác thực</label>
+                            <span asp-validation-for="User.EmailConfirmed" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions text-end">
+                    <a href="/Admin/Users" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-times me-1"></i> Hủy
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -10,9 +10,9 @@
         <div class="d-flex align-items-center justify-content-between">
             <h1 class="h3 mb-0">Quản lý khách hàng</h1>
             <div class="page-actions">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <a href="/Admin/AddUser" class="btn btn-primary">
                     <i class="fas fa-plus me-1"></i> Thêm khách hàng mới
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="status-title">Người dùng đang hoạt động</h6>
-                            <h3 class="status-value">458</h3>
+                            <h3 class="status-value">@Model.ActiveUsers</h3>
                         </div>
                         <div class="status-icon">
                             <i class="fas fa-user-check"></i>
@@ -41,7 +41,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="status-title">Người dùng mới (30 ngày)</h6>
-                            <h3 class="status-value">48</h3>
+                            <h3 class="status-value">@Model.NewUsersLast30Days</h3>
                         </div>
                         <div class="status-icon">
                             <i class="fas fa-user-plus"></i>
@@ -56,8 +56,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <h6 class="status-title">Khách hàng VIP</h6>
-                            <h3 class="status-value">23</h3>
+                            <h6 class="status-title">Khách hàng đang đặt phòng</h6>
+                            <h3 class="status-value">@Model.BookingUsers</h3>
                         </div>
                         <div class="status-icon">
                             <i class="fas fa-crown"></i>
@@ -73,7 +73,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <h6 class="status-title">Tài khoản bị khóa</h6>
-                            <h3 class="status-value">7</h3>
+                            <h3 class="status-value">@Model.InactiveUsers</h3>
                         </div>
                         <div class="status-icon">
                             <i class="fas fa-user-lock"></i>
@@ -83,6 +83,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Search & Filter Bar -->
     <div class="card mb-4">
@@ -111,9 +112,9 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-search me-1"></i> Tìm kiếm
                             </button>
-                            <button type="reset" class="btn btn-outline-secondary">
+                            <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary">
                                 <i class="fas fa-sync-alt"></i>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -148,567 +149,170 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="selectAll">
-                                </div>
-                            </th>
                             <th scope="col">Khách hàng</th>
                             <th scope="col">Email</th>
                             <th scope="col">Số điện thoại</th>
                             <th scope="col">Ngày đăng ký</th>
                             <th scope="col">Đặt phòng</th>
                             <th scope="col">Tổng chi tiêu</th>
+                            <th scope="col">Email xác nhận</th>
                             <th scope="col">Trạng thái</th>
-                            <th scope="col">Loại</th>
                             <th scope="col">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-2">
-                                        <span>PT</span>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-2">
+                                            <span>@user.FullName.Substring(0, 2).ToUpper()</span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">@user.FullName</h6>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h6 class="mb-0">Phạm Tuấn</h6>
-                                        <span class="user-id small">ID: #UID001</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>phamtuan@mail.com</td>
-                            <td>0912345678</td>
-                            <td>10/05/2023</td>
-                            <td>8</td>
-                            <td>64.500.000 VNĐ</td>
-                            <td><span class="badge bg-success">Đang hoạt động</span></td>
-                            <td><span class="badge bg-warning">VIP</span></td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item view-user" href="#" data-user-id="1"><i class="fas fa-eye me-2"></i>Chi tiết</a></li>
-                                        <li><a class="dropdown-item edit-user" href="#" data-user-id="1"><i class="fas fa-edit me-2"></i>Chỉnh sửa</a></li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Lịch sử đặt phòng</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item lock-user text-danger" href="#" data-user-id="1"><i class="fas fa-lock me-2"></i>Khóa tài khoản</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-2">
-                                        <span>NH</span>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Nguyễn Hương</h6>
-                                        <span class="user-id small">ID: #UID002</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>huongnguyen@mail.com</td>
-                            <td>0976543210</td>
-                            <td>15/06/2023</td>
-                            <td>6</td>
-                            <td>52.800.000 VNĐ</td>
-                            <td><span class="badge bg-success">Đang hoạt động</span></td>
-                            <td><span class="badge bg-warning">VIP</span></td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item view-user" href="#" data-user-id="2"><i class="fas fa-eye me-2"></i>Chi tiết</a></li>
-                                        <li><a class="dropdown-item edit-user" href="#" data-user-id="2"><i class="fas fa-edit me-2"></i>Chỉnh sửa</a></li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Lịch sử đặt phòng</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item lock-user text-danger" href="#" data-user-id="2"><i class="fas fa-lock me-2"></i>Khóa tài khoản</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-2">
-                                        <span>TL</span>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Trần Linh</h6>
-                                        <span class="user-id small">ID: #UID003</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>tranlinh@mail.com</td>
-                            <td>0932145678</td>
-                            <td>22/07/2023</td>
-                            <td>5</td>
-                            <td>48.200.000 VNĐ</td>
-                            <td><span class="badge bg-success">Đang hoạt động</span></td>
-                            <td><span class="badge bg-warning">VIP</span></td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item view-user" href="#" data-user-id="3"><i class="fas fa-eye me-2"></i>Chi tiết</a></li>
-                                        <li><a class="dropdown-item edit-user" href="#" data-user-id="3"><i class="fas fa-edit me-2"></i>Chỉnh sửa</a></li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Lịch sử đặt phòng</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item lock-user text-danger" href="#" data-user-id="3"><i class="fas fa-lock me-2"></i>Khóa tài khoản</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-2">
-                                        <span>LH</span>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Lê Hoàng</h6>
-                                        <span class="user-id small">ID: #UID004</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>lehoang@mail.com</td>
-                            <td>0987654321</td>
-                            <td>05/09/2023</td>
-                            <td>2</td>
-                            <td>12.500.000 VNĐ</td>
-                            <td><span class="badge bg-danger">Bị khóa</span></td>
-                            <td><span class="badge bg-secondary">Thường</span></td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item view-user" href="#" data-user-id="4"><i class="fas fa-eye me-2"></i>Chi tiết</a></li>
-                                        <li><a class="dropdown-item edit-user" href="#" data-user-id="4"><i class="fas fa-edit me-2"></i>Chỉnh sửa</a></li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Lịch sử đặt phòng</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item unlock-user text-success" href="#" data-user-id="4"><i class="fas fa-unlock me-2"></i>Mở khóa tài khoản</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-2">
-                                        <span>VM</span>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Vũ Minh</h6>
-                                        <span class="user-id small">ID: #UID005</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>vuminh@mail.com</td>
-                            <td>0901234567</td>
-                            <td>18/10/2023</td>
-                            <td>1</td>
-                            <td>3.200.000 VNĐ</td>
-                            <td><span class="badge bg-warning text-dark">Chưa xác thực</span></td>
-                            <td><span class="badge bg-secondary">Thường</span></td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item view-user" href="#" data-user-id="5"><i class="fas fa-eye me-2"></i>Chi tiết</a></li>
-                                        <li><a class="dropdown-item edit-user" href="#" data-user-id="5"><i class="fas fa-edit me-2"></i>Chỉnh sửa</a></li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Lịch sử đặt phòng</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item verify-user text-primary" href="#" data-user-id="5"><i class="fas fa-check-circle me-2"></i>Xác thực tài khoản</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                                <td>@MaskEmail(user.Email)</td>
+                                <td>@MaskPhone(user.PhoneNumber)</td>
+                                <td>@user.RegisteredDate.ToString("dd/MM/yyyy")</td>
+                                <td>@user.BookingCount</td>
+                                <td>@user.TotalSpent.ToString("N0") VNĐ</td>
+                                <td>
+                                    @if (user.EmailConfirmed)
+                                    {
+                                        <span class="badge bg-success">Đã xác nhận</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Chưa xác nhận</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsActivated)
+                                    {
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Bị khóa</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="EditUser" asp-controller="Admin" asp-route-id="@user.Id"
+                                       class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </a>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
+
             </div>
         </div>
         <div class="card-footer">
             <div class="d-flex justify-content-between align-items-center">
+                <!-- Pagination Info -->
                 <div class="pagination-info">
-                    Hiển thị <span>1</span> đến <span>5</span> của <span>48</span> khách hàng
+                    Hiển thị
+                    <span>@(((Model.CurrentPage - 1) * Model.Query.PageSize) + 1)</span>
+                    đến
+                    <span>@Math.Min(Model.CurrentPage * Model.Query.PageSize, Model.TotalUsers)</span>
+                    của <span>@Model.TotalUsers</span> khách hàng
                 </div>
+
+                <!-- Pagination Links -->
                 <ul class="pagination mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Users", new {
+                    page = Model.CurrentPage - 1,
+                    pageSize = Model.Query.PageSize,
+                    name = Model.Query.Name,
+                    email = Model.Query.Email,
+                    phone = Model.Query.Phone,
+                    status = Model.Query.Status
+                })">
                             <i class="fas fa-angle-left"></i>
                         </a>
                     </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Users", new {
+                        page = i,
+                        pageSize = Model.Query.PageSize,
+                        name = Model.Query.Name,
+                        email = Model.Query.Email,
+                        phone = Model.Query.Phone,
+                        status = Model.Query.Status
+                    })">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Users", new {
+                            page = Model.CurrentPage + 1,
+                            pageSize = Model.Query.PageSize,
+                            name = Model.Query.Name,
+                            email = Model.Query.Email,
+                            phone = Model.Query.Phone,
+                            status = Model.Query.Status
+                        })">
                             <i class="fas fa-angle-right"></i>
                         </a>
                     </li>
                 </ul>
+
+                <!-- Items per page -->
                 <div class="items-per-page">
-                    <select class="form-select form-select-sm">
-                        <option value="10">10 / trang</option>
-                        <option value="25">25 / trang</option>
-                        <option value="50">50 / trang</option>
-                        <option value="100">100 / trang</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <form method="get" id="pageSizeForm">
+                        <input type="hidden" name="page" value="1" />
+                        <input type="hidden" name="name" value="@Model.Query.Name" />
+                        <input type="hidden" name="email" value="@Model.Query.Email" />
+                        <input type="hidden" name="phone" value="@Model.Query.Phone" />
+                        <input type="hidden" name="status" value="@Model.Query.Status" />
 
-    <!-- Bulk Actions Fixed Bar -->
-    <div class="bulk-actions-bar" style="display: none;">
-        <div class="container-fluid">
-            <div class="d-flex align-items-center">
-                <div class="me-3">
-                    <span class="selected-count">5</span> người dùng đã chọn
+                        <select class="form-select form-select-sm" name="pageSize" onchange="this.form.submit()">
+                            <option value="10" selected="@(Model.Query.PageSize == 10)">10 / trang</option>
+                            <option value="25" selected="@(Model.Query.PageSize == 25)">25 / trang</option>
+                            <option value="50" selected="@(Model.Query.PageSize == 50)">50 / trang</option>
+                            <option value="100" selected="@(Model.Query.PageSize == 100)">100 / trang</option>
+                        </select>
+                    </form>
                 </div>
-                <div class="bulk-actions">
-                    <button class="btn btn-sm btn-outline-primary me-2" id="bulkVerify">
-                        <i class="fas fa-check-circle me-1"></i> Xác thực
-                    </button>
-                    <button class="btn btn-sm btn-outline-success me-2" id="bulkActivate">
-                        <i class="fas fa-unlock me-1"></i> Mở khóa
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger me-2" id="bulkDeactivate">
-                        <i class="fas fa-lock me-1"></i> Khóa
-                    </button>
-                </div>
-                <button class="btn btn-sm btn-outline-secondary ms-auto" id="clearSelection">
-                    <i class="fas fa-times me-1"></i> Bỏ chọn
-                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- User Detail Modal -->
-<div class="modal fade" id="userDetailModal" tabindex="-1" aria-labelledby="userDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="userDetailModalLabel">Thông tin chi tiết khách hàng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="user-profile-header">
-                    <div class="user-avatar">
-                        <span>PT</span>
-                    </div>
-                    <div class="user-info">
-                        <h4>Phạm Tuấn</h4>
-                        <div class="user-status">
-                            <span class="badge bg-success">Đang hoạt động</span>
-                            <span class="badge bg-warning">VIP</span>
-                        </div>
-                        <p class="user-id">ID: #UID001</p>
-                    </div>
-                </div>
+@functions {
+    string MaskEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return "";
+        var parts = email.Split('@');
+        if (parts.Length != 2) return email;
 
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="fw-bold">Email:</label>
-                            <p>phamtuan@mail.com</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Số điện thoại:</label>
-                            <p>0912345678</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Ngày đăng ký:</label>
-                            <p>10/05/2023</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Lần đăng nhập cuối:</label>
-                            <p>25/11/2023, 15:42:30</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="fw-bold">Địa chỉ:</label>
-                            <p>123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Số lần đặt phòng:</label>
-                            <p>8</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Tổng chi tiêu:</label>
-                            <p>64.500.000 VNĐ</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold">Điểm thưởng:</label>
-                            <p>1,450 điểm</p>
-                        </div>
-                    </div>
-                </div>
+        var name = parts[0];
+        var domain = parts[1];
 
-                <div class="booking-history mt-4">
-                    <h5>Lịch sử đặt phòng gần đây</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Mã đặt</th>
-                                <th>Phòng</th>
-                                <th>Ngày nhận - trả</th>
-                                <th>Trạng thái</th>
-                                <th>Tổng tiền</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>B091-2023</td>
-                                <td>Deluxe Hướng Biển</td>
-                                <td>10/10/2023 - 13/10/2023</td>
-                                <td><span class="badge bg-success">Hoàn thành</span></td>
-                                <td>9.000.000 VNĐ</td>
-                            </tr>
-                            <tr>
-                                <td>B075-2023</td>
-                                <td>Suite Gia Đình</td>
-                                <td>15/09/2023 - 18/09/2023</td>
-                                <td><span class="badge bg-success">Hoàn thành</span></td>
-                                <td>15.600.000 VNĐ</td>
-                            </tr>
-                            <tr>
-                                <td>B042-2023</td>
-                                <td>Executive Business</td>
-                                <td>22/07/2023 - 25/07/2023</td>
-                                <td><span class="badge bg-success">Hoàn thành</span></td>
-                                <td>12.800.000 VNĐ</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        if (name.Length <= 3)
+            name = new string('*', 3);
+        else
+            name = name.Substring(0, 2) + new string('*', 3);
 
-                <div class="user-activity mt-4">
-                    <h5>Hoạt động gần đây</h5>
-                    <ul class="activity-timeline">
-                        <li>
-                            <div class="activity-icon bg-primary">
-                                <i class="fas fa-sign-in-alt"></i>
-                            </div>
-                            <div class="activity-content">
-                                <h6>Đăng nhập</h6>
-                                <p>25/11/2023, 15:42:30</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="activity-icon bg-success">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="activity-content">
-                                <h6>Hoàn thành đặt phòng #B091-2023</h6>
-                                <p>13/10/2023, 12:00:15</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="activity-icon bg-info">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="activity-content">
-                                <h6>Đặt phòng mới #B091-2023</h6>
-                                <p>05/10/2023, 09:15:22</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="activity-icon bg-warning">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="activity-content">
-                                <h6>Đánh giá 5 sao cho phòng Suite Gia Đình</h6>
-                                <p>19/09/2023, 14:30:45</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" id="editUserBtn"><i class="fas fa-edit me-1"></i>Chỉnh sửa</button>
-            </div>
-        </div>
-    </div>
-</div>
+        return $"{name}@{domain}";
+    }
 
-<!-- Add/Edit User Modal -->
-<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addUserModalLabel">Thêm khách hàng mới</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="userForm">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="firstName" class="form-label">Tên <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="firstName" name="firstName" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lastName" class="form-label">Họ <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="lastName" name="lastName" required>
-                        </div>
-                    </div>
+    string MaskPhone(string phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) return "";
+        if (phone.Length <= 4) return new string('*', 4);
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="phone" class="form-label">Số điện thoại</label>
-                            <input type="tel" class="form-control" id="phone" name="phone">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="password" class="form-label">Mật khẩu <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password" required>
-                                <button class="btn btn-outline-secondary toggle-password" type="button"><i class="fas fa-eye"></i></button>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                                <button class="btn btn-outline-secondary toggle-password" type="button"><i class="fas fa-eye"></i></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="address" class="form-label">Địa chỉ</label>
-                            <textarea class="form-control" id="address" name="address" rows="2"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="userType" class="form-label">Loại người dùng</label>
-                            <select class="form-select" id="userType" name="userType">
-                                <option value="normal" selected>Thường</option>
-                                <option value="vip">VIP</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="status" class="form-label">Trạng thái</label>
-                            <select class="form-select" id="status" name="status">
-                                <option value="active" selected>Đang hoạt động</option>
-                                <option value="pending">Chưa xác thực</option>
-                                <option value="inactive">Bị khóa</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="loyaltyPoints" class="form-label">Điểm thưởng</label>
-                            <input type="number" class="form-control" id="loyaltyPoints" name="loyaltyPoints" value="0" min="0">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Tùy chọn</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="sendWelcomeEmail" name="sendWelcomeEmail" checked>
-                                <label class="form-check-label" for="sendWelcomeEmail">
-                                    Gửi email chào mừng
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="requirePasswordChange" name="requirePasswordChange">
-                                <label class="form-check-label" for="requirePasswordChange">
-                                    Yêu cầu đổi mật khẩu khi đăng nhập lần đầu
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="notes" class="form-label">Ghi chú</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" id="saveUserBtn">Lưu</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Confirmation Modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmationModalLabel">Xác nhận thao tác</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmationMessage">Bạn có chắc chắn muốn thực hiện thao tác này?</p>
-                <div class="alert alert-warning" id="warningMessage">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <span id="warningText">Cảnh báo: Thao tác này có thể ảnh hưởng đến tài khoản người dùng.</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" id="confirmActionBtn">Xác nhận</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <script src="~/js/admin-users.js" asp-append-version="true"></script>
+        return new string('*', 3) + phone.Substring(phone.Length - 3, 3);
+    }
 }
 
 @section Styles {

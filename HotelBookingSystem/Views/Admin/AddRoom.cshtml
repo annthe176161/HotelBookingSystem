@@ -1,4 +1,4 @@
-﻿@model HotelBookingSystem.ViewModels.Admin.RoomCreateViewModel
+﻿@model HotelBookingSystem.ViewModels.Admin.CreateRoomViewModel
 @{
     ViewData["Title"] = "Thêm phòng mới";
     Layout = "_AdminLayout";
@@ -23,14 +23,15 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h5 class="mb-3">Thông tin cơ bản</h5>
+
                         <div class="mb-3">
-                            <label asp-for="Name" class="form-label">Tên phòng <span class="text-danger">*</span></label>
-                            <input asp-for="Name" type="text" class="form-control" required>
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" required />
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="RoomType" class="form-label">Loại phòng <span class="text-danger">*</span></label>
+                            <label asp-for="RoomType" class="form-label"></label>
                             <select asp-for="RoomType" class="form-select" required>
                                 <option value="" selected disabled>Chọn loại phòng</option>
                                 <option value="Standard">Standard</option>
@@ -43,191 +44,49 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="PricePerNight" class="form-label">Giá phòng (VNĐ/đêm) <span class="text-danger">*</span></label>
+                            <label asp-for="PricePerNight" class="form-label"></label>
                             <div class="input-group">
-                                <input asp-for="PricePerNight" type="number" class="form-control" min="0" step="100000" required>
+                                <input asp-for="PricePerNight" class="form-control" type="number" min="0" step="100000" required />
                                 <span class="input-group-text">VNĐ</span>
                             </div>
                             <span asp-validation-for="PricePerNight" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Capacity" class="form-label">Sức chứa <span class="text-danger">*</span></label>
+                            <label asp-for="Capacity" class="form-label"></label>
                             <div class="input-group">
-                                <input asp-for="Capacity" type="number" class="form-control" min="1" max="10" required>
+                                <input asp-for="Capacity" class="form-control" type="number" min="1" max="20" required />
                                 <span class="input-group-text">người</span>
                             </div>
                             <span asp-validation-for="Capacity" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="BedType" class="form-label">Loại giường</label>
-                            <select asp-for="BedType" class="form-select">
-                                <option value="1 Giường King">1 Giường King</option>
-                                <option value="1 Giường Queen">1 Giường Queen</option>
-                                <option value="2 Giường Đơn">2 Giường Đơn</option>
-                                <option value="1 Giường King & 1 Giường Đơn">1 Giường King & 1 Giường Đơn</option>
-                                <option value="1 Giường King & 2 Giường Đơn">1 Giường King & 2 Giường Đơn</option>
-                            </select>
-                            <span asp-validation-for="BedType" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Size" class="form-label">Diện tích (m²)</label>
-                            <div class="input-group">
-                                <input asp-for="Size" type="number" class="form-control" min="15" max="200">
-                                <span class="input-group-text">m²</span>
-                            </div>
-                            <span asp-validation-for="Size" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <h5 class="mb-3">Thông tin bổ sung</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Floor" class="form-label">Tầng</label>
-                                <input asp-for="Floor" type="text" class="form-control">
-                                <span asp-validation-for="Floor" class="text-danger"></span>
-                            </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="RoomNumber" class="form-label">Số phòng</label>
-                                <input asp-for="RoomNumber" type="text" class="form-control">
-                                <span asp-validation-for="RoomNumber" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="IsAvailable" class="form-label">Trạng thái</label>
-                                <select asp-for="IsAvailable" class="form-select">
-                                    <option value="true" selected>Trống</option>
-                                    <option value="false">Không khả dụng</option>
-                                </select>
-                                <span asp-validation-for="IsAvailable" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="View" class="form-label">Tầm nhìn</label>
-                                <select asp-for="View" class="form-select">
-                                    <option value="Biển">Biển</option>
-                                    <option value="Thành phố">Thành phố</option>
-                                    <option value="Vườn">Vườn</option>
-                                    <option value="Hồ bơi">Hồ bơi</option>
-                                    <option value="Núi">Núi</option>
-                                </select>
-                                <span asp-validation-for="View" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <div class="form-check mb-3">
-                            <input asp-for="IncludeBreakfast" type="checkbox" class="form-check-input" id="includeBreakfast">
-                            <label class="form-check-label" for="includeBreakfast">Bao gồm bữa sáng</label>
+                        <div class="mb-3">
+                            <label asp-for="IsAvailable" class="form-label"></label>
+                            <select asp-for="IsAvailable" class="form-select">
+                                <option value="true">Trống</option>
+                                <option value="false">Không khả dụng</option>
+                            </select>
+                            <span asp-validation-for="IsAvailable" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Description" class="form-label">Mô tả</label>
-                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Mô tả chi tiết về phòng..."></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <label asp-for="IsActivated" class="form-label"></label>
+                            <select asp-for="IsActivated" class="form-select">
+                                <option value="true">Đang kích hoạt</option>
+                                <option value="false">Đã vô hiệu</option>
+                            </select>
+                            <span asp-validation-for="IsActivated" class="text-danger"></span>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h5 class="mb-3">Tiện nghi phòng</h5>
-                        <div class="amenities-container">
-                            <div class="row">
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="wifi" value="WiFi miễn phí">
-                                        <label class="form-check-label" for="wifi">
-                                            <i class="fas fa-wifi me-1"></i> WiFi miễn phí
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="tv" value="TV màn hình phẳng">
-                                        <label class="form-check-label" for="tv">
-                                            <i class="fas fa-tv me-1"></i> TV màn hình phẳng
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="ac" value="Điều hòa">
-                                        <label class="form-check-label" for="ac">
-                                            <i class="fas fa-snowflake me-1"></i> Điều hòa
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="minibar" value="Minibar">
-                                        <label class="form-check-label" for="minibar">
-                                            <i class="fas fa-glass-martini me-1"></i> Minibar
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="safe" value="Két an toàn">
-                                        <label class="form-check-label" for="safe">
-                                            <i class="fas fa-lock me-1"></i> Két an toàn
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="bathtub" value="Bồn tắm">
-                                        <label class="form-check-label" for="bathtub">
-                                            <i class="fas fa-bath me-1"></i> Bồn tắm
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="workspace" value="Bàn làm việc">
-                                        <label class="form-check-label" for="workspace">
-                                            <i class="fas fa-desk me-1"></i> Bàn làm việc
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="coffee" value="Máy pha cà phê">
-                                        <label class="form-check-label" for="coffee">
-                                            <i class="fas fa-coffee me-1"></i> Máy pha cà phê
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="livingroom" value="Phòng khách riêng">
-                                        <label class="form-check-label" for="livingroom">
-                                            <i class="fas fa-couch me-1"></i> Phòng khách riêng
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="jacuzzi" value="Bồn tắm Jacuzzi">
-                                        <label class="form-check-label" for="jacuzzi">
-                                            <i class="fas fa-hot-tub me-1"></i> Bồn tắm Jacuzzi
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Amenities" id="butler" value="Dịch vụ quản gia">
-                                        <label class="form-check-label" for="butler">
-                                            <i class="fas fa-concierge-bell me-1"></i> Dịch vụ quản gia
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -237,27 +96,20 @@
                         <h5 class="mb-3">Hình ảnh phòng</h5>
 
                         <div class="mb-3">
-                            <label for="mainImage" class="form-label">Ảnh chính <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" id="mainImage" name="MainImage" accept="image/*" required>
-                            <div class="form-text">Đây sẽ là ảnh đại diện chính của phòng. Kích thước khuyến nghị 1200x800px.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="additionalImages" class="form-label">Ảnh bổ sung</label>
-                            <input type="file" class="form-control" id="additionalImages" name="AdditionalImages" multiple accept="image/*">
-                            <div class="form-text">Bạn có thể tải lên tối đa 5 ảnh bổ sung. Mỗi ảnh không quá 5MB.</div>
-                        </div>
-
-                        <div id="imagePreviewContainer" class="row mt-3">
-                            <!-- Image previews will be shown here -->
+                            <div class="mb-2">
+                                <img id="addPreview" src="#" alt="Preview" class="img-fluid rounded d-none" style="max-height:300px;" />
+                            </div>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" required onchange="previewImage(this, 'addPreview')" />
+                            <div class="form-text">Ảnh đại diện phòng (khuyến nghị 1200x800px)</div>
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-actions text-end">
-                    <button type="button" class="btn btn-outline-secondary me-2" onclick="location.href='/Admin/Rooms'">
+                    <a href="/Admin/Rooms" class="btn btn-outline-secondary me-2">
                         <i class="fas fa-times me-1"></i> Hủy
-                    </button>
+                    </a>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i> Lưu phòng
                     </button>
@@ -269,81 +121,27 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            // Image preview functionality
-            $('#mainImage').change(function() {
-                previewImage(this, true);
-            });
-
-            $('#additionalImages').change(function() {
-                previewImage(this, false);
-            });
-
-            function previewImage(input, isMain) {
-                if (isMain) {
-                    $('#imagePreviewContainer').empty();
-                }
-
-                if (input.files && input.files.length > 0) {
-                    for (let i = 0; i < input.files.length; i++) {
-                        if (i >= 5 && !isMain) break; // Limit to 5 additional images
-
-                        const reader = new FileReader();
-
-                        reader.onload = function(e) {
-                            const previewCol = $('<div class="col-md-3 col-sm-6 mb-3"></div>');
-                            const previewCard = $('<div class="card h-100"></div>');
-                            const previewImage = $('<img class="card-img-top" style="height: 150px; object-fit: cover;">');
-
-                            previewImage.attr('src', e.target.result);
-
-                            const cardBody = $('<div class="card-body p-2"></div>');
-                            const cardText = $('<p class="card-text small mb-0"></p>').text(input.files[i].name);
-
-                            cardBody.append(cardText);
-                            previewCard.append(previewImage).append(cardBody);
-
-                            if (isMain) {
-                                const mainBadge = $('<span class="badge bg-primary position-absolute top-0 end-0 m-2">Ảnh chính</span>');
-                                previewCard.append(mainBadge);
-                            }
-
-                            previewCol.append(previewCard);
-                            $('#imagePreviewContainer').append(previewCol);
-                        }
-
-                        reader.readAsDataURL(input.files[i]);
-                    }
-                }
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove("d-none");
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = "#";
+                preview.classList.add("d-none");
             }
-
-            // Form validation
-            $('#addRoomForm').submit(function(event) {
-                if (!this.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-
-                $(this).addClass('was-validated');
-            });
-        });
+        }
     </script>
-
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 }
 
 @section Styles {
     <style>
         .form-label {
             font-weight: 500;
-        }
-
-        .amenities-container {
-            background-color: #f8f9fa;
-            border-radius: 0.25rem;
-            padding: 1rem;
         }
     </style>
 }

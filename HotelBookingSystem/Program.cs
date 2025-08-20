@@ -1,9 +1,12 @@
+using CloudinaryDotNet;
 using HotelBookingSystem.Data;
+using HotelBookingSystem.Infrastructure.Options;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Implementations;
 using HotelBookingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace HotelBookingSystem
 {
@@ -27,8 +30,22 @@ namespace HotelBookingSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.Configure<CloudinarySettings>(
+                builder.Configuration.GetSection("Cloudinary"));
+            builder.Services.AddSingleton(sp =>
+            {
+                var opts = sp.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+                var account = new Account(opts.CloudName, opts.ApiKey, opts.ApiSecret);
+                var cld = new Cloudinary(account);
+                cld.Api.Secure = true;
+                return cld;
+            });
+            builder.Services.AddScoped<IImageStorageService, CloudinaryImageStorageService>();
 
             builder.Services.AddScoped<IRoomService, RoomService>();
+            builder.Services.AddScoped<IAdminRoomService, AdminRoomService>();
+            builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+            builder.Services.AddScoped<IAdminBookingService, AdminBookingService>();
 
             var app = builder.Build();
 
@@ -52,25 +69,25 @@ namespace HotelBookingSystem
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             // Seed Database
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    await SeedData.InitializeAsync(services);
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    try
+            //    {
+            //        await SeedData.InitializeAsync(services);
 
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogInformation("Database seeding completed successfully.");
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
+            //        var logger = services.GetRequiredService<ILogger<Program>>();
+            //        logger.LogInformation("Database seeding completed successfully.");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = services.GetRequiredService<ILogger<Program>>();
+            //        logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
 
-                    Console.WriteLine($"Seed error: {ex.Message}");
-                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                }
-            }
+            //        Console.WriteLine($"Seed error: {ex.Message}");
+            //        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            //    }
+            //}
 
             app.Run();
         }

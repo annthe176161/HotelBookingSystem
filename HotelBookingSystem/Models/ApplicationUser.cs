@@ -5,7 +5,10 @@ namespace HotelBookingSystem.Models
     public class ApplicationUser : IdentityUser
     {
         public string FullName { get; set; }
-        public virtual ICollection<Booking> Bookings { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool IsActivated { get; set; } = true;
+
+        public virtual ICollection<Booking>? Bookings { get; set; }
+        public virtual ICollection<Review>? Reviews { get; set; }
     }
 }
