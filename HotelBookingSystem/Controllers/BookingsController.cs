@@ -159,7 +159,7 @@ namespace HotelBookingSystem.Controllers
                 try
                 {
                     Console.WriteLine("ModelState is valid, starting booking process...");
-                    
+
                     // Validation
                     if (model.CheckOutDate <= model.CheckInDate)
                     {
@@ -216,11 +216,11 @@ namespace HotelBookingSystem.Controllers
                         // Gửi email xác nhận cho khách hàng
                         await _emailService.SendBookingConfirmationToCustomerAsync(booking);
                         Console.WriteLine("Customer email sent successfully");
-                        
+
                         // Gửi email thông báo cho khách sạn
                         await _emailService.SendBookingNotificationToHotelAsync(booking);
                         Console.WriteLine("Hotel email sent successfully");
-                        
+
                         TempData["Success"] = "Đặt phòng thành công! Email xác nhận đã được gửi đến địa chỉ email của bạn.";
                     }
                     catch (Exception emailEx)

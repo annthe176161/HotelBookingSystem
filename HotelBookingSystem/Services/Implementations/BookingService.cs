@@ -100,7 +100,7 @@ namespace HotelBookingSystem.Services.Implementations
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
-                
+
                 // Load lại booking với đầy đủ thông tin cho email
                 var bookingWithDetails = await _context.Bookings
                     .Include(b => b.Room)
@@ -108,7 +108,7 @@ namespace HotelBookingSystem.Services.Implementations
                     .Include(b => b.BookingStatus)
                     .Include(b => b.Payment)
                     .FirstOrDefaultAsync(b => b.Id == booking.Id);
-                
+
                 return bookingWithDetails ?? booking;
             }
             catch

@@ -53,7 +53,7 @@ namespace HotelBookingSystem.Data
                 logger.LogInformation("Removing old test user 'test.user@example.com'...");
                 await userManager.DeleteAsync(oldUser);
             }
-            
+
             const string userEmail = "thanhan01236339441@gmail.com";
             logger.LogInformation("Checking if default test user '{UserEmail}' exists...", userEmail);
 
