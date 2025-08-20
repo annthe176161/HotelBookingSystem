@@ -38,11 +38,11 @@ namespace HotelBookingSystem.Controllers
             var bookingStatuses = await _context.BookingStatuses
                 .Select(s => new { s.Id, s.Name })
                 .ToListAsync();
-            
+
             var paymentStatuses = await _context.PaymentStatuses
                 .Select(s => new { s.Id, s.Name })
                 .ToListAsync();
-                
+
             var roomTypes = await _context.Rooms
                 .Select(r => r.RoomType)
                 .Distinct()
@@ -125,7 +125,7 @@ namespace HotelBookingSystem.Controllers
             {
                 var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
                                      .Select(x => new { Field = x.Key, Errors = x.Value.Errors.Select(e => e.ErrorMessage) });
-                
+
                 foreach (var error in errors)
                 {
                     foreach (var errorMsg in error.Errors)
@@ -345,7 +345,7 @@ namespace HotelBookingSystem.Controllers
             }
 
             var result = await _bookingService.CancelBookingAsync(id, user.Id);
-            
+
             if (result)
             {
                 TempData["Success"] = "Đặt phòng đã được hủy thành công.";

@@ -25,22 +25,22 @@ namespace HotelBookingSystem.ViewModels.Booking
         public decimal TotalPrice { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? CompletedDate { get; set; }
-        
+
         // Room Information
         public int RoomId { get; set; }
         public string RoomName { get; set; }
         public string RoomType { get; set; }
         public string RoomImageUrl { get; set; }
         public decimal RoomPricePerNight { get; set; }
-        
+
         // Status Information
         public string Status { get; set; }
         public string StatusColor { get; set; }
-        
+
         // Payment Information
         public string PaymentStatus { get; set; }
         public string PaymentMethod { get; set; }
-        
+
         // Calculated Properties
         public int NightCount => (CheckOut - CheckIn).Days;
         public bool CanCancel => Status == "Confirmed" && CheckIn > DateTime.Now.AddDays(1);
@@ -48,7 +48,7 @@ namespace HotelBookingSystem.ViewModels.Booking
         public bool IsUpcoming => CheckIn > DateTime.Now && Status == "Confirmed";
         public bool IsActive => CheckIn <= DateTime.Now && CheckOut > DateTime.Now && Status == "Confirmed";
         public bool IsPast => CheckOut < DateTime.Now;
-        
+
         public string FormattedBookingNumber => $"#BK{Id.ToString().PadLeft(6, '0')}";
         public string FormattedCheckIn => CheckIn.ToString("dd/MM/yyyy");
         public string FormattedCheckOut => CheckOut.ToString("dd/MM/yyyy");

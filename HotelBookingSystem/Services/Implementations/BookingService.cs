@@ -18,7 +18,7 @@ namespace HotelBookingSystem.Services.Implementations
         public async Task<bool> IsRoomAvailableAsync(int roomId, DateTime checkIn, DateTime checkOut)
         {
             var conflictingBookings = await _context.Bookings
-                .Where(b => b.RoomId == roomId && 
+                .Where(b => b.RoomId == roomId &&
                            b.BookingStatus.Name != "Đã hủy" &&
                            ((b.CheckIn < checkOut && b.CheckOut > checkIn)))
                 .AnyAsync();
@@ -141,7 +141,7 @@ namespace HotelBookingSystem.Services.Implementations
             // Apply search filter
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                query = query.Where(b => 
+                query = query.Where(b =>
                     b.Room.Name.Contains(searchTerm) ||
                     b.Room.RoomType.Contains(searchTerm) ||
                     b.Id.ToString().Contains(searchTerm));
@@ -152,13 +152,13 @@ namespace HotelBookingSystem.Services.Implementations
             {
                 query = query.Where(b => b.BookingStatus.Name == status);
             }
-            
+
             // Apply room type filter
             if (!string.IsNullOrEmpty(roomType))
             {
                 query = query.Where(b => b.Room.RoomType == roomType);
             }
-            
+
             // Apply payment status filter
             if (!string.IsNullOrEmpty(paymentStatus))
             {
@@ -179,18 +179,18 @@ namespace HotelBookingSystem.Services.Implementations
                 TotalPrice = b.TotalPrice,
                 CreatedDate = b.CreatedDate,
                 CompletedDate = b.CompletedDate,
-                
+
                 // Room Information
                 RoomId = b.RoomId,
                 RoomName = b.Room.Name,
                 RoomType = b.Room.RoomType,
                 RoomImageUrl = b.Room.ImageUrl,
                 RoomPricePerNight = b.Room.PricePerNight,
-                
+
                 // Status Information
                 Status = b.BookingStatus.Name,
                 StatusColor = GetStatusColor(b.BookingStatus.Name),
-                
+
                 // Payment Information
                 PaymentStatus = b.Payment?.PaymentStatus?.Name ?? "Pending",
                 PaymentMethod = b.Payment?.PaymentMethod ?? "N/A"
@@ -217,7 +217,7 @@ namespace HotelBookingSystem.Services.Implementations
             return status switch
             {
                 "Confirmed" => "success",
-                "Pending" => "warning", 
+                "Pending" => "warning",
                 "Cancelled" => "danger",
                 "Completed" => "primary",
                 _ => "secondary"
