@@ -1,0 +1,275 @@
+@model HotelBookingSystem.ViewModels.Booking.BookingViewModel
+@{
+    ViewData["Title"] = "Đặt phòng";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/booking-simple.css" />
+}
+
+<div class="container my-4">
+    <div class="row">
+        <!-- Main Form Column -->
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="page-header mb-4">
+                <h2 class="h3 mb-2">Đặt phòng khách sạn</h2>
+                <p class="text-muted mb-0">Vui lòng điền đầy đủ thông tin để hoàn tất đặt phòng</p>
+            </div>
+
+            <form asp-action="Create" method="post" novalidate>
+                <input type="hidden" asp-for="RoomId" />
+                <input type="hidden" asp-for="RoomName" />
+                <input type="hidden" asp-for="RoomType" />
+                <input type="hidden" asp-for="RoomImageUrl" />
+                <input type="hidden" asp-for="RoomPrice" />
+                <input type="hidden" asp-for="MaxGuests" />
+
+                <!-- 1. Thông tin lưu trú -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4 class="section-title">
+                            <span class="step-number">1</span>
+                            Thông tin lưu trú
+                        </h4>
+                    </div>
+                    <div class="section-content">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CheckInDate" class="form-label">Ngày nhận phòng</label>
+                                <input asp-for="CheckInDate" type="date" class="form-control" required />
+                                <span asp-validation-for="CheckInDate" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CheckOutDate" class="form-label">Ngày trả phòng</label>
+                                <input asp-for="CheckOutDate" type="date" class="form-control" required />
+                                <span asp-validation-for="CheckOutDate" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="GuestCount" class="form-label">Số khách</label>
+                                <select asp-for="GuestCount" class="form-select" required>
+                                    <option value="">Chọn số khách</option>
+                                    @for (int i = 1; i <= Model.MaxGuests; i++)
+                                    {
+                                        <option value="@i">@i khách</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="GuestCount" class="text-danger small"></span>
+                                <small class="form-text text-muted">Tối đa: @Model.MaxGuests khách</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="SpecialRequests" class="form-label">Yêu cầu đặc biệt (tùy chọn)</label>
+                            <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="VD: Phòng tầng cao, giường đôi, gần thang máy..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Thông tin khách hàng -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4 class="section-title">
+                            <span class="step-number">2</span>
+                            Thông tin khách hàng
+                        </h4>
+                    </div>
+                    <div class="section-content">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Thông tin được lấy từ hồ sơ của bạn. 
+                            <a href="/Account/Profile" class="alert-link">Cập nhật thông tin</a> nếu cần thiết.
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label">Tên <span class="text-danger">*</span></label>
+                                <input asp-for="FirstName" class="form-control" readonly />
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label">Họ <span class="text-danger">*</span></label>
+                                <input asp-for="LastName" class="form-control" readonly />
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input asp-for="Email" type="email" class="form-control" readonly />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                <input asp-for="Phone" class="form-control" readonly />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Phương thức thanh toán -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4 class="section-title">
+                            <span class="step-number">3</span>
+                            Phương thức thanh toán
+                        </h4>
+                    </div>
+                    <div class="section-content">
+                        <div class="payment-methods-simple">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="cash" value="Cash" checked>
+                                <label class="form-check-label" for="cash">
+                                    <i class="fas fa-money-bill-wave me-2 text-success"></i>
+                                    Thanh toán tiền mặt tại khách sạn
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="card" value="CreditCard">
+                                <label class="form-check-label" for="card">
+                                    <i class="fas fa-credit-card me-2 text-primary"></i>
+                                    Thanh toán bằng thẻ tín dụng
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="transfer" value="BankTransfer">
+                                <label class="form-check-label" for="transfer">
+                                    <i class="fas fa-university me-2 text-info"></i>
+                                    Chuyển khoản ngân hàng
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Điều khoản và đặt phòng -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4 class="section-title">
+                            <span class="step-number">4</span>
+                            Xác nhận đặt phòng
+                        </h4>
+                    </div>
+                    <div class="section-content">
+                        <div class="terms-agreement mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    Tôi đồng ý với 
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="text-decoration-none">
+                                        Điều khoản và Điều kiện
+                                    </a> 
+                                    của khách sạn <span class="text-danger">*</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline-secondary me-3" onclick="history.back()">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check me-2"></i>Xác nhận đặt phòng
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="booking-summary-card">
+                <h5 class="summary-title">Thông tin đặt phòng</h5>
+                
+                <!-- Room Info -->
+                <div class="room-info mb-4">
+                    <img src="@Model.RoomImageUrl" alt="@Model.RoomName" class="room-image">
+                    <div class="room-details">
+                        <h6 class="room-name">@Model.RoomName</h6>
+                        <p class="room-type mb-0">@Model.RoomType</p>
+                    </div>
+                </div>
+
+                <!-- Booking Details -->
+                <div class="booking-details">
+                    <div class="detail-row">
+                        <span>Ngày nhận phòng:</span>
+                        <span id="display-checkin">Chưa chọn</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Ngày trả phòng:</span>
+                        <span id="display-checkout">Chưa chọn</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Số đêm:</span>
+                        <span id="display-nights">0</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Số khách:</span>
+                        <span id="display-guests">Chưa chọn</span>
+                    </div>
+                    <hr>
+                    <div class="detail-row">
+                        <span>Giá phòng/đêm:</span>
+                        <span>@Model.RoomPrice.ToString("N0") VNĐ</span>
+                    </div>
+                    <div class="detail-row total-row">
+                        <span><strong>Tổng cộng:</strong></span>
+                        <span><strong id="display-total">0 VNĐ</strong></span>
+                    </div>
+                </div>
+
+                <!-- Support -->
+                <div class="support-info">
+                    <div class="text-center">
+                        <i class="fas fa-headset text-primary mb-2" style="font-size: 24px;"></i>
+                        <p class="mb-1">Cần hỗ trợ?</p>
+                        <p class="mb-0">
+                            <strong>Hotline: 1900 1234</strong><br>
+                            <small>Hỗ trợ 24/7</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Điều khoản và Điều kiện</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Điều kiện đặt phòng</h6>
+                <p>- Khách hàng phải từ 18 tuổi trở lên để đặt phòng</p>
+                <p>- Thông tin đặt phòng phải chính xác và đầy đủ</p>
+                
+                <h6>2. Chính sách hủy phòng</h6>
+                <p>- Hủy phòng trước 24h: Hoàn tiền 100%</p>
+                <p>- Hủy phòng trong vòng 24h: Tính phí 50% tổng hóa đơn</p>
+                
+                <h6>3. Chính sách thanh toán</h6>
+                <p>- Thanh toán khi nhận phòng</p>
+                <p>- Chấp nhận tiền mặt, thẻ tín dụng, chuyển khoản</p>
+                
+                <h6>4. Quy định khách sạn</h6>
+                <p>- Giờ nhận phòng: 14:00 | Giờ trả phòng: 12:00</p>
+                <p>- Không hút thuốc trong phòng</p>
+                <p>- Không được mang thú cưng</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/booking-simple.js"></script>
+}
