@@ -9,10 +9,12 @@ namespace HotelBookingSystem.Services.Implementations
     public class BookingService : IBookingService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public BookingService(ApplicationDbContext context)
+        public BookingService(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<bool> IsRoomAvailableAsync(int roomId, DateTime checkIn, DateTime checkOut)
@@ -318,6 +320,8 @@ namespace HotelBookingSystem.Services.Implementations
                 .Include(b => b.BookingStatus)
                 .Include(b => b.Payment)
                 .ThenInclude(p => p!.PaymentStatus)
+                .Include(b => b.User)
+                .Include(b => b.Room)
                 .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
 
             if (booking == null)
@@ -326,6 +330,9 @@ namespace HotelBookingSystem.Services.Implementations
             // Chỉ cho phép hủy nếu booking chưa hoàn thành
             if (booking.BookingStatus.Name == "Hoàn thành")
                 return false;
+
+            // Lưu trạng thái cũ để gửi email
+            var oldStatus = booking.BookingStatus.Name;
 
             // Lấy trạng thái "Đã hủy"
             var cancelledStatus = await _context.BookingStatuses
@@ -350,6 +357,20 @@ namespace HotelBookingSystem.Services.Implementations
             }
 
             await _context.SaveChangesAsync();
+
+            // Gửi email thông báo hủy đặt phòng
+            try
+            {
+                string reason = "Khách hàng yêu cầu hủy đặt phòng";
+                await _emailService.SendBookingCancellationToCustomerAsync(booking, reason);
+                await _emailService.SendBookingCancellationToHotelAsync(booking, reason);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi email nhưng không làm fail transaction
+                Console.WriteLine($"Email sending failed during booking cancellation: {ex.Message}");
+            }
+
             return true;
         }
     }

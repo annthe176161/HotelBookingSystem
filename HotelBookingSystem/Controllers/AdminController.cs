@@ -1,4 +1,5 @@
 ﻿using HotelBookingSystem.Models;
+using HotelBookingSystem.Services.Interfaces;
 using HotelBookingSystem.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -232,6 +233,60 @@ namespace HotelBookingSystem.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost("UpdateBookingStatus")]
+        public async Task<IActionResult> UpdateBookingStatus(int bookingId, int newStatusId, string reason = "Admin thay đổi trạng thái")
+        {
+            try
+            {
+                var bookingStatusService = HttpContext.RequestServices.GetService<IBookingStatusService>();
+                if (bookingStatusService != null)
+                {
+                    await bookingStatusService.UpdateBookingStatusAsync(bookingId, newStatusId, reason);
+                    TempData["SuccessMessage"] = "Cập nhật trạng thái đặt phòng thành công!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Không thể tìm thấy service để cập nhật trạng thái.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Có lỗi khi cập nhật trạng thái: {ex.Message}";
+            }
+
+            return RedirectToAction("Bookings");
+        }
+
+        [HttpPost("UpdatePaymentStatus")]
+        public async Task<IActionResult> UpdatePaymentStatus(int bookingId, int newPaymentStatusId, string reason = "Admin thay đổi trạng thái thanh toán")
+        {
+            try
+            {
+                var bookingStatusService = HttpContext.RequestServices.GetService<IBookingStatusService>();
+                if (bookingStatusService != null)
+                {
+                    await bookingStatusService.UpdatePaymentStatusAsync(bookingId, newPaymentStatusId, reason);
+                    TempData["SuccessMessage"] = "Cập nhật trạng thái thanh toán thành công!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Không thể tìm thấy service để cập nhật trạng thái thanh toán.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Có lỗi khi cập nhật trạng thái thanh toán: {ex.Message}";
+            }
+
+            return RedirectToAction("Bookings");
+        }
+
+        [HttpGet("EmailTest")]
+        public IActionResult EmailTest()
+        {
+            return View();
         }
     }
 }
