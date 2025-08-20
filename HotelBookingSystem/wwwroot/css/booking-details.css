@@ -20,6 +20,7 @@
     height: 250px;
     display: flex;
     align-items: center;
+    justify-content: center;
     color: #fff;
 }
 
@@ -37,6 +38,10 @@
         z-index: 1;
         text-align: center;
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .booking-details-banner h1 {
@@ -44,25 +49,43 @@
         font-weight: 700;
         margin-bottom: 15px;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin-top: 0;
     }
 
 .breadcrumb {
     display: flex;
     justify-content: center;
     background-color: transparent;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 .breadcrumb-item {
     color: #fff;
+    font-size: 14px;
 }
 
     .breadcrumb-item a {
         color: #fff;
         text-decoration: none;
+        opacity: 0.9;
+        transition: opacity 0.3s ease;
+    }
+
+    .breadcrumb-item a:hover {
+        opacity: 1;
+        text-decoration: underline;
     }
 
     .breadcrumb-item.active {
         color: var(--accent-color);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "›";
+        color: rgba(255, 255, 255, 0.7);
+        padding: 0 0.5rem;
     }
 
 /* Booking Details Container */
@@ -399,6 +422,34 @@
     border-radius: 6px;
 }
 
+/* Payment Notice Styles */
+.payment-notice {
+    border-top: 1px solid #f0f0f0;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+.payment-notice .alert {
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+    border-left: 4px solid #2196f3;
+}
+
+.payment-notice .alert-heading {
+    color: #1976d2;
+    font-weight: 600;
+}
+
+.payment-notice p {
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.payment-notice .text-success {
+    color: #28a745 !important;
+}
+
 /* Support */
 .support-item {
     display: flex;
@@ -420,7 +471,7 @@
 
 /* Policy */
 .policy-item {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
     .policy-item:last-child {
@@ -430,21 +481,82 @@
     .policy-item h6 {
         display: flex;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         color: var(--dark-color);
+        font-weight: 600;
+        border-bottom: 2px solid #f8f9fa;
+        padding-bottom: 8px;
     }
 
         .policy-item h6 i {
-            margin-right: 8px;
-            color: var(--primary-color);
+            margin-right: 10px;
+            font-size: 1.1rem;
         }
 
+.policy-content {
+    padding-left: 5px;
+}
+
+.policy-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+    .policy-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f1f1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .policy-list li:last-child {
+        border-bottom: none;
+    }
+
+    .policy-list li strong {
+        color: var(--dark-color);
+        min-width: 120px;
+    }
+
 .cancellation-deadline {
-    background-color: #f8f9fa;
-    padding: 10px;
-    border-radius: 6px;
-    margin-top: 10px;
-    border-left: 3px solid var(--primary-color);
+    margin-top: 15px;
+}
+
+.cancellation-deadline.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    border-left: 4px solid var(--success-color);
+}
+
+/* Enhanced alerts for policies */
+.alert {
+    border-radius: 8px;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.alert i {
+    margin-right: 8px;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #d6eaf8 0%, #ebf3fd 100%);
+    color: #1b4f72;
+    border-left: 4px solid var(--info-color);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d5f4e6 0%, #eafaf1 100%);
+    color: #0d5345;
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fcf3cd 0%, #fef9e7 100%);
+    color: #8a6d3b;
+    border-left: 4px solid var(--warning-color);
 }
 
 /* Responsive */
@@ -530,5 +642,45 @@
 
     .booking-payment-summary {
         page-break-before: always;
+    }
+}
+
+/* Responsive Design for Banner */
+@media (max-width: 768px) {
+    .booking-details-banner {
+        height: 200px;
+    }
+    
+    .booking-details-banner h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+    
+    .breadcrumb-item {
+        font-size: 12px;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item::before {
+        padding: 0 0.3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-details-banner {
+        height: 180px;
+    }
+    
+    .booking-details-banner h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+    
+    .breadcrumb {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .breadcrumb-item {
+        font-size: 11px;
     }
 }

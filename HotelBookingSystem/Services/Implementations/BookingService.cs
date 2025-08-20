@@ -204,9 +204,9 @@ namespace HotelBookingSystem.Services.Implementations
                 PaymentStatus = paymentStatus,
                 Bookings = customerBookings,
                 TotalBookings = customerBookings.Count,
-                CompletedBookings = customerBookings.Count(b => b.Status == "Completed"),
-                CancelledBookings = customerBookings.Count(b => b.Status == "Cancelled"),
-                PendingBookings = customerBookings.Count(b => b.Status == "Confirmed" || b.Status == "Pending")
+                CompletedBookings = customerBookings.Count(b => b.Status == "Hoàn thành"),
+                CancelledBookings = customerBookings.Count(b => b.Status == "Đã hủy"),
+                PendingBookings = customerBookings.Count(b => b.Status == "Đã xác nhận" || b.Status == "Chờ xác nhận")
             };
 
             return viewModel;
@@ -216,10 +216,10 @@ namespace HotelBookingSystem.Services.Implementations
         {
             return status switch
             {
-                "Confirmed" => "success",
-                "Pending" => "warning",
-                "Cancelled" => "danger",
-                "Completed" => "primary",
+                "Đã xác nhận" => "success",
+                "Chờ xác nhận" => "warning",
+                "Đã hủy" => "danger",
+                "Hoàn thành" => "primary",
                 _ => "secondary"
             };
         }
