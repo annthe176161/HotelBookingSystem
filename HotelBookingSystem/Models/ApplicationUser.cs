@@ -7,15 +7,16 @@ namespace HotelBookingSystem.Models
     public class ApplicationUser : IdentityUser
     {
         [MaxLength(150)]
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
         public bool IsActivated { get; set; } = true;
 
         public virtual ICollection<Booking>? Bookings { get; set; }
         public virtual ICollection<Review>? Reviews { get; set; }
+
         [MaxLength(100)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
         [MaxLength(100)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
         public GenderType Gender { get; set; } = GenderType.Unknow;
@@ -30,8 +31,5 @@ namespace HotelBookingSystem.Models
         [MaxLength(500)]
         public string? ProfilePictureUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public virtual ICollection<Booking> Bookings { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
     }
 }
