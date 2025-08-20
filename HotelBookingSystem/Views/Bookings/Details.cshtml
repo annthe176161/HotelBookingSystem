@@ -14,7 +14,8 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a asp-controller="Bookings" asp-action="Index">Đặt phòng của tôi</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Bookings" asp-action="Index">Đặt phòng của tôi</a>
+                    </li>
                     <li class="breadcrumb-item active" aria-current="page">Chi tiết đặt phòng</li>
                 </ol>
             </nav>
@@ -91,13 +92,17 @@
                                         <span>@Model.RoomRating</span>
                                     </div>
                                     <div class="room-specs mb-3">
-                                        <span class="room-spec"><i class="fas fa-ruler-combined"></i> @Model.RoomSize m²</span>
-                                        <span class="room-spec"><i class="fas fa-users"></i> Tối đa @Model.RoomCapacity người</span>
+                                        <span class="room-spec"><i class="fas fa-ruler-combined"></i> @Model.RoomSize
+                                            m²</span>
+                                        <span class="room-spec"><i class="fas fa-users"></i> Tối đa @Model.RoomCapacity
+                                            người</span>
                                         <span class="room-spec"><i class="fas fa-bed"></i> @Model.BedType</span>
-                                        <span class="room-spec"><i class="fas fa-map-marker-alt"></i> Tầng @Model.Floor, @Model.Building</span>
+                                        <span class="room-spec"><i class="fas fa-map-marker-alt"></i> Tầng @Model.Floor,
+                                            @Model.Building</span>
                                     </div>
                                     <p>@Model.RoomDescription</p>
-                                    <a href="@Url.Action("Details", "Rooms", new { id = Model.RoomId })" class="btn btn-outline-primary btn-sm">
+                                    <a href="@Url.Action("Details", "Rooms", new { id = Model.RoomId })"
+                                        class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-info-circle"></i> Xem chi tiết phòng
                                     </a>
                                 </div>
@@ -199,13 +204,17 @@
                                 <div class="policy-content">
                                     <p class="mb-2"><strong>Miễn phí hủy phòng:</strong></p>
                                     <ul class="policy-list mb-3">
-                                        <li>Hủy trước 6 giờ kể từ thời điểm nhận phòng: <span class="text-success font-weight-bold">Hoàn toàn miễn phí</span></li>
-                                        <li>Hủy trong vòng 6 giờ trước nhận phòng: <span class="text-warning">Có thể mất phí giữ phòng (nếu có)</span></li>
-                                        <li>No-show (không đến nhận phòng): <span class="text-danger">Tính phí 1 đêm</span></li>
+                                        <li>Hủy trước 6 giờ kể từ thời điểm nhận phòng: <span
+                                                class="text-success font-weight-bold">Hoàn toàn miễn phí</span></li>
+                                        <li>Hủy trong vòng 6 giờ trước nhận phòng: <span class="text-warning">Có thể mất
+                                                phí giữ phòng (nếu có)</span></li>
+                                        <li>No-show (không đến nhận phòng): <span class="text-danger">Tính phí 1
+                                                đêm</span></li>
                                     </ul>
                                     <div class="alert alert-info mb-2">
                                         <i class="fas fa-info-circle me-2"></i>
-                                        <strong>Lưu ý:</strong> Do thanh toán tại khách sạn, việc hủy phòng không ảnh hưởng đến thẻ tín dụng của bạn.
+                                        <strong>Lưu ý:</strong> Do thanh toán tại khách sạn, việc hủy phòng không ảnh
+                                        hưởng đến thẻ tín dụng của bạn.
                                     </div>
                                     @if (Model.IsCancellable)
                                     {
@@ -219,7 +228,8 @@
                                     {
                                         <div class="alert alert-warning">
                                             <i class="fas fa-exclamation-triangle me-2"></i>
-                                            Đã quá thời hạn hủy miễn phí. Vui lòng liên hệ khách sạn: <strong>1900 1234</strong>
+                                            Đã quá thời hạn hủy miễn phí. Vui lòng liên hệ khách sạn: <strong>1900
+                                                1234</strong>
                                         </div>
                                     }
                                 </div>
@@ -232,12 +242,14 @@
                                         <div class="col-6">
                                             <h6 class="text-success"><i class="fas fa-sign-in-alt"></i> Nhận phòng</h6>
                                             <p class="mb-1"><strong>Thời gian:</strong> 14:00 - 22:00</p>
-                                            <p class="mb-2"><strong>Nhận phòng sớm:</strong> 12:00 - 14:00 (phí 50% giá phòng/ngày)</p>
+                                            <p class="mb-2"><strong>Nhận phòng sớm:</strong> 12:00 - 14:00 (phí 50% giá
+                                                phòng/ngày)</p>
                                         </div>
                                         <div class="col-6">
                                             <h6 class="text-warning"><i class="fas fa-sign-out-alt"></i> Trả phòng</h6>
                                             <p class="mb-1"><strong>Thời gian:</strong> Trước 12:00</p>
-                                            <p class="mb-2"><strong>Trả phòng muộn:</strong> 12:00 - 18:00 (phí 50% giá phòng/ngày)</p>
+                                            <p class="mb-2"><strong>Trả phòng muộn:</strong> 12:00 - 18:00 (phí 50% giá
+                                                phòng/ngày)</p>
                                         </div>
                                     </div>
                                 </div>
@@ -334,7 +346,7 @@
                                 <div class="payment-method-header">
                                     <h6><i class="fas fa-info-circle me-2"></i> Trạng thái đặt phòng</h6>
                                     <span class="payment-status @GetPaymentStatusClass(Model.PaymentStatus)">
-                                        @if(Model.PaymentStatus == "Pending")
+                                        @if (Model.PaymentStatus == "Pending")
                                         {
                                             <span>Chờ thanh toán tại khách sạn</span>
                                         }
@@ -369,21 +381,24 @@
 
                                 @if (Model.IsCancellable)
                                 {
-                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal"
+                                        data-bs-target="#cancelModal">
                                         <i class="fas fa-times"></i> Hủy đặt phòng
                                     </button>
                                 }
 
                                 @if (Model.CanReview)
                                 {
-                                    <a href="@Url.Action("AddReview", "Reviews", new { bookingId = Model.Id })" class="btn btn-warning">
+                                    <a href="@Url.Action("AddReview", "Reviews", new { bookingId = Model.Id })"
+                                        class="btn btn-warning">
                                         <i class="fas fa-star"></i> Viết đánh giá
                                     </a>
                                 }
 
                                 @if (Model.HasReview)
                                 {
-                                    <a href="@Url.Action("ViewReview", "Reviews", new { bookingId = Model.Id })" class="btn btn-outline-success">
+                                    <a href="@Url.Action("ViewReview", "Reviews", new { bookingId = Model.Id })"
+                                        class="btn btn-outline-success">
                                         <i class="fas fa-comment-alt"></i> Xem đánh giá của bạn
                                     </a>
                                 }
@@ -441,7 +456,8 @@
                     </div>
                     <p>Lưu ý:</p>
                     <ul>
-                        <li>Hủy đặt phòng trước @Model.FreeCancellationDeadline.ToString("dd/MM/yyyy HH:mm") sẽ được hoàn tiền 100%.</li>
+                        <li>Hủy đặt phòng trước @Model.FreeCancellationDeadline.ToString("dd/MM/yyyy HH:mm") sẽ được hoàn
+                            tiền 100%.</li>
                         <li>Hủy đặt phòng sau thời gian này sẽ bị tính phí 1 đêm đầu tiên.</li>
                         <li>Sau khi hủy, không thể khôi phục lại đặt phòng.</li>
                     </ul>
@@ -475,7 +491,7 @@
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Xử lý hiển thị lý do khác
             const cancelReason = document.getElementById('cancelReason');
             const otherReasonGroup = document.getElementById('otherReasonGroup');
@@ -484,7 +500,7 @@
             const confirmCancel = document.getElementById('confirm-cancel');
 
             if (cancelReason) {
-                cancelReason.addEventListener('change', function() {
+                cancelReason.addEventListener('change', function () {
                     if (this.value === 'other') {
                         otherReasonGroup.style.display = 'block';
                     } else {
@@ -495,7 +511,7 @@
             }
 
             if (confirmCancel) {
-                confirmCancel.addEventListener('click', function(e) {
+                confirmCancel.addEventListener('click', function (e) {
                     if (!cancelReason.value) {
                         e.preventDefault();
                         alert('Vui lòng chọn lý do hủy đặt phòng');
