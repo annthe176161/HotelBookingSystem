@@ -13,12 +13,14 @@ namespace HotelBookingSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IBookingService _bookingService;
+        private readonly IEmailService _emailService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public BookingsController(ApplicationDbContext context, IBookingService bookingService, UserManager<ApplicationUser> userManager)
+        public BookingsController(ApplicationDbContext context, IBookingService bookingService, IEmailService emailService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _bookingService = bookingService;
+            _emailService = emailService;
             _userManager = userManager;
         }
 
@@ -27,7 +29,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> Index(string searchTerm = "", string status = "", string roomType = "", string paymentStatus = "")
         {
             // Lấy user mặc định để test (có thể thay đổi khi có login)
-            var user = await _userManager.FindByEmailAsync("test.user@example.com");
+            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
             if (user == null)
             {
                 TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
@@ -69,7 +71,7 @@ namespace HotelBookingSystem.Controllers
             }
 
             // --- BẮT ĐẦU THAY ĐỔI: Lấy user mặc định để test ---
-            var user = await _userManager.FindByEmailAsync("test.user@example.com");
+            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
             if (user == null)
             {
                 // Xử lý trường hợp không tìm thấy user test. 
@@ -120,29 +122,48 @@ namespace HotelBookingSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookingViewModel model)
         {
-            // Debug: Log ModelState
+            // Debug: Log tất cả dữ liệu nhận được
+            Console.WriteLine($"=== DEBUG CREATE BOOKING ===");
+            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+            Console.WriteLine($"RoomId: {model.RoomId}");
+            Console.WriteLine($"CheckIn: {model.CheckInDate}");
+            Console.WriteLine($"CheckOut: {model.CheckOutDate}");
+            Console.WriteLine($"Guests: {model.GuestCount}");
+            Console.WriteLine($"FirstName: {model.FirstName}");
+            Console.WriteLine($"LastName: {model.LastName}");
+            Console.WriteLine($"Email: {model.Email}");
+            Console.WriteLine($"Phone: {model.Phone}");
+
+            // Debug: Log ModelState errors
             if (!ModelState.IsValid)
             {
+                Console.WriteLine("=== ModelState Errors ===");
                 var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
                                      .Select(x => new { Field = x.Key, Errors = x.Value.Errors.Select(e => e.ErrorMessage) });
 
                 foreach (var error in errors)
                 {
+                    Console.WriteLine($"Field: {error.Field}");
                     foreach (var errorMsg in error.Errors)
                     {
+                        Console.WriteLine($"  Error: {errorMsg}");
                         // Thêm lỗi vào ModelState để hiển thị
                         ModelState.AddModelError("", $"{error.Field}: {errorMsg}");
                     }
                 }
+                Console.WriteLine("=== End ModelState Errors ===");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    Console.WriteLine("ModelState is valid, starting booking process...");
+                    
                     // Validation
                     if (model.CheckOutDate <= model.CheckInDate)
                     {
+                        Console.WriteLine("Error: CheckOut date is not after CheckIn date");
                         ModelState.AddModelError("CheckOutDate", "Ngày trả phòng phải sau ngày nhận phòng.");
                         await RepopulateRoomInfoForModel(model);
                         return View(model);
@@ -150,50 +171,87 @@ namespace HotelBookingSystem.Controllers
 
                     if (model.CheckInDate < DateTime.Today)
                     {
+                        Console.WriteLine("Error: CheckIn date is in the past");
                         ModelState.AddModelError("CheckInDate", "Ngày nhận phòng không thể là ngày trong quá khứ.");
                         await RepopulateRoomInfoForModel(model);
                         return View(model);
                     }
 
                     // Kiểm tra tính khả dụng của phòng
+                    Console.WriteLine("Checking room availability...");
                     var isAvailable = await _bookingService.IsRoomAvailableAsync(model.RoomId, model.CheckInDate, model.CheckOutDate);
                     if (!isAvailable)
                     {
+                        Console.WriteLine("Error: Room is not available");
                         ModelState.AddModelError("", "Phòng không khả dụng trong thời gian bạn đã chọn. Vui lòng chọn ngày khác.");
                         await RepopulateRoomInfoForModel(model);
                         return View(model);
                     }
 
                     // --- BẮT ĐẦU THAY ĐỔI: Lấy userId của user mặc định ---
-                    var user = await _userManager.FindByEmailAsync("test.user@example.com");
+                    Console.WriteLine("Finding test user...");
+                    var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
                     var userId = user?.Id;
 
                     if (userId == null)
                     {
+                        Console.WriteLine("Error: Cannot find test user");
                         // Trường hợp này không nên xảy ra nếu GET hoạt động đúng
                         ModelState.AddModelError("", "Không thể xác định người dùng để đặt phòng.");
                         await RepopulateRoomInfoForModel(model);
                         return View(model);
                     }
+                    Console.WriteLine($"Found user: {userId}");
                     // --- KẾT THÚC THAY ĐỔI ---
 
                     // Tạo booking
+                    Console.WriteLine("Creating booking...");
                     var booking = await _bookingService.CreateBookingAsync(model, userId);
+                    Console.WriteLine($"Booking created with ID: {booking.Id}");
 
-                    TempData["Success"] = "Đặt phòng thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.";
+                    // Gửi email thông báo
+                    try
+                    {
+                        Console.WriteLine("Sending emails...");
+                        // Gửi email xác nhận cho khách hàng
+                        await _emailService.SendBookingConfirmationToCustomerAsync(booking);
+                        Console.WriteLine("Customer email sent successfully");
+                        
+                        // Gửi email thông báo cho khách sạn
+                        await _emailService.SendBookingNotificationToHotelAsync(booking);
+                        Console.WriteLine("Hotel email sent successfully");
+                        
+                        TempData["Success"] = "Đặt phòng thành công! Email xác nhận đã được gửi đến địa chỉ email của bạn.";
+                    }
+                    catch (Exception emailEx)
+                    {
+                        // Log lỗi email nhưng không làm fail transaction
+                        Console.WriteLine($"Email sending failed: {emailEx.Message}");
+                        TempData["Success"] = "Đặt phòng thành công! Tuy nhiên, có lỗi khi gửi email xác nhận. Chúng tôi sẽ liên hệ với bạn sớm nhất.";
+                    }
+
+                    Console.WriteLine($"Redirecting to Confirmation with booking ID: {booking.Id}");
                     return RedirectToAction("Confirmation", new { id = booking.Id });
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine($"Exception in Create method: {ex.Message}");
+                    Console.WriteLine($"StackTrace: {ex.StackTrace}");
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                     if (ex.InnerException != null)
                     {
+                        Console.WriteLine($"InnerException: {ex.InnerException.Message}");
                         ModelState.AddModelError("", $"Chi tiết: {ex.InnerException.Message}");
                     }
                 }
             }
+            else
+            {
+                Console.WriteLine("ModelState is NOT valid, returning to view");
+            }
 
             // Nếu có lỗi, load lại thông tin phòng
+            Console.WriteLine("Repopulating room info and returning view");
             await RepopulateRoomInfoForModel(model);
             return View(model);
         }
@@ -316,7 +374,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> Details(int id)
         {
             // Lấy user mặc định để test
-            var user = await _userManager.FindByEmailAsync("test.user@example.com");
+            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
             if (user == null)
             {
                 TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
@@ -337,7 +395,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> Cancel(int id)
         {
             // Lấy user mặc định để test
-            var user = await _userManager.FindByEmailAsync("test.user@example.com");
+            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
             if (user == null)
             {
                 TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
