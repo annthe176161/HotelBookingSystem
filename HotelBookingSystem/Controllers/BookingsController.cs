@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingSystem.Controllers
 {
-    [Authorize]
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;

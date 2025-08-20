@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace HotelBookingSystem
 {
     public class Program
-    {   
+    {
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -22,23 +22,6 @@ namespace HotelBookingSystem
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            //// Add Identity
-            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            //    options.SignIn.RequireConfirmedAccount = false)
-            //    .AddEntityFrameworkStores<ApplicationDbContext>()
-            //    .AddDefaultTokenProviders();
-            //// Configure Identity options
-            //builder.Services
-            //.AddIdentity<ApplicationUser, IdentityRole>(opts =>
-            // {
-            //     opts.User.RequireUniqueEmail = true;
-            //     opts.Password.RequiredLength = 6;
-            //     opts.SignIn.RequireConfirmedEmail = false;
-            //     opts.Lockout.MaxFailedAccessAttempts = 5;
-            // })
-            //.AddEntityFrameworkStores<ApplicationDbContext>()
-            //.AddDefaultTokenProviders();
-
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
@@ -47,16 +30,16 @@ namespace HotelBookingSystem
             });
 
             builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>(opts =>
-    {
-        opts.SignIn.RequireConfirmedAccount = false;
-        opts.User.RequireUniqueEmail = true;
-        opts.Password.RequiredLength = 6;
-        opts.SignIn.RequireConfirmedEmail = false;
-        opts.Lockout.MaxFailedAccessAttempts = 5;
-    })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+                .AddIdentity<ApplicationUser, IdentityRole>(opts =>
+                {
+                    opts.SignIn.RequireConfirmedAccount = false;
+                    opts.User.RequireUniqueEmail = true;
+                    opts.Password.RequiredLength = 6;
+                    opts.SignIn.RequireConfirmedEmail = false;
+                    opts.Lockout.MaxFailedAccessAttempts = 5;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -103,25 +86,25 @@ namespace HotelBookingSystem
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             // Seed Database
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    try
-            //    {
-            //        await SeedData.InitializeAsync(services);
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    await SeedData.InitializeAsync(services);
 
-            //        var logger = services.GetRequiredService<ILogger<Program>>();
-            //        logger.LogInformation("Database seeding completed successfully.");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        var logger = services.GetRequiredService<ILogger<Program>>();
-            //        logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogInformation("Database seeding completed successfully.");
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
 
-            //        Console.WriteLine($"Seed error: {ex.Message}");
-            //        Console.WriteLine($"Stack trace: {ex.StackTrace}");
-            //    }
-            //}
+                    Console.WriteLine($"Seed error: {ex.Message}");
+                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                }
+            }
 
             app.Run();
         }
