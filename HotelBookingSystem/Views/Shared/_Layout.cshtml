@@ -72,10 +72,11 @@
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <div class="dropdown">
-                                    <button class="btn dropdown-toggle" type="button" id="userDropdown"
+                                    <button class="btn user-account-btn" type="button" id="userDropdown"
                                             data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="~/images/avatar-placeholder.jpg" alt="Avatar" class="user-avatar" />
-                                        <span>@User.Identity.Name</span>
+                                        <i class="fas fa-user-circle user-icon"></i>
+                                        <span class="user-name">@User.Identity.Name</span>
+                                        <i class="fas fa-chevron-down dropdown-arrow"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                         <li>

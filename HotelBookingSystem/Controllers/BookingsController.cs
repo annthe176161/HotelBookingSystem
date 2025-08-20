@@ -30,7 +30,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> Index(string searchTerm = "", string status = "", string roomType = "", string paymentStatus = "")
         {
             // Lấy user mặc định để test (có thể thay đổi khi có login)
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            var user = await _userManager.FindByEmailAsync("test.customer@example.com");
             if (user == null)
             {
                 TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
@@ -72,7 +72,7 @@ namespace HotelBookingSystem.Controllers
             }
 
             // --- BẮT ĐẦU THAY ĐỔI: Lấy user mặc định để test ---
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            var user = await _userManager.FindByEmailAsync("test.customer@example.com");
             if (user == null)
             {
                 // Xử lý trường hợp không tìm thấy user test. 
@@ -191,7 +191,7 @@ namespace HotelBookingSystem.Controllers
 
                     // --- BẮT ĐẦU THAY ĐỔI: Lấy userId của user mặc định ---
                     Console.WriteLine("Finding test user...");
-                    var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+                    var user = await _userManager.FindByEmailAsync("test.customer@example.com");
                     var userId = user?.Id;
 
                     if (userId == null)
@@ -375,7 +375,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> Details(int id)
         {
             // Lấy user mặc định để test
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            var user = await _userManager.FindByEmailAsync("test.customer@example.com");
             if (user == null)
             {
                 TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
@@ -396,7 +396,7 @@ namespace HotelBookingSystem.Controllers
         public async Task<IActionResult> Cancel(int id)
         {
             // Lấy user mặc định để test
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            var user = await _userManager.FindByEmailAsync("test.customer@example.com");
             if (user == null)
             {
                 TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
