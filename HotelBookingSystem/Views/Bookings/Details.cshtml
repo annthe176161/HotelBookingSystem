@@ -3,6 +3,8 @@
     ViewData["Title"] = $"Chi tiết đặt phòng #{Model.BookingNumber}";
 }
 
+<link rel="stylesheet" href="~/css/booking-details.css" asp-append-version="true" />
+
 <!-- Booking Details Banner -->
 <div class="booking-details-banner">
     <div class="overlay"></div>
@@ -12,7 +14,8 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a asp-controller="Bookings" asp-action="Index">Đặt phòng của tôi</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Bookings" asp-action="Index">Đặt phòng của tôi</a>
+                    </li>
                     <li class="breadcrumb-item active" aria-current="page">Chi tiết đặt phòng</li>
                 </ol>
             </nav>
@@ -89,13 +92,17 @@
                                         <span>@Model.RoomRating</span>
                                     </div>
                                     <div class="room-specs mb-3">
-                                        <span class="room-spec"><i class="fas fa-ruler-combined"></i> @Model.RoomSize m²</span>
-                                        <span class="room-spec"><i class="fas fa-users"></i> Tối đa @Model.RoomCapacity người</span>
+                                        <span class="room-spec"><i class="fas fa-ruler-combined"></i> @Model.RoomSize
+                                            m²</span>
+                                        <span class="room-spec"><i class="fas fa-users"></i> Tối đa @Model.RoomCapacity
+                                            người</span>
                                         <span class="room-spec"><i class="fas fa-bed"></i> @Model.BedType</span>
-                                        <span class="room-spec"><i class="fas fa-map-marker-alt"></i> Tầng @Model.Floor, @Model.Building</span>
+                                        <span class="room-spec"><i class="fas fa-map-marker-alt"></i> Tầng @Model.Floor,
+                                            @Model.Building</span>
                                     </div>
                                     <p>@Model.RoomDescription</p>
-                                    <a href="@Url.Action("Details", "Rooms", new { id = Model.RoomId })" class="btn btn-outline-primary btn-sm">
+                                    <a href="@Url.Action("Details", "Rooms", new { id = Model.RoomId })"
+                                        class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-info-circle"></i> Xem chi tiết phòng
                                     </a>
                                 </div>
@@ -193,20 +200,87 @@
                         </div>
                         <div class="card-body">
                             <div class="policy-item">
-                                <h6><i class="fas fa-calendar-times"></i> Chính sách hủy phòng</h6>
-                                <p>Miễn phí hủy phòng trước 72 giờ kể từ thời điểm nhận phòng. Hủy phòng sau thời gian này sẽ bị tính phí một đêm.</p>
-                                @if (Model.IsCancellable)
-                                {
-                                    <div class="cancellation-deadline">
-                                        <span>Hạn hủy miễn phí:</span>
-                                        <strong>@Model.FreeCancellationDeadline.ToString("HH:mm dd/MM/yyyy")</strong>
+                                <h6><i class="fas fa-calendar-times text-success"></i> Chính sách hủy phòng</h6>
+                                <div class="policy-content">
+                                    <p class="mb-2"><strong>Miễn phí hủy phòng:</strong></p>
+                                    <ul class="policy-list mb-3">
+                                        <li>Hủy trước 6 giờ kể từ thời điểm nhận phòng: <span
+                                                class="text-success font-weight-bold">Hoàn toàn miễn phí</span></li>
+                                        <li>Hủy trong vòng 6 giờ trước nhận phòng: <span class="text-warning">Có thể mất
+                                                phí giữ phòng (nếu có)</span></li>
+                                        <li>No-show (không đến nhận phòng): <span class="text-danger">Tính phí 1
+                                                đêm</span></li>
+                                    </ul>
+                                    <div class="alert alert-info mb-2">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Lưu ý:</strong> Do thanh toán tại khách sạn, việc hủy phòng không ảnh
+                                        hưởng đến thẻ tín dụng của bạn.
                                     </div>
-                                }
+                                    @if (Model.IsCancellable)
+                                    {
+                                        <div class="cancellation-deadline alert alert-success">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            <span>Hạn hủy miễn phí:</span>
+                                            <strong>@Model.FreeCancellationDeadline.ToString("HH:mm dd/MM/yyyy")</strong>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            Đã quá thời hạn hủy miễn phí. Vui lòng liên hệ khách sạn: <strong>1900
+                                                1234</strong>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                             <hr />
                             <div class="policy-item">
-                                <h6><i class="fas fa-clock"></i> Chính sách nhận/trả phòng</h6>
-                                <p>Nhận phòng từ 14:00 - 22:00. Trả phòng trước 12:00. Nhận phòng sớm và trả phòng muộn có thể phát sinh phí bổ sung.</p>
+                                <h6><i class="fas fa-clock text-primary"></i> Chính sách nhận/trả phòng</h6>
+                                <div class="policy-content">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h6 class="text-success"><i class="fas fa-sign-in-alt"></i> Nhận phòng</h6>
+                                            <p class="mb-1"><strong>Thời gian:</strong> 14:00 - 22:00</p>
+                                            <p class="mb-2"><strong>Nhận phòng sớm:</strong> 12:00 - 14:00 (phí 50% giá
+                                                phòng/ngày)</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <h6 class="text-warning"><i class="fas fa-sign-out-alt"></i> Trả phòng</h6>
+                                            <p class="mb-1"><strong>Thời gian:</strong> Trước 12:00</p>
+                                            <p class="mb-2"><strong>Trả phòng muộn:</strong> 12:00 - 18:00 (phí 50% giá
+                                                phòng/ngày)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="policy-item">
+                                <h6><i class="fas fa-credit-card text-info"></i> Chính sách thanh toán</h6>
+                                <div class="policy-content">
+                                    <ul class="policy-list mb-2">
+                                        <li><strong>Thanh toán tại khách sạn:</strong> Tiền mặt (VNĐ)</li>
+                                        <li><strong>Thời điểm thanh toán:</strong> Khi nhận phòng (check-in)</li>
+                                        <li><strong>Không cần:</strong> Thanh toán trước, thẻ tín dụng, đặt cọc</li>
+                                        <li><strong>Hóa đơn:</strong> Cung cấp hóa đơn VAT đầy đủ</li>
+                                    </ul>
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-shield-alt me-2"></i>
+                                        <strong>An toàn:</strong> Không cần cung cấp thông tin thẻ tín dụng online
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="policy-item">
+                                <h6><i class="fas fa-users text-secondary"></i> Chính sách khách</h6>
+                                <div class="policy-content">
+                                    <ul class="policy-list">
+                                        <li><strong>Trẻ em dưới 6 tuổi:</strong> Miễn phí (không tính vào sức chứa)</li>
+                                        <li><strong>Trẻ em 6-12 tuổi:</strong> 50% giá phòng</li>
+                                        <li><strong>Người lớn thêm:</strong> 200.000 VNĐ/người/đêm</li>
+                                        <li><strong>Giấy tờ tùy thân:</strong> Bắt buộc khi check-in</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -219,7 +293,7 @@
                 <div class="booking-payment-summary mb-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0"><i class="fas fa-receipt me-2"></i> Tóm tắt thanh toán</h5>
+                            <h5 class="mb-0"><i class="fas fa-receipt me-2"></i> Chi tiết giá phòng</h5>
                         </div>
                         <div class="card-body">
                             <div class="payment-item">
@@ -242,21 +316,54 @@
                                 </div>
                             }
                             <div class="payment-total">
-                                <div class="total-label">Tổng cộng</div>
+                                <div class="total-label">Tổng tiền phải trả</div>
                                 <div class="total-value">@Model.TotalPrice.ToString("N0") VNĐ</div>
+                            </div>
+
+                            <!-- Payment Notice -->
+                            <div class="payment-notice mt-3">
+                                <div class="alert alert-info p-3">
+                                    <h6 class="alert-heading mb-2">
+                                        <i class="fas fa-hand-holding-usd me-2"></i>
+                                        Thanh toán tại khách sạn
+                                    </h6>
+                                    <p class="mb-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>Miễn phí đặt phòng</strong> - Không thu phí trước
+                                    </p>
+                                    <p class="mb-2">
+                                        <i class="fas fa-money-bill-wave me-2"></i>
+                                        Thanh toán bằng <strong>tiền mặt</strong> khi check-in
+                                    </p>
+                                    <p class="mb-0">
+                                        <i class="fas fa-shield-alt me-2"></i>
+                                        Hủy miễn phí trước 6 giờ check-in
+                                    </p>
+                                </div>
                             </div>
 
                             <div class="payment-method">
                                 <div class="payment-method-header">
-                                    <h6><i class="fas fa-credit-card me-2"></i> Phương thức thanh toán</h6>
-                                    <span class="payment-status @GetPaymentStatusClass(Model.PaymentStatus)">@Model.PaymentStatus</span>
+                                    <h6><i class="fas fa-info-circle me-2"></i> Trạng thái đặt phòng</h6>
+                                    <span class="payment-status @GetPaymentStatusClass(Model.PaymentStatus)">
+                                        @if (Model.PaymentStatus == "Pending")
+                                        {
+                                            <span>Chờ thanh toán tại khách sạn</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@Model.PaymentStatus</span>
+                                        }
+                                    </span>
                                 </div>
                                 <div class="payment-method-details">
-                                    <p class="mb-0">@Model.PaymentMethod</p>
-                                    @if (!string.IsNullOrEmpty(Model.PaymentDetails))
-                                    {
-                                        <small class="text-muted">@Model.PaymentDetails</small>
-                                    }
+                                    <p class="mb-0">
+                                        <i class="fas fa-calendar-check me-2"></i>
+                                        Thanh toán khi nhận phòng
+                                    </p>
+                                    <small class="text-muted">
+                                        Vui lòng mang theo tiền mặt hoặc thẻ ATM để thanh toán tại khách sạn
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -274,21 +381,24 @@
 
                                 @if (Model.IsCancellable)
                                 {
-                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                    <button class="btn btn-outline-danger" data-bs-toggle="modal"
+                                        data-bs-target="#cancelModal">
                                         <i class="fas fa-times"></i> Hủy đặt phòng
                                     </button>
                                 }
 
                                 @if (Model.CanReview)
                                 {
-                                    <a href="@Url.Action("AddReview", "Reviews", new { bookingId = Model.Id })" class="btn btn-warning">
+                                    <a href="@Url.Action("AddReview", "Reviews", new { bookingId = Model.Id })"
+                                        class="btn btn-warning">
                                         <i class="fas fa-star"></i> Viết đánh giá
                                     </a>
                                 }
 
                                 @if (Model.HasReview)
                                 {
-                                    <a href="@Url.Action("ViewReview", "Reviews", new { bookingId = Model.Id })" class="btn btn-outline-success">
+                                    <a href="@Url.Action("ViewReview", "Reviews", new { bookingId = Model.Id })"
+                                        class="btn btn-outline-success">
                                         <i class="fas fa-comment-alt"></i> Xem đánh giá của bạn
                                     </a>
                                 }
@@ -346,7 +456,8 @@
                     </div>
                     <p>Lưu ý:</p>
                     <ul>
-                        <li>Hủy đặt phòng trước @Model.FreeCancellationDeadline.ToString("dd/MM/yyyy HH:mm") sẽ được hoàn tiền 100%.</li>
+                        <li>Hủy đặt phòng trước @Model.FreeCancellationDeadline.ToString("dd/MM/yyyy HH:mm") sẽ được hoàn
+                            tiền 100%.</li>
                         <li>Hủy đặt phòng sau thời gian này sẽ bị tính phí 1 đêm đầu tiên.</li>
                         <li>Sau khi hủy, không thể khôi phục lại đặt phòng.</li>
                     </ul>
@@ -367,8 +478,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không, giữ đặt phòng</button>
-                    <form asp-controller="Bookings" asp-action="Cancel" method="post">
-                        <input type="hidden" name="bookingId" value="@Model.Id" />
+                    <form asp-controller="Bookings" asp-action="Cancel" method="post" style="display: inline;">
+                        <input type="hidden" name="id" value="@Model.Id" />
                         <input type="hidden" id="cancelReasonInput" name="reason" value="" />
                         <button type="submit" class="btn btn-danger" id="confirm-cancel">Xác nhận hủy</button>
                     </form>
@@ -380,7 +491,7 @@
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Xử lý hiển thị lý do khác
             const cancelReason = document.getElementById('cancelReason');
             const otherReasonGroup = document.getElementById('otherReasonGroup');
@@ -389,7 +500,7 @@
             const confirmCancel = document.getElementById('confirm-cancel');
 
             if (cancelReason) {
-                cancelReason.addEventListener('change', function() {
+                cancelReason.addEventListener('change', function () {
                     if (this.value === 'other') {
                         otherReasonGroup.style.display = 'block';
                     } else {
@@ -400,7 +511,7 @@
             }
 
             if (confirmCancel) {
-                confirmCancel.addEventListener('click', function(e) {
+                confirmCancel.addEventListener('click', function (e) {
                     if (!cancelReason.value) {
                         e.preventDefault();
                         alert('Vui lòng chọn lý do hủy đặt phòng');

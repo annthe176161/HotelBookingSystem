@@ -3,60 +3,81 @@
     ViewData["Title"] = "Trang chủ";
 }
 
-<!-- Hero Section -->
+<!-- Hero Section with Image Slider -->
 <section id="hero" class="hero-section">
+    <div class="hero-slider">
+        <div class="hero-slide active" style="background-image: url('/images/hero/hero1.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('/images/hero/hero2.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('/images/hero/hero3.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-slide" style="background-image: url('/images/hero/phonghero.jpg')">
+            <div class="hero-overlay"></div>
+        </div>
+    </div>
+    
+    <!-- Hero Navigation Dots -->
+    <div class="hero-dots">
+        <span class="dot active" data-slide="0"></span>
+        <span class="dot" data-slide="1"></span>
+        <span class="dot" data-slide="2"></span>
+        <span class="dot" data-slide="3"></span>
+    </div>
+    
+    <!-- Hero Navigation Arrows -->
+    <div class="hero-nav">
+        <button class="hero-nav-btn prev" onclick="changeSlide(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="hero-nav-btn next" onclick="changeSlide(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
     <div class="hero-content">
         <div class="hero-text">
             <h1>Chào mừng đến với Luxury Hotel</h1>
-            <p>Trải nghiệm kỳ nghỉ đẳng cấp với dịch vụ 5 sao</p>
+            <p>Trải nghiệm kỳ nghỉ đẳng cấp với dịch vụ 5 sao tại trung tâm thành phố</p>
+            <div class="hero-buttons">
+                <a asp-controller="Home" asp-action="Rooms" class="btn btn-primary btn-lg">Khám phá phòng</a>
+                <a href="#about" class="btn btn-outline-light btn-lg">Tìm hiểu thêm</a>
+            </div>
         </div>
+    </div>
+</section>
 
-        <!-- Search Form -->
-        <div class="search-container">
-            <form id="searchForm" asp-controller="Home" asp-action="Rooms" method="get">
-                <div class="row search-box">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="form-group">
-                            <label>Nhận phòng</label>
-                            <input type="date" class="form-control" id="checkin" name="checkin">
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="form-group">
-                            <label>Trả phòng</label>
-                            <input type="date" class="form-control" id="checkout" name="checkout">
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4">
-                        <div class="form-group">
-                            <label>Người lớn</label>
-                            <select class="form-control" id="adults" name="adults">
-                                <option value="1">1</option>
-                                <option value="2" selected>2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4">
-                        <div class="form-group">
-                            <label>Trẻ em</label>
-                            <select class="form-control" id="children" name="children">
-                                <option value="0" selected>0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-4">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button type="submit" class="btn btn-search w-100">Tìm phòng</button>
-                        </div>
-                    </div>
+<!-- Stats Section -->
+<section id="stats" class="stats-section">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">Phòng nghỉ</div>
                 </div>
-            </form>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Năm kinh nghiệm</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Khách hàng hài lòng</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Đánh giá tích cực</div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -64,19 +85,39 @@
 <!-- About Section -->
 <section id="about" class="about-section">
     <div class="container">
-        <div class="row">
+        <div class="row align-items-center">
             <div class="col-lg-6">
                 <div class="about-image">
-                    <img src="/images/hotel-exterior.jpg" alt="Luxury Hotel">
+                    <img src="/images/avatars/LuxuryHotel.webp" alt="Luxury Hotel" class="img-fluid rounded">
+                    <div class="about-overlay">
+                        <div class="about-badge">
+                            <i class="fas fa-award"></i>
+                            <span>Khách sạn 5 sao</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="about-content">
-                    <h2 class="section-title">Về chúng tôi</h2>
-                    <p class="section-subtitle">Sang trọng & tiện nghi</p>
+                    <h2 class="section-title">Về Luxury Hotel</h2>
+                    <p class="section-subtitle">Sang trọng & tiện nghi từ 2008</p>
                     <div class="about-text">
-                        <p>Luxury Hotel mang đến không gian nghỉ dưỡng sang trọng bậc nhất, nơi bạn có thể tận hưởng sự riêng tư và dịch vụ cá nhân hóa. Với vị trí đắc địa, khách sạn là điểm đến lý tưởng cho cả doanh nhân và du khách.</p>
-                        <p>Chúng tôi tự hào về đội ngũ nhân viên chuyên nghiệp, luôn sẵn sàng đáp ứng mọi nhu cầu của quý khách.</p>
+                        <p>Luxury Hotel mang đến không gian nghỉ dưỡng sang trọng bậc nhất, nơi bạn có thể tận hưởng sự riêng tư và dịch vụ cá nhân hóa. Với vị trí đắc địa tại trung tâm thành phố, khách sạn là điểm đến lý tưởng cho cả doanh nhân và du khách.</p>
+                        <p>Chúng tôi tự hào về đội ngũ nhân viên chuyên nghiệp, luôn sẵn sàng đáp ứng mọi nhu cầu của quý khách với tiêu chuẩn dịch vụ quốc tế.</p>
+                        <div class="about-highlights">
+                            <div class="highlight-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Vị trí trung tâm thành phố</span>
+                            </div>
+                            <div class="highlight-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Dịch vụ 24/7</span>
+                            </div>
+                            <div class="highlight-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Tiêu chuẩn quốc tế</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="about-features">
                         <div class="feature-item">
@@ -85,15 +126,15 @@
                         </div>
                         <div class="feature-item">
                             <i class="fas fa-swimming-pool"></i>
-                            <span>Hồ bơi</span>
+                            <span>Hồ bơi vô cực</span>
                         </div>
                         <div class="feature-item">
                             <i class="fas fa-spa"></i>
-                            <span>Spa</span>
+                            <span>Spa & Wellness</span>
                         </div>
                         <div class="feature-item">
                             <i class="fas fa-utensils"></i>
-                            <span>Nhà hàng</span>
+                            <span>3 nhà hàng</span>
                         </div>
                     </div>
                 </div>
@@ -114,15 +155,18 @@
                 {
                     foreach (var room in Model)
                     {
-                        <div class="col-lg-3 col-md-6">
+                        <div class="col-lg-3 col-md-6 mb-4">
                             <div class="room-card">
                                 <div class="room-img">
                                     <a asp-controller="Rooms" asp-action="Details" asp-route-id="@room.Id">
-                                        <img src="@room.ImageUrl" alt="@room.Name">
+                                        <img src="@room.ImageUrl" alt="@room.Name" class="img-fluid">
                                     </a>
                                     <div class="room-price">
                                         <span>@String.Format("{0:N0}", room.PricePerNight) VNĐ</span>
                                         <small>/đêm</small>
+                                    </div>
+                                    <div class="room-badge">
+                                        <span class="badge badge-featured">Nổi bật</span>
                                     </div>
                                 </div>
                                 <div class="room-info">
@@ -150,7 +194,10 @@
                                         <span><i class="fas fa-users"></i> @room.Capacity người</span>
                                         <span><i class="fas fa-bed"></i> @room.RoomType</span>
                                     </div>
-                                    <a asp-controller="Rooms" asp-action="Details" asp-route-id="@room.Id" class="btn btn-outline-primary">Xem chi tiết</a>
+                                    <div class="room-actions">
+                                        <a asp-controller="Rooms" asp-action="Details" asp-route-id="@room.Id" class="btn btn-outline-primary">Xem chi tiết</a>
+                                        <a asp-controller="Bookings" asp-action="Create" asp-route-roomId="@room.Id" class="btn btn-primary">Đặt ngay</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -159,12 +206,80 @@
                 else
                 {
                     <div class="col-12 text-center">
-                        <p>Hiện không có phòng nào để hiển thị</p>
+                        <div class="no-rooms-message">
+                            <i class="fas fa-bed fa-3x mb-3 text-muted"></i>
+                            <p>Hiện không có phòng nào để hiển thị</p>
+                        </div>
                     </div>
                 }
             </div>
-            <div class="text-center mt-4">
-                <a asp-controller="Home" asp-action="Rooms" class="btn btn-primary">Xem tất cả phòng</a>
+            <div class="text-center mt-5">
+                <a asp-controller="Home" asp-action="Rooms" class="btn btn-primary btn-lg">Xem tất cả phòng</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Special Offers Section -->
+<section id="offers" class="offers-section">
+    <div class="container">
+        <h2 class="section-title text-center">Ưu đãi đặc biệt</h2>
+        <p class="section-subtitle text-center">Không bỏ lỡ những cơ hội tuyệt vời</p>
+        
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="offer-card">
+                    <div class="offer-image">
+                        <img src="/images/offers/uudaione.webp" alt="Đặt sớm" class="img-fluid">
+                        <div class="offer-discount">
+                            <span>-20%</span>
+                        </div>
+                    </div>
+                    <div class="offer-content">
+                        <h4>Ưu đãi đặt sớm</h4>
+                        <p>Tiết kiệm 20% khi đặt phòng trước 30 ngày</p>
+                        <div class="offer-validity">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Có hiệu lực đến 31/12/2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="offer-card">
+                    <div class="offer-image">
+                        <img src="/images/offers/uudaitwo.jpg" alt="Cuối tuần" class="img-fluid">
+                        <div class="offer-discount">
+                            <span>-15%</span>
+                        </div>
+                    </div>
+                    <div class="offer-content">
+                        <h4>Gói cuối tuần</h4>
+                        <p>Giảm 15% cho kỳ nghỉ cuối tuần (2 đêm trở lên)</p>
+                        <div class="offer-validity">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Áp dụng mỗi cuối tuần</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="offer-card">
+                    <div class="offer-image">
+                        <img src="/images/offers/uudaithree.jpg" alt="Ở dài hạn" class="img-fluid">
+                        <div class="offer-discount">
+                            <span>-25%</span>
+                        </div>
+                    </div>
+                    <div class="offer-content">
+                        <h4>Ưu đãi lưu trú dài hạn</h4>
+                        <p>Giảm 25% khi ở từ 7 đêm trở lên</p>
+                        <div class="offer-validity">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Quanh năm</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -173,44 +288,159 @@
 <!-- Services Section -->
 <section id="services" class="services-section">
     <div class="container">
-        <h2 class="section-title text-center">Dịch vụ của chúng tôi</h2>
-        <p class="section-subtitle text-center">Trải nghiệm đẳng cấp</p>
+        <h2 class="section-title text-center">Dịch vụ & Tiện ích</h2>
+        <p class="section-subtitle text-center">Trải nghiệm đẳng cấp quốc tế</p>
 
         <div class="row">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <div class="service-item">
                     <div class="service-icon">
                         <i class="fas fa-concierge-bell"></i>
                     </div>
                     <h3>Dịch vụ phòng 24/7</h3>
-                    <p>Sẵn sàng phục vụ mọi nhu cầu của quý khách mọi lúc, mọi nơi</p>
+                    <p>Sẵn sàng phục vụ mọi nhu cầu của quý khách mọi lúc, mọi nơi với đội ngũ chuyên nghiệp</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <div class="service-item">
                     <div class="service-icon">
                         <i class="fas fa-utensils"></i>
                     </div>
                     <h3>Nhà hàng & Bar</h3>
-                    <p>Thưởng thức ẩm thực đa dạng từ các đầu bếp hàng đầu</p>
+                    <p>3 nhà hàng phong cách và 2 bar sang trọng với ẩm thực đa dạng từ các đầu bếp hàng đầu</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <div class="service-item">
                     <div class="service-icon">
                         <i class="fas fa-spa"></i>
                     </div>
-                    <h3>Spa & Massage</h3>
-                    <p>Thư giãn và làm mới cơ thể với các liệu pháp spa đẳng cấp</p>
+                    <h3>Spa & Wellness</h3>
+                    <p>Trung tâm chăm sóc sức khỏe 1500m² với các liệu pháp spa đẳng cấp quốc tế</p>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <div class="service-item">
                     <div class="service-icon">
                         <i class="fas fa-swimming-pool"></i>
                     </div>
                     <h3>Hồ bơi & Gym</h3>
-                    <p>Giữ gìn sức khỏe và thư giãn tại hồ bơi vô cực và phòng gym hiện đại</p>
+                    <p>Hồ bơi vô cực tầng 25 và phòng gym hiện đại với trang thiết bị cao cấp</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Đưa đón sân bay</h3>
+                    <p>Dịch vụ đưa đón sân bay sang trọng với xe Limousine cao cấp</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Trung tâm Hội nghị</h3>
+                    <p>5 phòng họp hiện đại và hội trường 500 chỗ với trang thiết bị công nghệ cao</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                    <h3>Dịch vụ trẻ em</h3>
+                    <p>Khu vui chơi trẻ em an toàn và dịch vụ chăm sóc chuyên nghiệp</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="service-item">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>An ninh 24/7</h3>
+                    <p>Hệ thống an ninh hiện đại với camera và bảo vệ chuyên nghiệp</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section id="gallery" class="gallery-section">
+    <div class="container">
+        <h2 class="section-title text-center">Thư viện hình ảnh</h2>
+        <p class="section-subtitle text-center">Khám phá vẻ đẹp của Luxury Hotel</p>
+        
+        <div class="gallery-grid">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="gallery-item">
+                        <img src="/images/gallery/sanhkhachsan.jpg" alt="Sảnh khách sạn" class="img-fluid">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h5>Sảnh chính</h5>
+                                <p>Không gian sang trọng và ấm cúng</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="gallery-item">
+                        <img src="/images/gallery/nhahang.jpg" alt="Nhà hàng" class="img-fluid">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h5>Nhà hàng chính</h5>
+                                <p>Ẩm thực cao cấp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="gallery-item">
+                        <img src="/images/gallery/hoboi.jpg" alt="Hồ bơi" class="img-fluid">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h5>Hồ bơi vô cực</h5>
+                                <p>View toàn cảnh thành phố</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="gallery-item">
+                        <img src="/images/gallery/spa.jpg" alt="Spa" class="img-fluid">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h5>Trung tâm Spa</h5>
+                                <p>Thư giãn và tái tạo năng lượng</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="gallery-item">
+                        <img src="/images/gallery/phonggym.jpg" alt="Phòng gym" class="img-fluid">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h5>Phòng gym</h5>
+                                <p>Trang thiết bị hiện đại</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="gallery-item">
+                        <img src="/images/gallery/phonghop.jpg" alt="Phòng họp" class="img-fluid">
+                        <div class="gallery-overlay">
+                            <div class="gallery-content">
+                                <h5>Trung tâm hội nghị</h5>
+                                <p>Không gian sự kiện chuyên nghiệp</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,13 +455,13 @@
 
         <div class="testimonial-carousel">
             <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="testimonial-item">
+                <div class="col-lg-4 col-md-6 d-flex">
+                    <div class="testimonial-item h-100">
                         <div class="testimonial-content">
                             <p>"Một trải nghiệm tuyệt vời! Dịch vụ chuyên nghiệp và phòng ốc sang trọng. Tôi sẽ quay lại trong kỳ nghỉ tiếp theo."</p>
                         </div>
                         <div class="testimonial-author">
-                            <img src="/images/testimonials/user1.jpg" alt="User">
+                            <img src="/images/avatars/avt1.jpg" alt="User">
                             <div class="author-info">
                                 <h4>Nguyễn Văn A</h4>
                                 <div class="rating">
@@ -245,13 +475,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="testimonial-item">
+                <div class="col-lg-4 col-md-6 d-flex">
+                    <div class="testimonial-item h-100">
                         <div class="testimonial-content">
                             <p>"Khách sạn có vị trí tuyệt vời, nhân viên thân thiện và hỗ trợ nhiệt tình. Phòng sạch sẽ và thoải mái."</p>
                         </div>
                         <div class="testimonial-author">
-                            <img src="/images/testimonials/user2.jpg" alt="User">
+                            <img src="/images/avatars/avt2.jpg" alt="User">
                             <div class="author-info">
                                 <h4>Trần Thị B</h4>
                                 <div class="rating">
@@ -265,13 +495,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="testimonial-item">
+                <div class="col-lg-4 col-md-6 d-flex">
+                    <div class="testimonial-item h-100">
                         <div class="testimonial-content">
                             <p>"Bữa sáng phong phú, nhân viên thân thiện và phòng rộng rãi. Đây là lựa chọn hoàn hảo cho chuyến công tác của tôi."</p>
                         </div>
                         <div class="testimonial-author">
-                            <img src="/images/testimonials/user3.jpg" alt="User">
+                            <img src="/images/avatars/avt3.jpg" alt="User">
                             <div class="author-info">
                                 <h4>Lê Văn C</h4>
                                 <div class="rating">
@@ -303,14 +533,15 @@
                             <i class="fas fa-map-marker-alt"></i>
                             <div>
                                 <h4>Địa chỉ</h4>
-                                <p>123 Đường ABC, Quận 1, TP. Hồ Chí Minh</p>
+                                <p>123 Phố Hoàn Kiếm, Quận Hoàn Kiếm, Hà Nội</p>
                             </div>
                         </li>
                         <li>
                             <i class="fas fa-phone-alt"></i>
                             <div>
                                 <h4>Điện thoại</h4>
-                                <p>+84 123 456 789</p>
+                                <p>+84 (024) 3822 5555</p>
+                                <p>Hotline: 1900 1234</p>
                             </div>
                         </li>
                         <li>
@@ -318,21 +549,49 @@
                             <div>
                                 <h4>Email</h4>
                                 <p>info@luxuryhotel.com</p>
+                                <p>booking@luxuryhotel.com</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <h4>Giờ làm việc</h4>
+                                <p>Lễ tân: 24/7</p>
+                                <p>Dịch vụ khách hàng: 6:00 - 22:00</p>
                             </div>
                         </li>
                     </ul>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <h5>Theo dõi chúng tôi</h5>
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.3960070386117!2d106.69886111471925!3d10.775267692322647!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f49499e8cc3%3A0xb98b56018d844143!2sLandmark%2081!5e0!3m2!1svi!2s!4v1645960512080!5m2!1svi!2s"
-                            style="border:0; width:100%; height:400px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <h4>Vị trí khách sạn</h4>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.096756018074!2d105.84116841493284!3d21.028511393063844!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab9bd9861ca1%3A0xe7887f7b72ca17a9!2sHoan%20Kiem%20Lake!5e0!3m2!1svi!2s!4v1645960512080!5m2!1svi!2s"
+                            style="border:0; width:100%; height:400px; border-radius: 10px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <div class="location-info mt-3">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <i class="fas fa-plane"></i>
+                                <p><strong>Sân bay</strong><br>15 phút lái xe</p>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-shopping-bag"></i>
+                                <p><strong>Trung tâm mua sắm</strong><br>5 phút đi bộ</p>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-landmark"></i>
+                                <p><strong>Địa danh</strong><br>2 phút đi bộ</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

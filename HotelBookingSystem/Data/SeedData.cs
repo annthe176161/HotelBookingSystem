@@ -30,11 +30,65 @@ namespace HotelBookingSystem.Data
 
                 // Cập nhật dữ liệu Rooms thành tiếng Việt
                 await UpdateRoomsToVietnameseAsync(context, logger);
+
+                // Seed Default Test User
+                await SeedDefaultTestUserAsync(userManager, roleManager, logger);
+
+                // Seed Test Bookings
+                await SeedTestBookingsAsync(context, userManager, logger);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
                 throw;
+            }
+        }
+
+        private static async Task SeedDefaultTestUserAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger logger)
+        {
+            // Xóa user cũ nếu tồn tại
+            var oldUser = await userManager.FindByEmailAsync("test.user@example.com");
+            if (oldUser != null)
+            {
+                logger.LogInformation("Removing old test user 'test.user@example.com'...");
+                await userManager.DeleteAsync(oldUser);
+            }
+
+            const string userEmail = "thanhan01236339441@gmail.com";
+            logger.LogInformation("Checking if default test user '{UserEmail}' exists...", userEmail);
+
+            var testUser = await userManager.FindByEmailAsync(userEmail);
+            if (testUser == null)
+            {
+                logger.LogInformation("Creating default test user '{UserEmail}'...", userEmail);
+                testUser = new ApplicationUser
+                {
+                    UserName = userEmail,
+                    Email = userEmail,
+                    EmailConfirmed = true,
+                    FullName = "Nguyễn Thành An",
+                    PhoneNumber = "0123456789"
+                };
+
+                var result = await userManager.CreateAsync(testUser, "Password@123");
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("Default test user created successfully.");
+                    // Gán vai trò "Guest"
+                    if (await roleManager.RoleExistsAsync("Guest"))
+                    {
+                        await userManager.AddToRoleAsync(testUser, "Guest");
+                        logger.LogInformation("Assigned 'Guest' role to default test user.");
+                    }
+                }
+                else
+                {
+                    logger.LogError("Failed to create default test user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+            else
+            {
+                logger.LogInformation("Default test user '{UserEmail}' already exists.", userEmail);
             }
         }
 
@@ -323,6 +377,116 @@ namespace HotelBookingSystem.Data
             await context.SaveChangesAsync();
 
             logger.LogInformation("Added {Count} Vietnamese rooms successfully.", vietnameseRooms.Count);
+        }
+
+        private static async Task SeedTestBookingsAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger logger)
+        {
+            // Kiểm tra xem đã có booking test chưa
+            if (context.Bookings.Any())
+            {
+                logger.LogInformation("Test bookings already exist.");
+                return;
+            }
+
+            logger.LogInformation("Creating test bookings...");
+
+            // Lấy test user
+            var testUser = await userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            if (testUser == null)
+            {
+                logger.LogWarning("Test user not found, cannot create test bookings.");
+                return;
+            }
+
+            // Lấy rooms
+            var rooms = await context.Rooms.Take(3).ToListAsync();
+            if (!rooms.Any())
+            {
+                logger.LogWarning("No rooms found, cannot create test bookings.");
+                return;
+            }
+
+            // Lấy booking statuses
+            var pendingStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Pending");
+            var confirmedStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Confirmed");
+            var completedStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Completed");
+
+            // Lấy payment statuses
+            var pendingPayment = await context.PaymentStatuses.FirstOrDefaultAsync(ps => ps.Name == "Pending");
+            var completedPayment = await context.PaymentStatuses.FirstOrDefaultAsync(ps => ps.Name == "Completed");
+
+            var testBookings = new List<Booking>();
+
+            // Booking 1: Sắp tới
+            if (rooms.Count > 0 && confirmedStatus != null)
+            {
+                var booking1 = new Booking
+                {
+                    UserId = testUser.Id,
+                    RoomId = rooms[0].Id,
+                    CheckIn = DateTime.Today.AddDays(5),
+                    CheckOut = DateTime.Today.AddDays(8),
+                    TotalPrice = rooms[0].PricePerNight * 3,
+                    Guests = 2,
+                    CreatedDate = DateTime.Now.AddDays(-2),
+                    BookingStatusId = confirmedStatus.Id
+                };
+                testBookings.Add(booking1);
+            }
+
+            // Booking 2: Đã hoàn thành
+            if (rooms.Count > 1 && completedStatus != null)
+            {
+                var booking2 = new Booking
+                {
+                    UserId = testUser.Id,
+                    RoomId = rooms[1].Id,
+                    CheckIn = DateTime.Today.AddDays(-10),
+                    CheckOut = DateTime.Today.AddDays(-7),
+                    TotalPrice = rooms[1].PricePerNight * 3,
+                    Guests = 1,
+                    CreatedDate = DateTime.Now.AddDays(-15),
+                    BookingStatusId = completedStatus.Id
+                };
+                testBookings.Add(booking2);
+            }
+
+            // Booking 3: Đang chờ
+            if (rooms.Count > 2 && pendingStatus != null)
+            {
+                var booking3 = new Booking
+                {
+                    UserId = testUser.Id,
+                    RoomId = rooms[2].Id,
+                    CheckIn = DateTime.Today.AddDays(15),
+                    CheckOut = DateTime.Today.AddDays(17),
+                    TotalPrice = rooms[2].PricePerNight * 2,
+                    Guests = 2,
+                    CreatedDate = DateTime.Now.AddHours(-3),
+                    BookingStatusId = pendingStatus.Id
+                };
+                testBookings.Add(booking3);
+            }
+
+            context.Bookings.AddRange(testBookings);
+
+            // Tạo payments tương ứng
+            foreach (var booking in testBookings)
+            {
+                var payment = new Payment
+                {
+                    BookingId = booking.Id,
+                    Amount = booking.TotalPrice,
+                    PaymentMethod = "Credit Card",
+                    TransactionId = $"TXN_{Guid.NewGuid().ToString("N")[..8].ToUpper()}",
+                    PaymentDate = booking.BookingStatusId == completedStatus?.Id ? booking.CreatedDate.AddMinutes(30) : DateTime.Now,
+                    PaymentStatusId = booking.BookingStatusId == completedStatus?.Id ? completedPayment?.Id ?? 1 : pendingPayment?.Id ?? 1
+                };
+                context.Payments.Add(payment);
+            }
+
+            await context.SaveChangesAsync();
+            logger.LogInformation("Created {Count} test bookings successfully.", testBookings.Count);
         }
     }
 }

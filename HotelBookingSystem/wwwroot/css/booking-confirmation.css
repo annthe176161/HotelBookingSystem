@@ -1,0 +1,418 @@
+/* Booking Confirmation Styles */
+
+/* Confirmation Banner */
+.confirmation-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.confirmation-banner .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.confirmation-banner .banner-content {
+    position: relative;
+    z-index: 2;
+}
+
+.success-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: #28a745;
+}
+
+.confirmation-banner h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.confirmation-banner .lead {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* Confirmation Container */
+.confirmation-container {
+    background: #f8f9fa;
+    min-height: 60vh;
+}
+
+/* Booking Info Card */
+.booking-info-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.booking-info-card .card-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 20px 30px;
+    border-bottom: none;
+}
+
+.booking-info-card .card-body {
+    padding: 30px;
+}
+
+/* Booking ID Section */
+.booking-id-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.info-item {
+    margin-bottom: 10px;
+}
+
+.info-item strong {
+    color: #2c3e50;
+    margin-right: 10px;
+}
+
+.booking-number {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    padding: 4px 8px;
+    border-radius: 5px;
+}
+
+/* Section Titles */
+.section-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: #667eea;
+}
+
+/* Room Card */
+.room-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.room-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.room-name {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.room-type {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.room-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detail-item {
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.detail-item i {
+    color: #667eea;
+    width: 16px;
+}
+
+/* Stay Details */
+.stay-details {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.date-item {
+    text-align: center;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.date-label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.date-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.date-value i {
+    color: #667eea;
+}
+
+.time-note {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.nights-count {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+/* Payment Summary */
+.payment-summary {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.price-breakdown {
+    margin-bottom: 20px;
+}
+
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.price-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+    border-top: 2px solid #dee2e6;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.payment-method {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.payment-method i {
+    color: #28a745;
+}
+
+/* Important Info Card */
+.important-info-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.important-info-card .card-header {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: white;
+    padding: 15px 30px;
+}
+
+.info-list .info-item {
+    display: flex;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.info-list .info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-list .info-item i {
+    color: #667eea;
+    margin-top: 2px;
+    font-size: 1.1rem;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.info-list .info-item div {
+    flex-grow: 1;
+}
+
+.info-list .info-item strong {
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.info-list .info-item p {
+    color: #6c757d;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Action Buttons */
+.action-buttons {
+    margin-top: 30px;
+}
+
+.action-buttons .btn {
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn i {
+    margin-right: 8px;
+}
+
+.action-buttons .btn-outline-primary {
+    border: 2px solid #667eea;
+    color: #667eea;
+}
+
+.action-buttons .btn-outline-primary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.action-buttons .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.action-buttons .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .confirmation-banner {
+        padding: 60px 0;
+    }
+    
+    .confirmation-banner h1 {
+        font-size: 2rem;
+    }
+    
+    .success-icon {
+        font-size: 3rem;
+    }
+    
+    .booking-info-card .card-body {
+        padding: 20px;
+    }
+    
+    .booking-id-section {
+        padding: 15px;
+    }
+    
+    .stay-details {
+        padding: 20px;
+    }
+    
+    .date-item {
+        margin-bottom: 10px;
+    }
+    
+    .action-buttons .btn {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    
+    .room-image {
+        height: 100px;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .confirmation-banner {
+        padding: 40px 0;
+    }
+    
+    .confirmation-banner h1 {
+        font-size: 1.5rem;
+    }
+    
+    .confirmation-banner .lead {
+        font-size: 1rem;
+    }
+    
+    .booking-info-card .card-header {
+        padding: 15px 20px;
+    }
+    
+    .booking-info-card .card-body {
+        padding: 15px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .confirmation-banner {
+        background: #667eea !important;
+        -webkit-print-color-adjust: exact;
+    }
+    
+    .action-buttons {
+        display: none;
+    }
+    
+    .important-info-card .card-header {
+        background: #f39c12 !important;
+        -webkit-print-color-adjust: exact;
+    }
+    
+    .booking-info-card .card-header {
+        background: #2c3e50 !important;
+        -webkit-print-color-adjust: exact;
+    }
+}

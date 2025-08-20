@@ -76,6 +76,9 @@ namespace HotelBookingSystem
             builder.Services.AddScoped<IAdminRoomService, AdminRoomService>();
             builder.Services.AddScoped<IAdminUserService, AdminUserService>();
             builder.Services.AddScoped<IAdminBookingService, AdminBookingService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
 
             var app = builder.Build();
 

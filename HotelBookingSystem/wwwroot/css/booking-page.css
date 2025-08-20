@@ -1,0 +1,528 @@
+/* Booking Page Styles */
+
+/* Main Layout */
+.simple-booking-page {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 0;
+}
+
+.booking-container {
+    width: 100%;
+    margin: 0;
+    background: white;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+.booking-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.booking-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.booking-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 16px;
+}
+
+.booking-content {
+    padding: 40px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Form Sections */
+.form-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin-bottom: 25px;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.section-title {
+    color: #495057;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-label {
+    color: #495057;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-group-text {
+    background: #667eea;
+    color: white;
+    border: 2px solid #667eea;
+    font-weight: 500;
+}
+
+/* Booking Summary */
+.booking-summary {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 25px;
+    position: sticky;
+    top: 20px;
+}
+
+.summary-title {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f1f3f4;
+}
+
+/* Buttons */
+.btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+/* Progress indicator styles */
+.booking-progress-container {
+    margin-bottom: 25px;
+}
+
+.booking-progress-card {
+    background: white;
+    border: 1px solid #e3e6f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.progress-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.progress-header small {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 30px 40px;
+    background: #f8f9fa;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.step-connector {
+    height: 3px;
+    background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 100%);
+    flex: 1;
+    margin: 0 15px;
+    margin-top: -25px;
+    border-radius: 2px;
+}
+
+.step-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e9ecef;
+    border: 3px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    color: #6c757d;
+}
+
+.step-item.active .step-circle {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.step-item.completed .step-circle {
+    background: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.step-item.completed ~ .step-connector {
+    background: #28a745;
+}
+
+.step-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6c757d;
+    white-space: nowrap;
+    margin-top: 5px;
+}
+
+.step-item.active .step-label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Helpful info cards */
+.helpful-info-card {
+    background: white;
+    border: 1px solid #e3e6f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.helpful-info-card .card-header {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+    padding: 15px 20px;
+    border-bottom: none;
+}
+
+.helpful-info-card .card-body {
+    padding: 20px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 15px;
+}
+
+.info-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.info-card.wifi::before {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.info-card.parking::before {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.info-card.breakfast::before {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    border-color: #667eea;
+}
+
+.info-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+    color: white;
+    font-size: 20px;
+}
+
+.info-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.info-icon.wifi {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.info-icon.parking {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.info-icon.breakfast {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.info-content h6 {
+    color: #495057;
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.info-content p {
+    color: #6c757d;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Cancellation policy cards */
+.cancellation-policy-card {
+    background: white;
+    border: 1px solid #e3e6f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.cancellation-policy-card .card-header {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: white;
+    padding: 15px 20px;
+    border-bottom: none;
+}
+
+.cancellation-policy-card .card-body {
+    padding: 20px;
+}
+
+.policy-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.policy-item-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.policy-item-card.success {
+    border-left-color: #28a745;
+    background: #f8fff9;
+}
+
+.policy-item-card.warning {
+    border-left-color: #ffc107;
+    background: #fffdf5;
+}
+
+.policy-item-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.policy-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+    color: white;
+}
+
+.policy-item-card.success .policy-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.policy-item-card.warning .policy-icon {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.policy-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.policy-text strong {
+    color: #495057;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.policy-text span {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+/* Animation styles */
+.fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.discount-notification {
+    border-left: 4px solid #28a745;
+}
+
+.availability-status {
+    border-left: 4px solid #007bff;
+}
+
+.contact-support .support-hours {
+    margin-top: 5px;
+}
+
+.terms-content h6 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.terms-content ul {
+    margin-bottom: 15px;
+}
+
+.terms-content li {
+    margin-bottom: 5px;
+    line-height: 1.5;
+}
+
+/* Cải thiện giao diện readonly fields */
+.form-control.bg-light {
+    cursor: not-allowed;
+    border-color: #e9ecef;
+}
+
+.alert-info .alert-link {
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.alert-info .alert-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .progress-steps {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .step-connector {
+        display: none;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .info-card {
+        padding: 15px;
+    }
+    
+    .modal-lg {
+        max-width: 95%;
+    }
+    
+    .alert.position-fixed {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .booking-progress-card .progress-header {
+        padding: 15px 20px;
+    }
+    
+    .step-circle {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+}

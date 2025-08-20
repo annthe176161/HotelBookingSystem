@@ -130,8 +130,30 @@
 
                 <!-- Room Policies -->
                 <div class="room-policies">
-                    <h3>Chính sách phòng</h3>
+                    <h3>Chính sách phòng & Điều khoản đặt phòng</h3>
                     <div class="row">
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-calendar-times" aria-hidden="true"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h5>Chính sách hủy phòng</h5>
+                                    <p>Miễn phí hủy phòng trước 24 giờ kể từ thời điểm nhận phòng. Không áp dụng phí hủy phòng do thanh toán tại khách sạn.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-credit-card" aria-hidden="true"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h5>Thanh toán</h5>
+                                    <p>Thanh toán trực tiếp tại khách sạn khi nhận phòng. Chấp nhận tiền mặt và thẻ.</p>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="policy-item" tabindex="0">
                                 <div class="policy-icon">
@@ -139,7 +161,7 @@
                                 </div>
                                 <div class="policy-content">
                                     <h5>Không hút thuốc</h5>
-                                    <p>Không được phép hút thuốc trong phòng</p>
+                                    <p>Không được phép hút thuốc trong phòng. Khu vực hút thuốc có sẵn tại sảnh.</p>
                                 </div>
                             </div>
                         </div>
@@ -149,8 +171,8 @@
                                     <i class="fas fa-paw" aria-hidden="true"></i>
                                 </div>
                                 <div class="policy-content">
-                                    <h5>Không mang thú cưng</h5>
-                                    <p>Không cho phép mang thú cưng vào phòng</p>
+                                    <h5>Thú cưng</h5>
+                                    <p>Không cho phép mang thú cưng vào khách sạn để đảm bảo vệ sinh và sự thoải mái cho tất cả khách hàng.</p>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +183,7 @@
                                 </div>
                                 <div class="policy-content">
                                     <h5>Giờ nhận phòng</h5>
-                                    <p>Từ 14:00 - 22:00</p>
+                                    <p>Từ 14:00 - 22:00 hàng ngày. Nhận phòng sớm có thể được sắp xếp với phụ phí.</p>
                                 </div>
                             </div>
                         </div>
@@ -172,8 +194,114 @@
                                 </div>
                                 <div class="policy-content">
                                     <h5>Giờ trả phòng</h5>
-                                    <p>Trước 12:00</p>
+                                    <p>Trước 12:00 trưa. Trả phòng trễ có thể bị tính phí thêm 50% giá phòng/ngày.</p>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-id-card" aria-hidden="true"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h5>Giấy tờ tùy thân</h5>
+                                    <p>Bắt buộc xuất trình CMND/CCCD hoặc Passport khi nhận phòng theo quy định pháp luật.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="policy-item" tabindex="0">
+                                <div class="policy-icon">
+                                    <i class="fas fa-user-friends" aria-hidden="true"></i>
+                                </div>
+                                <div class="policy-content">
+                                    <h5>Số lượng khách</h5>
+                                    <p>Tối đa @Model.Capacity người/phòng. Không cho phép khách thêm qua đêm mà không đăng ký.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room Amenities & What's Included -->
+                <div class="room-amenities">
+                    <h3>Tiện nghi & Dịch vụ phòng</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-bed text-primary"></i> Tiện nghi giường ngủ</h5>
+                            <ul class="amenity-list">
+                                <li><i class="fas fa-check text-success"></i> Ga trải giường cao cấp</li>
+                                <li><i class="fas fa-check text-success"></i> Gối êm ái</li>
+                                <li><i class="fas fa-check text-success"></i> Chăn mền sạch sẽ</li>
+                                <li><i class="fas fa-check text-success"></i> Thay ga giường hàng ngày</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-shower text-primary"></i> Phòng tắm riêng</h5>
+                            <ul class="amenity-list">
+                                <li><i class="fas fa-check text-success"></i> Vòi sen nước nóng lạnh</li>
+                                <li><i class="fas fa-check text-success"></i> Khăn tắm sạch</li>
+                                <li><i class="fas fa-check text-success"></i> Dầu gội & sữa tắm</li>
+                                <li><i class="fas fa-check text-success"></i> Máy sấy tóc</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-tv text-primary"></i> Giải trí</h5>
+                            <ul class="amenity-list">
+                                <li><i class="fas fa-check text-success"></i> TV màn hình phẳng</li>
+                                <li><i class="fas fa-check text-success"></i> Kênh truyền hình cáp</li>
+                                <li><i class="fas fa-check text-success"></i> WiFi miễn phí tốc độ cao</li>
+                                <li><i class="fas fa-check text-success"></i> Điều hòa không khí</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-concierge-bell text-primary"></i> Dịch vụ khách sạn</h5>
+                            <ul class="amenity-list">
+                                <li><i class="fas fa-check text-success"></i> Dọn phòng hàng ngày</li>
+                                <li><i class="fas fa-check text-success"></i> Lễ tân 24/7</li>
+                                <li><i class="fas fa-check text-success"></i> Dịch vụ giặt ủi (có phí)</li>
+                                <li><i class="fas fa-check text-success"></i> Gọi taxi & xe ôm</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Information -->
+                <div class="important-info">
+                    <h3>Thông tin quan trọng cần biết</h3>
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Khi nhận phòng, quý khách cần mang theo:</h5>
+                        <ul class="mb-0">
+                            <li>CMND/CCCD hoặc Passport còn hiệu lực</li>
+                            <li>Mã đặt phòng (trong email xác nhận)</li>
+                            <li>Tiền thanh toán (tiền mặt hoặc thẻ)</li>
+                        </ul>
+                    </div>
+                    <div class="alert alert-warning">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Lưu ý quan trọng:</h5>
+                        <ul class="mb-0">
+                            <li>Phòng có thể được kiểm tra trước khi nhận</li>
+                            <li>Không được mang đồ ăn có mùi vào phòng</li>
+                            <li>Giữ gìn trật tự, không gây ồn ào sau 22:00</li>
+                            <li>Báo cáo ngay nếu có hư hỏng để được hỗ trợ</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Contact & Support -->
+                <div class="contact-support">
+                    <h3>Hỗ trợ & Liên hệ</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="support-item">
+                                <h5><i class="fas fa-phone text-success"></i> Hotline 24/7</h5>
+                                <p>1900-1234 - Hỗ trợ khách hàng mọi lúc</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="support-item">
+                                <h5><i class="fas fa-envelope text-primary"></i> Email hỗ trợ</h5>
+                                <p>support@hotelbook.com</p>
                             </div>
                         </div>
                     </div>
@@ -294,19 +422,12 @@
                         </div>
                         <div class="booking-feature-item">
                             <i class="fas fa-ban" aria-hidden="true"></i>
-                            <span>Miễn phí hủy trước 72 giờ</span>
+                            <span>Miễn phí hủy trước 24 giờ</span>
                         </div>
                         <div class="booking-feature-item">
-                            <i class="fas fa-shield-alt" aria-hidden="true"></i>
-                            <span>Thanh toán an toàn</span>
+                            <i class="fas fa-credit-card" aria-hidden="true"></i>
+                            <span>Thanh toán tại khách sạn</span>
                         </div>
-                    </div>
-
-                    <div class="booking-help">
-                        <p>Bạn cần hỗ trợ đặt phòng?</p>
-                        <div class="help-contact">
-                            <i class="fas fa-phone-alt" aria-hidden="true"></i>
-                            <span>+84 123 456 789</span>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,210 @@
+@model HotelBookingSystem.Models.Booking
+@{
+    ViewData["Title"] = "Xác nhận đặt phòng";
+}
+
+<link rel="stylesheet" href="~/css/booking-confirmation-modern.css" asp-append-version="true" />
+
+<!-- Success Banner -->
+<div class="success-banner">
+    <div class="container">
+        <div class="text-center">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="success-title">Đặt phòng thành công!</h2>
+            <p class="success-subtitle">Cảm ơn bạn đã tin tưởng và lựa chọn dịch vụ của chúng tôi</p>
+            <div class="booking-id-badge">
+                <strong>Mã đặt phòng: #BK@(Model.Id.ToString().PadLeft(6, '0'))</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container py-4">
+    <div class="row">
+        <!-- Left Column - Booking Details -->
+        <div class="col-lg-8">
+            <!-- Booking Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Thông tin đặt phòng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Ngày đặt:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Trạng thái:</strong> 
+                                <span class="badge bg-warning text-dark">@Model.BookingStatus.Name</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Room Information -->
+                    <h6 class="border-bottom pb-2 mb-3">Thông tin phòng</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="@Model.Room.ImageUrl" alt="@Model.Room.Name" class="img-fluid rounded room-image">
+                        </div>
+                        <div class="col-md-8">
+                            <h6>@Model.Room.Name</h6>
+                            <p class="text-muted">@Model.Room.RoomType</p>
+                            <div class="room-details">
+                                <p><i class="fas fa-users text-primary me-2"></i>@Model.Guests người</p>
+                                <p><i class="fas fa-bed text-primary me-2"></i>Sức chứa tối đa: @Model.Room.Capacity người</p>
+                                <p><i class="fas fa-star text-warning me-2"></i>Đánh giá: @Model.Room.AverageRating.ToString("F1") sao</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stay Information -->
+                    <h6 class="border-bottom pb-2 mb-3 mt-4">Thông tin lưu trú</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="date-info p-3 bg-light rounded">
+                                <div class="text-center">
+                                    <h6 class="text-success"><i class="fas fa-calendar-check me-2"></i>Ngày nhận phòng</h6>
+                                    <p class="mb-1"><strong>@Model.CheckIn.ToString("dddd, dd/MM/yyyy")</strong></p>
+                                    <small class="text-muted">Từ 14:00</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="date-info p-3 bg-light rounded">
+                                <div class="text-center">
+                                    <h6 class="text-danger"><i class="fas fa-calendar-times me-2"></i>Ngày trả phòng</h6>
+                                    <p class="mb-1"><strong>@Model.CheckOut.ToString("dddd, dd/MM/yyyy")</strong></p>
+                                    <small class="text-muted">Trước 12:00</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <div class="badge bg-primary fs-6 p-2">
+                            <i class="fas fa-moon me-2"></i>@((Model.CheckOut - Model.CheckIn).Days) đêm lưu trú
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Thông tin quan trọng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="info-item">
+                                <h6><i class="fas fa-clock text-primary me-2"></i>Thời gian nhận/trả phòng</h6>
+                                <p class="mb-0">Nhận phòng: 14:00 | Trả phòng: 12:00</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="info-item">
+                                <h6><i class="fas fa-id-card text-primary me-2"></i>Giấy tờ cần thiết</h6>
+                                <p class="mb-0">CMND/CCCD hoặc hộ chiếu khi nhận phòng</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="info-item">
+                                <h6><i class="fas fa-ban text-danger me-2"></i>Chính sách hủy phòng</h6>
+                                <p class="mb-0">Miễn phí hủy trước 24 giờ</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="info-item">
+                                <h6><i class="fas fa-phone text-success me-2"></i>Liên hệ hỗ trợ</h6>
+                                <p class="mb-0">Hotline: 1900 1234</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Summary -->
+        <div class="col-lg-4">
+            <!-- Payment Summary -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-receipt me-2"></i>
+                        Tóm tắt thanh toán
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="summary-item d-flex justify-content-between mb-2">
+                        <span>Số đêm:</span>
+                        <span><strong>@((Model.CheckOut - Model.CheckIn).Days) đêm</strong></span>
+                    </div>
+                    <div class="summary-item d-flex justify-content-between mb-2">
+                        <span>Giá phòng/đêm:</span>
+                        <span>@((Model.TotalPrice / (Model.CheckOut - Model.CheckIn).Days).ToString("N0")) VNĐ</span>
+                    </div>
+                    <hr>
+                    <div class="summary-item d-flex justify-content-between mb-3">
+                        <span><strong>Tổng tiền:</strong></span>
+                        <span class="text-success"><strong>@Model.TotalPrice.ToString("N0") VNĐ</strong></span>
+                    </div>
+                    <div class="payment-method text-center p-2 bg-light rounded">
+                        <i class="fas fa-money-bill-wave text-success me-2"></i>
+                        <span>Thanh toán tại khách sạn</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-tools me-2"></i>
+                        Thao tác nhanh
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <button class="btn btn-outline-primary mb-2 w-100" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>In xác nhận
+                    </button>
+                    <button class="btn btn-outline-success mb-2 w-100" onclick="emailConfirmation()">
+                        <i class="fas fa-envelope me-2"></i>Gửi email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary me-2">
+                <i class="fas fa-home me-2"></i>Về trang chủ
+            </a>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary me-2">
+                <i class="fas fa-search me-2"></i>Đặt phòng khác
+            </a>
+            <a href="@Url.Action("Index", "Bookings")" class="btn btn-outline-secondary">
+                <i class="fas fa-history me-2"></i>Lịch sử đặt phòng
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function emailConfirmation() {
+            alert('Xác nhận đặt phòng đã được gửi qua email của bạn!');
+        }
+    </script>
+}
+
+
