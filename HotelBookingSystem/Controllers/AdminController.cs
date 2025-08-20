@@ -1,11 +1,13 @@
 ﻿using HotelBookingSystem.Models;
 using HotelBookingSystem.ViewModels.Admin;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
 namespace HotelBookingSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("Admin")]
     public class AdminController : Controller
     {

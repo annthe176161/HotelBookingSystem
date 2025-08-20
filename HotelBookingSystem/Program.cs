@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HotelBookingSystem
 {
     public class Program
-    {
+    {   
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -19,11 +19,41 @@ namespace HotelBookingSystem
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // Add Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-                options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            //// Add Identity
+            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            //    options.SignIn.RequireConfirmedAccount = false)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
+            //// Configure Identity options
+            //builder.Services
+            //.AddIdentity<ApplicationUser, IdentityRole>(opts =>
+            // {
+            //     opts.User.RequireUniqueEmail = true;
+            //     opts.Password.RequiredLength = 6;
+            //     opts.SignIn.RequireConfirmedEmail = false;
+            //     opts.Lockout.MaxFailedAccessAttempts = 5;
+            // })
+            //.AddEntityFrameworkStores<ApplicationDbContext>()
+            //.AddDefaultTokenProviders();
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                //options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+            });
+
+            builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>(opts =>
+    {
+        opts.SignIn.RequireConfirmedAccount = false;
+        opts.User.RequireUniqueEmail = true;
+        opts.Password.RequiredLength = 6;
+        opts.SignIn.RequireConfirmedEmail = false;
+        opts.Lockout.MaxFailedAccessAttempts = 5;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -45,6 +75,7 @@ namespace HotelBookingSystem
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
