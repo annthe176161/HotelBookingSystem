@@ -69,71 +69,11 @@
                             </li>
                         </ul>
 
-                        <div class="user-actions d-flex align-items-center">
+                        <div class="user-actions">
                             <!-- If user is logged in -->
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <!-- User Notifications -->
                                 <div class="dropdown">
-                                    <button class="btn notification-btn" type="button" id="userNotificationDropdown"
-                                        data-bs-toggle="dropdown" aria-expanded="false" title="Thông báo">
-                                        <i class="fas fa-bell"></i>
-                                        <span class="notification-badge" id="userNotificationBadge">3</span>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end user-notification-dropdown"
-                                        aria-labelledby="userNotificationDropdown">
-                                        <div class="dropdown-header">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <h6 class="mb-0">Thông báo</h6>
-                                                <span class="badge bg-primary">3 mới</span>
-                                            </div>
-                                        </div>
-                                        <div class="dropdown-divider"></div>
-                                        
-                                        <!-- Notification Items -->
-                                        <div class="notification-items">
-                                            <a class="dropdown-item notification-item unread" href="/Bookings">
-                                                <div class="notification-icon bg-success">
-                                                    <i class="fas fa-check-circle"></i>
-                                                </div>
-                                                <div class="notification-content">
-                                                    <div class="notification-title">Xác nhận đặt phòng</div>
-                                                    <div class="notification-text">Đặt phòng #BK2025001 đã được xác nhận</div>
-                                                    <div class="notification-time">5 phút trước</div>
-                                                </div>
-                                            </a>
-                                            
-                                            <a class="dropdown-item notification-item unread" href="/Bookings">
-                                                <div class="notification-icon bg-info">
-                                                    <i class="fas fa-calendar-alt"></i>
-                                                </div>
-                                                <div class="notification-content">
-                                                    <div class="notification-title">Nhắc nhở check-in</div>
-                                                    <div class="notification-text">Bạn có lịch check-in vào ngày mai</div>
-                                                    <div class="notification-time">2 giờ trước</div>
-                                                </div>
-                                            </a>
-                                            
-                                            <a class="dropdown-item notification-item" href="/Account/Profile">
-                                                <div class="notification-icon bg-warning">
-                                                    <i class="fas fa-gift"></i>
-                                                </div>
-                                                <div class="notification-content">
-                                                    <div class="notification-title">Ưu đãi đặc biệt</div>
-                                                    <div class="notification-text">Giảm 20% cho lần đặt phòng tiếp theo</div>
-                                                    <div class="notification-time">1 ngày trước</div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                        
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-center view-all-notifications" href="/User/Notifications">
-                                            Xem tất cả thông báo
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown ms-3">
                                     <button class="btn user-account-btn" type="button" id="userDropdown"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-user-circle user-icon"></i>
@@ -184,7 +124,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/user-notifications.js" asp-append-version="true"></script>
 
     <script>
         // Global variables for authentication status
