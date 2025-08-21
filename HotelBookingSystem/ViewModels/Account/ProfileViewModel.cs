@@ -8,12 +8,12 @@
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime? Birthdate { get; set; }
-        public string Gender { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string ZipCode { get; set; }
-        public string AvatarUrl { get; set; }
+        public string? Gender { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? ZipCode { get; set; }
+        public string? AvatarUrl { get; set; }
         public DateTime CreatedAt { get; set; }
 
         // Thống kê
@@ -31,8 +31,8 @@
         public List<FavoriteRoomViewModel> FavoriteRooms { get; set; } = new();
 
         // Thông tin điểm thưởng
-        public string LoyaltyTier { get; set; }
-        public string NextTier { get; set; }
+        public string? LoyaltyTier { get; set; }
+        public string? NextTier { get; set; }
         public int PointsToNextTier { get; set; }
         public int NextTierProgress { get; set; }
         public List<LoyaltyPointHistoryViewModel> LoyaltyPointsHistory { get; set; } = new();
@@ -45,7 +45,7 @@
     public class BookingItemViewModel
     {
         public int Id { get; set; }
-        public string BookingNumber { get; set; }
+        public string? BookingNumber { get; set; }
         public string RoomName { get; set; }
         public string RoomImageUrl { get; set; }
         public DateTime CheckInDate { get; set; }

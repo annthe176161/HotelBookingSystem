@@ -107,7 +107,9 @@ namespace HotelBookingSystem.Controllers
                 Email = vm.Email,
                 PhoneNumber = vm.PhoneNumber,
                 UserName = userName,
-                FullName = fullName
+                FullName = fullName,
+                FirstName = vm.FirstName?.Trim() ?? "",
+                LastName = vm.LastName?.Trim() ?? "",
             };
 
             var create = await _userManager.CreateAsync(user, vm.Password);
@@ -171,6 +173,11 @@ namespace HotelBookingSystem.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            return View();
         }
 
         //public IActionResult Profile()
@@ -377,6 +384,8 @@ namespace HotelBookingSystem.Controllers
             if (parts.Length == 1) return (parts[0], "");
             return (string.Join(' ', parts[..^1]), parts[^1]); // first = tất cả trừ từ cuối, last = từ cuối
         }
+
+        
     }
 
 }
