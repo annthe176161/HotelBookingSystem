@@ -1,6 +1,6 @@
 ﻿@model HotelBookingSystem.ViewModels.Room.RoomListViewModel
 @{
-    ViewData["Title"] = "Danh sách phòng";
+    ViewData["Title"] = "Phòng khả dụng";
 }
 
 <!-- Room List Header -->
@@ -8,11 +8,20 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
-                <h1>Danh sách phòng</h1>
+                <h1 class="display-4 fw-bold text-primary mb-3">Phòng khả dụng</h1>
+                <p class="lead text-dark mb-4 fs-5">Khám phá những phòng còn trống và sẵn sàng phục vụ bạn</p>
+                <div class="availability-info mb-4">
+                    <span class="badge bg-success fs-5 me-3 py-2 px-3">
+                        <i class="fas fa-check-circle me-2"></i>Còn trống
+                    </span>
+                    <span class="badge bg-primary fs-5 py-2 px-3">
+                        <i class="fas fa-calendar-check me-2"></i>Có thể đặt ngay
+                    </span>
+                </div>
                 <nav aria-label="breadcrumb" class="d-flex justify-content-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/" aria-label="Trang chủ">Trang chủ</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Danh sách phòng</li>
+                        <li class="breadcrumb-item active" aria-current="page">Phòng khả dụng</li>
                     </ol>
                 </nav>
             </div>
@@ -84,13 +93,17 @@
                 <div class="room-sorting mb-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <div>
-                            <p class="mb-0">
-                                Hiển thị <strong>@Model.Rooms.Count</strong> của <strong>@Model.TotalRooms</strong> phòng
+                            <p class="mb-1 fs-5 fw-semibold text-dark">
+                                Hiển thị <span class="text-primary">@Model.Rooms.Count</span> của <span class="text-primary">@Model.TotalRooms</span> phòng khả dụng
                                 @if (!string.IsNullOrEmpty(Model.RoomType))
                                 {
-                                    <span class="text-muted">• Loại phòng: <strong>@Model.RoomType</strong></span>
+                                    <span class="text-secondary">• Loại phòng: <strong class="text-info">@Model.RoomType</strong></span>
                                 }
                             </p>
+                            <div class="alert alert-success py-2 px-3 mb-0 d-inline-block">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Tất cả phòng hiển thị đều còn trống và có thể đặt ngay</strong>
+                            </div>
                         </div>
                         <div class="sorting-options">
                             <label for="sortOptions" class="visually-hidden">Sắp xếp theo</label>
@@ -137,11 +150,20 @@
                                         
                                         <div class="room-card-body">
                                             <div class="room-header mb-2">
-                                                <h3 class="room-title" id="room-@room.Id-title">
-                                                    <a href="@Url.Action("Details", "Rooms", new { id = room.Id })" 
-                                                       aria-describedby="room-@room.Id-desc">@room.Name</a>
-                                                </h3>
-                                                <div class="room-type">@room.RoomType</div>
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h3 class="room-title" id="room-@room.Id-title">
+                                                            <a href="@Url.Action("Details", "Rooms", new { id = room.Id })" 
+                                                               aria-describedby="room-@room.Id-desc">@room.Name</a>
+                                                        </h3>
+                                                        <div class="room-type">@room.RoomType</div>
+                                                    </div>
+                                                    <div class="availability-badge">
+                                                        <span class="badge bg-success fs-6 fw-bold">
+                                                            <i class="fas fa-check-circle me-1"></i>Còn trống
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                             
                                             <div class="rating mb-2" aria-label="Đánh giá @room.AverageRating.ToString("0.0") trên 5 sao">
@@ -292,6 +314,75 @@
                             </div>
                         </div>
                     }
+                </div>
+            </div>
+        </div>
+        
+        <!-- Available Rooms Info Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body bg-gradient" style="background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);">
+                        <div class="row align-items-center">
+                            <div class="col-md-10 mx-auto text-center">
+                                <h4 class="card-title text-primary fw-bold mb-4">
+                                    <i class="fas fa-shield-check me-3 fs-3"></i>
+                                    Cam kết về tình trạng phòng
+                                </h4>
+                                <p class="lead text-dark mb-4 fs-5">
+                                    <strong>Tất cả phòng hiển thị trên trang này đều được đảm bảo:</strong>
+                                </p>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                            <div class="bg-success rounded-circle p-3 me-3">
+                                                <i class="fas fa-check text-white fs-4"></i>
+                                            </div>
+                                            <div class="text-start">
+                                                <h6 class="text-success fw-bold mb-1">Hiện đang còn trống</h6>
+                                                <small class="text-muted">Phòng sẵn sàng cho khách</small>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="bg-primary rounded-circle p-3 me-3">
+                                                <i class="fas fa-clock text-white fs-4"></i>
+                                            </div>
+                                            <div class="text-start">
+                                                <h6 class="text-primary fw-bold mb-1">Có thể đặt ngay lập tức</h6>
+                                                <small class="text-muted">Không cần chờ đợi</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center justify-content-center mb-3">
+                                            <div class="bg-info rounded-circle p-3 me-3">
+                                                <i class="fas fa-handshake text-white fs-4"></i>
+                                            </div>
+                                            <div class="text-start">
+                                                <h6 class="text-info fw-bold mb-1">Sẵn sàng phục vụ khách hàng</h6>
+                                                <small class="text-muted">Dịch vụ tốt nhất</small>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="bg-warning rounded-circle p-3 me-3">
+                                                <i class="fas fa-bolt text-white fs-4"></i>
+                                            </div>
+                                            <div class="text-start">
+                                                <h6 class="text-warning fw-bold mb-1">Không cần chờ xác nhận</h6>
+                                                <small class="text-muted">Xác nhận tức thì</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 p-3 bg-white rounded shadow-sm">
+                                    <p class="mb-0 text-muted fst-italic">
+                                        <i class="fas fa-sync-alt me-2 text-primary"></i>
+                                        <strong>Chúng tôi cập nhật tình trạng phòng liên tục để đảm bảo thông tin chính xác nhất.</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

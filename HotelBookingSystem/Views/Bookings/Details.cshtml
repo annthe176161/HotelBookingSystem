@@ -204,17 +204,17 @@
                                 <div class="policy-content">
                                     <p class="mb-2"><strong>Miễn phí hủy phòng:</strong></p>
                                     <ul class="policy-list mb-3">
-                                        <li>Hủy trước 6 giờ kể từ thời điểm nhận phòng: <span
+                                        <li>Hủy trước 24 giờ kể từ thời điểm nhận phòng: <span
                                                 class="text-success font-weight-bold">Hoàn toàn miễn phí</span></li>
-                                        <li>Hủy trong vòng 6 giờ trước nhận phòng: <span class="text-warning">Có thể mất
-                                                phí giữ phòng (nếu có)</span></li>
-                                        <li>No-show (không đến nhận phòng): <span class="text-danger">Tính phí 1
-                                                đêm</span></li>
+                                        <li>Hủy trong vòng 24 giờ trước nhận phòng: <span class="text-success">Vẫn miễn
+                                                phí - không áp dụng phí phạt</span></li>
+                                        <li>No-show (không đến nhận phòng): <span class="text-info">Không tính phí do
+                                                thanh toán tại khách sạn</span></li>
                                     </ul>
                                     <div class="alert alert-info mb-2">
                                         <i class="fas fa-info-circle me-2"></i>
                                         <strong>Lưu ý:</strong> Do thanh toán tại khách sạn, việc hủy phòng không ảnh
-                                        hưởng đến thẻ tín dụng của bạn.
+                                        hưởng đến thẻ tín dụng của bạn và không áp dụng bất kỳ phí phạt nào.
                                     </div>
                                     @if (Model.IsCancellable)
                                     {
@@ -226,9 +226,10 @@
                                     }
                                     else
                                     {
-                                        <div class="alert alert-warning">
-                                            <i class="fas fa-exclamation-triangle me-2"></i>
-                                            Đã quá thời hạn hủy miễn phí. Vui lòng liên hệ khách sạn: <strong>1900
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Đã quá thời hạn hủy khuyến nghị (24 giờ trước). Tuy nhiên, vẫn có thể hủy miễn
+                                            phí. Liên hệ khách sạn: <strong>1900
                                                 1234</strong>
                                         </div>
                                     }
@@ -276,9 +277,13 @@
                                 <div class="policy-content">
                                     <ul class="policy-list">
                                         <li><strong>Trẻ em dưới 6 tuổi:</strong> Miễn phí (không tính vào sức chứa)</li>
-                                        <li><strong>Trẻ em 6-12 tuổi:</strong> 50% giá phòng</li>
-                                        <li><strong>Người lớn thêm:</strong> 200.000 VNĐ/người/đêm</li>
+                                        <li><strong>Trẻ em 6-12 tuổi:</strong> Miễn phí (đã bao gồm trong giá phòng)
+                                        </li>
+                                        <li><strong>Người lớn thêm:</strong> Đã bao gồm trong giá phòng (tùy theo sức
+                                            chứa)</li>
                                         <li><strong>Giấy tờ tùy thân:</strong> Bắt buộc khi check-in</li>
+                                        <li><strong>Lưu ý:</strong> Tất cả chi phí đã được tính trong tổng giá hiển thị
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -337,7 +342,7 @@
                                     </p>
                                     <p class="mb-0">
                                         <i class="fas fa-shield-alt me-2"></i>
-                                        Hủy miễn phí trước 6 giờ check-in
+                                        Hủy miễn phí trước 24 giờ check-in
                                     </p>
                                 </div>
                             </div>
@@ -456,9 +461,8 @@
                     </div>
                     <p>Lưu ý:</p>
                     <ul>
-                        <li>Hủy đặt phòng trước @Model.FreeCancellationDeadline.ToString("dd/MM/yyyy HH:mm") sẽ được hoàn
-                            tiền 100%.</li>
-                        <li>Hủy đặt phòng sau thời gian này sẽ bị tính phí 1 đêm đầu tiên.</li>
+                        <li>Miễn phí hủy đặt phòng trước @Model.FreeCancellationDeadline.ToString("dd/MM/yyyy HH:mm").</li>
+                        <li>Không áp dụng phí phạt khi hủy phòng do thanh toán tại khách sạn.</li>
                         <li>Sau khi hủy, không thể khôi phục lại đặt phòng.</li>
                     </ul>
                     <div class="form-group mt-3">
