@@ -25,24 +25,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Listen for notifications
   connection.on("ReceiveNotification", function (notification) {
-    addNotificationToList(notification);
-    updateNotificationCount();
-    showToastNotification(notification);
+    handleIncomingNotification(notification);
   });
 
   // Listen for admin notifications
   connection.on("ReceiveAdminNotification", function (notification) {
-    addNotificationToList(notification);
-    updateNotificationCount();
-    showToastNotification(notification);
+    handleIncomingNotification(notification);
   });
 
   // Listen for customer confirmation notifications
   connection.on("ReceiveCustomerConfirmation", function (notification) {
-    addNotificationToList(notification);
-    updateNotificationCount();
-    showToastNotification(notification);
+    handleIncomingNotification(notification);
   });
+
+  function handleIncomingNotification(notification) {
+    // Convert SignalR notification to format expected by UserNotificationManager
+    const formattedNotification = {
+      type: notification.type || "booking",
+      title: getNotificationTitle(notification),
+      message: notification.message,
+      time: formatTime(notification.timestamp),
+      icon: getNotificationIcon(notification.type || "booking"),
+    };
+
+    // Use the UserNotificationManager if available
+    if (window.notificationManager) {
+      window.notificationManager.addNotification(formattedNotification);
+    } else {
+      // Fallback: add directly to DOM if manager not available
+      addNotificationToList(formattedNotification);
+      updateNotificationCount();
+    }
+
+    showToastNotification(notification);
+  }
+
+  function getNotificationTitle(notification) {
+    switch (notification.type) {
+      case "booking":
+        return "Thông báo đặt phòng";
+      case "payment":
+        return "Thông báo thanh toán";
+      case "promotion":
+        return "Ưu đãi đặc biệt";
+      default:
+        return "Thông báo mới";
+    }
+  }
 
   function addNotificationToList(notification) {
     const notificationList = document.getElementById("notificationList");
