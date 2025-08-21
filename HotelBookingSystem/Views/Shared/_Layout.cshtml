@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/HotelBookingSystem.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/rooms-list.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/notifications.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
 
@@ -136,6 +136,7 @@
         window.isUserAuthenticated = @Json.Serialize(User.Identity.IsAuthenticated);
         window.isUserAdmin = @Json.Serialize(User.IsInRole("Admin"));
         window.currentUserId = '@(User.Identity.IsAuthenticated ? (User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "") : "")';
+        window.loginUrl = '@Url.Action("Login", "Account")';
 
         // Add CSRF token to all AJAX requests
         $.ajaxSetup({
