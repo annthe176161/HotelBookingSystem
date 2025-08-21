@@ -130,14 +130,14 @@ namespace HotelBookingSystem.Services.Implementations
                             adminMessage
                         );
 
-                        // 2. Gửi thông báo xác nhận cho khách hàng
-                        var customerMessage = $"Bạn đã đặt thành công {roomName}. Mã đặt phòng của bạn là #{booking.Id}.";
-                        await _notificationService.SendBookingConfirmationToCustomerAsync(
-                            booking.UserId,
-                            booking.Id.ToString(),
-                            roomName ?? "Phòng",
-                            customerMessage
-                        );
+                        // 2. Không gửi thông báo cho khách hàng để tránh hiển thị notification badge
+                        // var customerMessage = $"Bạn đã đặt thành công {roomName}. Mã đặt phòng của bạn là #{booking.Id}.";
+                        // await _notificationService.SendBookingConfirmationToCustomerAsync(
+                        //     booking.UserId,
+                        //     booking.Id.ToString(),
+                        //     roomName ?? "Phòng",
+                        //     customerMessage
+                        // );
                     }
                     catch (Exception ex)
                     {

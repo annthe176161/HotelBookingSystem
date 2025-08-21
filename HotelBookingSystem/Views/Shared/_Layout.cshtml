@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/rooms-list.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/notifications.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
 
@@ -74,38 +73,6 @@
                             <!-- If user is logged in -->
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <!-- Notification Bell -->
-                                <div class="notification-wrapper">
-                                    <button class="btn notification-btn" type="button" id="notificationDropdown"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-bell notification-icon"></i>
-                                        <span class="notification-badge" id="notificationBadge"
-                                            style="display: none;"></span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown"
-                                        aria-labelledby="notificationDropdown">
-                                        <li class="notification-header">
-                                            <h6 class="mb-0">Thông báo</h6>
-                                            <button class="btn btn-sm mark-all-read" id="markAllRead">Đánh dấu đã
-                                                đọc</button>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <div class="notification-list" id="notificationList">
-                                            <!-- Real notifications from SignalR will be loaded here -->
-                                        </div>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li class="notification-footer">
-                                            <a class="dropdown-item text-center" href="#" id="viewAllNotifications">
-                                                <i class="fas fa-list"></i> Xem tất cả thông báo
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
                                 <div class="dropdown">
                                     <button class="btn user-account-btn" type="button" id="userDropdown"
                                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -184,12 +151,6 @@
     @Html.AntiForgeryToken()
 
     @await RenderSectionAsync("Scripts", required: false)
-
-    <!-- User Notifications Script -->
-    @if (User.Identity?.IsAuthenticated == true)
-    {
-        <script src="~/js/user-notifications.js" asp-append-version="true"></script>
-    }
 
     <script>
         // Highlight active navigation menu item
