@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
+
 <body>
     <div class="admin-wrapper">
         <!-- Sidebar -->
@@ -18,9 +20,6 @@
                     <i class="fas fa-hotel"></i>
                     <span>Luxury Hotel</span>
                 </a>
-                <button id="sidebar-toggle" class="sidebar-toggle d-lg-none">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
             <div class="sidebar-content">
                 <ul class="sidebar-nav">
@@ -90,129 +89,136 @@
         <!-- Main Content -->
         <div class="admin-main">
             <!-- Topbar -->
-            <!-- Topbar -->
             <nav class="admin-topbar">
-                <div class="d-flex align-items-center">
-                    <button class="btn sidebar-toggle d-none d-lg-block" id="desktop-sidebar-toggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
+                <div class="topbar-left d-flex align-items-center">
+                    <!-- Không có hamburger menu và title nữa -->
                 </div>
 
-                <div class="topbar-nav">
-                    <ul class="navbar-nav flex-row">
-                        <!-- Thông báo dropdown -->
-                        <li class="nav-item dropdown mx-2">
-                            <a class="nav-icon dropdown-toggle position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <span class="badge bg-danger badge-counter position-absolute top-0 start-100 translate-middle">3</span>
+                <div class="topbar-right">
+                    <ul class="navbar-nav d-flex flex-row align-items-center">
+                        <!-- Notifications -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-icon dropdown-toggle" href="#" id="notificationsDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false" title="Thông báo">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">3</span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end py-0 overflow-hidden" style="width: 320px; max-height: 350px;" aria-labelledby="notificationsDropdown">
-                                <h6 class="dropdown-header d-flex justify-content-between align-items-center py-2">
-                                    Thông báo
-                                    <span class="badge bg-primary">3 mới</span>
-                                </h6>
-                                <div class="dropdown-divider my-0"></div>
-                                <a class="dropdown-item d-flex py-3 border-bottom" href="#">
-                                    <div class="me-3 notification-icon bg-primary d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px;">
-                                        <i class="fas fa-calendar-check text-white"></i>
+                            <div class="dropdown-menu dropdown-menu-end notification-dropdown"
+                                aria-labelledby="notificationsDropdown">
+                                <div class="dropdown-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Thông báo</span>
+                                        <span class="badge bg-light text-primary">3 mới</span>
                                     </div>
-                                    <div>
-                                        <div class="small text-muted">2 phút trước</div>
-                                        <span class="fw-bold">Đặt phòng mới từ Nguyễn Văn A</span>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item notification-item" href="#">
+                                    <div class="notification-icon bg-primary">
+                                        <i class="fas fa-calendar-check"></i>
                                     </div>
-                                </a>
-                                <a class="dropdown-item d-flex py-3 border-bottom" href="#">
-                                    <div class="me-3 notification-icon bg-warning d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px;">
-                                        <i class="fas fa-star text-white"></i>
-                                    </div>
-                                    <div>
-                                        <div class="small text-muted">3 giờ trước</div>
-                                        <span class="fw-bold">Đánh giá mới 5 sao từ Nguyễn Thị Thanh</span>
+                                    <div class="notification-content">
+                                        <div class="notification-text">Đặt phòng mới từ Nguyễn Văn A</div>
+                                        <div class="notification-time">2 phút trước</div>
                                     </div>
                                 </a>
-                                <a class="dropdown-item d-flex py-3 border-bottom" href="#">
-                                    <div class="me-3 notification-icon bg-danger d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px;">
-                                        <i class="fas fa-times-circle text-white"></i>
+                                <a class="dropdown-item notification-item" href="#">
+                                    <div class="notification-icon bg-warning">
+                                        <i class="fas fa-star"></i>
                                     </div>
-                                    <div>
-                                        <div class="small text-muted">1 giờ trước</div>
-                                        <span class="fw-bold">Vũ Minh E đã hủy đặt phòng</span>
+                                    <div class="notification-content">
+                                        <div class="notification-text">Đánh giá mới 5 sao từ Nguyễn Thị Thanh</div>
+                                        <div class="notification-time">3 giờ trước</div>
                                     </div>
                                 </a>
-                                <a class="dropdown-item text-center small text-muted py-2" href="/Admin/Notifications">Xem tất cả</a>
+                                <a class="dropdown-item notification-item" href="#">
+                                    <div class="notification-icon bg-danger">
+                                        <i class="fas fa-times-circle"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-text">Vũ Minh E đã hủy đặt phòng</div>
+                                        <div class="notification-time">1 giờ trước</div>
+                                    </div>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-center text-muted" href="/Admin/Notifications">
+                                    Xem tất cả thông báo
+                                </a>
                             </div>
                         </li>
 
-                        <!-- Tin nhắn dropdown -->
-                        <li class="nav-item dropdown mx-2">
-                            <a class="nav-icon dropdown-toggle position-relative" href="#" id="messagesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <span class="badge bg-danger badge-counter position-absolute top-0 start-100 translate-middle">7</span>
+                        <!-- Messages -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false" title="Tin nhắn">
+                                <i class="fas fa-envelope"></i>
+                                <span class="notification-badge">7</span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end py-0 overflow-hidden" style="width: 320px; max-height: 350px;" aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header d-flex justify-content-between align-items-center py-2">
-                                    Tin nhắn
-                                    <span class="badge bg-primary">7 mới</span>
-                                </h6>
-                                <div class="dropdown-divider my-0"></div>
-                                <a class="dropdown-item d-flex py-3 border-bottom" href="#">
-                                    <div class="dropdown-list-image me-3">
-                                        <div class="avatar-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: 500;">NT</div>
+                            <div class="dropdown-menu dropdown-menu-end notification-dropdown"
+                                aria-labelledby="messagesDropdown">
+                                <div class="dropdown-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Tin nhắn</span>
+                                        <span class="badge bg-light text-primary">7 mới</span>
                                     </div>
-                                    <div class="overflow-hidden">
-                                        <div class="fw-bold">Nguyễn Thanh</div>
-                                        <div class="text-truncate">Tôi cần hỗ trợ về việc đặt phòng...</div>
-                                        <div class="small text-muted">58 phút trước</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex py-3 border-bottom" href="#">
-                                    <div class="dropdown-list-image me-3">
-                                        <div class="avatar-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: 500;">TL</div>
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <div class="fw-bold">Trần Linh</div>
-                                        <div class="text-truncate">Tôi muốn đặt thêm dịch vụ spa...</div>
-                                        <div class="small text-muted">3 giờ trước</div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item message-item" href="#">
+                                    <div class="user-avatar">NT</div>
+                                    <div class="message-content">
+                                        <div class="message-sender">Nguyễn Thanh</div>
+                                        <div class="message-text">Tôi cần hỗ trợ về việc đặt phòng...</div>
+                                        <div class="message-time">58 phút trước</div>
                                     </div>
                                 </a>
-                                <a class="dropdown-item text-center small text-muted py-2" href="/Admin/Messages">Xem tất cả</a>
+                                <a class="dropdown-item message-item" href="#">
+                                    <div class="user-avatar">TL</div>
+                                    <div class="message-content">
+                                        <div class="message-sender">Trần Linh</div>
+                                        <div class="message-text">Tôi muốn đặt thêm dịch vụ spa...</div>
+                                        <div class="message-time">3 giờ trước</div>
+                                    </div>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-center text-muted" href="/Admin/Messages">
+                                    Xem tất cả tin nhắn
+                                </a>
                             </div>
                         </li>
 
-                        <!-- Dropdown hồ sơ người dùng -->
-                        <li class="nav-item dropdown ms-2">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="d-none d-lg-inline me-2 text-gray-600">Admin</span>
-                                <div class="avatar-circle d-flex align-items-center justify-content-center bg-primary text-white" style="width: 32px; height: 32px; font-weight: 500;">A</div>
+                        <!-- User Profile -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-icon dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false" title="Tài khoản">
+                                <i class="fas fa-user-circle"></i>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end shadow py-0" aria-labelledby="userDropdown" style="width: 220px;">
-                                <div class="dropdown-header bg-primary text-white py-2">
+                            <div class="dropdown-menu dropdown-menu-end user-dropdown-menu"
+                                aria-labelledby="userDropdown">
+                                <div class="dropdown-header user-header">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-circle bg-white text-primary me-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-weight: 500;">A</div>
-                                        <div>
-                                            <div class="fw-bold">Admin</div>
-                                            <div class="small">Quản trị viên</div>
+                                        <div class="user-avatar-header">A</div>
+                                        <div class="user-details">
+                                            <div class="user-name-header">Admin</div>
+                                            <div class="user-role">Quản trị viên</div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="dropdown-divider my-0"></div>
-                                <a class="dropdown-item py-2" href="/Admin/Profile">
-                                    <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>
-                                    Hồ sơ
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/Admin/Profile">
+                                    <i class="fas fa-user me-2"></i>Hồ sơ
                                 </a>
-                                <a class="dropdown-item py-2" href="/Admin/Settings">
-                                    <i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>
-                                    Cài đặt
+                                <a class="dropdown-item" href="/Admin/Settings">
+                                    <i class="fas fa-cogs me-2"></i>Cài đặt
                                 </a>
-                                <a class="dropdown-item py-2" href="/Admin/ActivityLog">
-                                    <i class="fas fa-list fa-sm fa-fw me-2 text-gray-400"></i>
-                                    Nhật ký hoạt động
+                                <a class="dropdown-item" href="/Admin/ActivityLog">
+                                    <i class="fas fa-list me-2"></i>Nhật ký hoạt động
                                 </a>
-                                <div class="dropdown-divider my-0"></div>
-                                <a class="dropdown-item py-2" href="/Account/Logout">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>
-                                    Đăng xuất
-                                </a>
+                                <div class="dropdown-divider"></div>
+                                <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                                    <button type="submit" class="dropdown-item text-danger"
+                                        style="border: none; background: none; width: 100%; text-align: left;">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </button>
+                                </form>
                             </div>
                         </li>
                     </ul>
@@ -232,17 +238,8 @@
     @RenderSection("Scripts", required: false)
 
     <script>
-        // Sidebar toggle functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebarToggles = document.querySelectorAll('.sidebar-toggle, #desktop-sidebar-toggle');
-            const adminWrapper = document.querySelector('.admin-wrapper');
-
-            sidebarToggles.forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    adminWrapper.classList.toggle('sidebar-collapsed');
-                });
-            });
-
+        // Sidebar navigation highlighting
+        document.addEventListener('DOMContentLoaded', function () {
             // Highlight active navigation item
             const currentPath = window.location.pathname;
             const sidebarLinks = document.querySelectorAll('.sidebar-link');
@@ -267,4 +264,5 @@
         });
     </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,6 +16,7 @@
     <link rel="stylesheet" href="~/css/rooms-list.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
+
 <body>
     <header>
         <!-- Top Header with contact info and social media -->
@@ -41,8 +43,8 @@
                         <i class="fas fa-hotel logo-icon"></i> Luxury Hotel
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
+                        data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse">
@@ -71,11 +73,82 @@
                             <!-- If user is logged in -->
                             @if (User.Identity.IsAuthenticated)
                             {
+                                <!-- Notification Bell -->
+                                <div class="notification-wrapper">
+                                    <button class="btn notification-btn" type="button" id="notificationDropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-bell notification-icon"></i>
+                                        <span class="notification-badge" id="notificationBadge">3</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown"
+                                        aria-labelledby="notificationDropdown">
+                                        <li class="notification-header">
+                                            <h6 class="mb-0">Thông báo</h6>
+                                            <button class="btn btn-sm mark-all-read" id="markAllRead">Đánh dấu đã
+                                                đọc</button>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <div class="notification-list" id="notificationList">
+                                            <!-- Notifications will be loaded here -->
+                                            <li class="notification-item unread">
+                                                <div class="notification-content">
+                                                    <div class="notification-icon-wrapper booking">
+                                                        <i class="fas fa-calendar-check"></i>
+                                                    </div>
+                                                    <div class="notification-text">
+                                                        <div class="notification-title">Đặt phòng thành công</div>
+                                                        <div class="notification-message">Phòng Deluxe Suite đã được đặt
+                                                            thành công</div>
+                                                        <div class="notification-time">2 phút trước</div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="notification-item unread">
+                                                <div class="notification-content">
+                                                    <div class="notification-icon-wrapper payment">
+                                                        <i class="fas fa-credit-card"></i>
+                                                    </div>
+                                                    <div class="notification-text">
+                                                        <div class="notification-title">Thanh toán hoàn tất</div>
+                                                        <div class="notification-message">Thanh toán 2,500,000 VNĐ đã được
+                                                            xử lý</div>
+                                                        <div class="notification-time">1 giờ trước</div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="notification-item">
+                                                <div class="notification-content">
+                                                    <div class="notification-icon-wrapper promotion">
+                                                        <i class="fas fa-gift"></i>
+                                                    </div>
+                                                    <div class="notification-text">
+                                                        <div class="notification-title">Ưu đãi đặc biệt</div>
+                                                        <div class="notification-message">Giảm 20% cho lần đặt phòng tiếp
+                                                            theo</div>
+                                                        <div class="notification-time">1 ngày trước</div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </div>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li class="notification-footer">
+                                            <a class="dropdown-item text-center" href="#" id="viewAllNotifications">
+                                                <i class="fas fa-list"></i> Xem tất cả thông báo
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
                                 <div class="dropdown">
-                                    <button class="btn dropdown-toggle" type="button" id="userDropdown"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="~/images/avatar-placeholder.jpg" alt="Avatar" class="user-avatar" />
-                                        <span>@User.Identity.Name</span>
+                                    <button class="btn user-account-btn" type="button" id="userDropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user-circle user-icon"></i>
+                                        <span class="user-name">@User.Identity.Name</span>
+                                        <i class="fas fa-chevron-down dropdown-arrow"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                         <li>
@@ -88,11 +161,15 @@
                                                 <i class="fas fa-history"></i> Lịch sử đặt phòng
                                             </a>
                                         </li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-heart"></i> Yêu thích</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-heart"></i> Yêu thích</a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li>
                                             <form asp-controller="Account" asp-action="Logout" method="post">
-                                                <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+                                                <button type="submit" class="dropdown-item"><i
+                                                        class="fas fa-sign-out-alt"></i> Đăng xuất</button>
                                             </form>
                                         </li>
                                     </ul>
@@ -117,13 +194,26 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Global variables for authentication status
+        window.isUserAuthenticated = @Json.Serialize(User.Identity.IsAuthenticated);
+        window.loginUrl = "@Url.Action("Login", "Account")";
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- User Notifications Script -->
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script src="~/js/user-notifications.js" asp-append-version="true"></script>
+    }
 
     <script>
         // Highlight active navigation menu item
-        $(document).ready(function() {
+        $(document).ready(function () {
             var path = window.location.pathname;
-            $(".navbar-nav .nav-link").each(function() {
+            $(".navbar-nav .nav-link").each(function () {
                 var href = $(this).attr('href');
                 if (path === href) {
                     $(this).addClass('active-link');
@@ -134,4 +224,5 @@
         });
     </script>
 </body>
+
 </html>
