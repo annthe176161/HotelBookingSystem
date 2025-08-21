@@ -60,6 +60,52 @@ namespace HotelBookingSystem.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Index(BookingReviewViewModel request) 
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    TempData["Error"] = "Dữ liệu không hợp lệ";
+                    return RedirectToAction("Index");
+                }
+
+                if (request.Rating < 1 || request.Rating > 5)
+                {
+                    TempData["Error"] = "Đánh giá phải từ 1 đến 5 sao";
+                    return RedirectToAction("Index");
+                }
+                var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+                if (user == null)
+                {
+                    // Xử lý trường hợp không tìm thấy user test. 
+                    // Có thể tạo user ở đây hoặc báo lỗi.
+                    // Trong ví dụ này, chúng ta sẽ báo lỗi để đảm bảo SeedData đã chạy đúng.
+                    TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
+                    return RedirectToAction("Index", "Home");
+                }
+                string result = await _bookingService.CreateBookingReviewAsync(request, user.Id);
+
+                // Kiểm tra kết quả
+                if (result == "Đánh giá thành công")
+                {
+                    TempData["Success"] = result;
+                }
+                else
+                {
+                    // Tất cả các case khác đều là lỗi
+                    TempData["Error"] = result;
+                }
+                return RedirectToAction("Index", "Bookings");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                return RedirectToAction("Index", "Bookings");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> Create(int roomId, DateTime? checkin, DateTime? checkout, int guests = 1)
         {

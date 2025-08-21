@@ -2,7 +2,9 @@
 @{
     var title = ViewData["Title"] = "Đặt phòng của tôi" as string;
 }
-
+@section Styles {
+    <link rel="stylesheet" href="~/css/review-form.css" />
+}
 <link rel="stylesheet" href="~/css/booking-list.css" asp-append-version="true" />
 
 <!-- Page Header -->
@@ -93,8 +95,8 @@
                     <div class="col-md-3 mb-3">
                         <label for="searchTerm" class="form-label">Tìm kiếm</label>
                         <input type="text" class="form-control" id="searchTerm" name="searchTerm"
-                            value="@Model.SearchTerm"
-                            placeholder="Tìm kiếm theo tên phòng, loại phòng hoặc mã đặt phòng...">
+                               value="@Model.SearchTerm"
+                               placeholder="Tìm kiếm theo tên phòng, loại phòng hoặc mã đặt phòng...">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="status" class="form-label">Trạng thái đặt phòng</label>
@@ -139,7 +141,7 @@
                     </div>
                 </div>
                 @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.Status) ||
-                                !string.IsNullOrEmpty(Model.RoomType) || !string.IsNullOrEmpty(Model.PaymentStatus))
+                !string.IsNullOrEmpty(Model.RoomType) || !string.IsNullOrEmpty(Model.PaymentStatus))
                 {
                     <div class="row">
                         <div class="col-12">
@@ -172,7 +174,7 @@
                                 <!-- Room Image -->
                                 <div class="booking-image">
                                     <img src="@(string.IsNullOrEmpty(booking.RoomImageUrl) ? "https://via.placeholder.com/350x200?text=Hotel+Room" : booking.RoomImageUrl)"
-                                        alt="@booking.RoomName">
+                                         alt="@booking.RoomName">
                                     <div class="booking-status">
                                         <span class="status-badge status-@booking.StatusColor.ToLower()">@booking.Status</span>
                                     </div>
@@ -259,21 +261,23 @@
 
                                             @if (booking.CanReview)
                                             {
-                                                <a href="#" class="btn btn-outline-warning btn-sm">
+                                                <a href="#" class="btn btn-outline-warning btn-sm" onclick="openPopup(@booking.Id)">
                                                     <i class="fas fa-star"></i> Đánh giá
                                                 </a>
                                             }
 
                                             <a href="@Url.Action("Details", new { id = booking.Id })"
-                                                class="btn btn-primary btn-sm">
+                                               class="btn btn-primary btn-sm">
                                                 <i class="fas fa-eye"></i> Chi tiết
                                             </a>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     }
+
                 </div>
             }
             else
@@ -291,16 +295,73 @@
             }
         </div>
     </div>
-</div>
+    <form method="post" asp-action="Index" id="reviewForm">
+        @Html.AntiForgeryToken()
+        <div id="reviewPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h5>Đánh giá dịch vụ</h5>
+                    <span class="close-btn" onclick="closePopup()">&times;</span>
+                </div>
+                <div class="popup-body">
+                    <!-- Hidden inputs để truyền dữ liệu -->
+                    <input type="hidden" name="BookingId" id="BookingId">
+                    <input type="hidden" name="Rating" id="ratingValue" value="0">
 
-@section Scripts {
-    <script>
-        function confirmCancel(bookingId) {
-            if (confirm('Bạn có chắc chắn muốn hủy đặt phòng này không?')) {
-                // Implement cancel booking logic here
-                console.log('Cancel booking:', bookingId);
-                alert('Chức năng hủy đặt phòng sẽ được implement sau.');
+                    <div class="rating-stars">
+                        <i onclick="setRating(1)" class="fa-solid fa-star star-item"></i>
+                        <i onclick="setRating(2)" class="fa-solid fa-star star-item"></i>
+                        <i onclick="setRating(3)" class="fa-solid fa-star star-item"></i>
+                        <i onclick="setRating(4)" class="fa-solid fa-star star-item"></i>
+                        <i onclick="setRating(5)" class="fa-solid fa-star star-item"></i>
+                    </div>
+
+                    <textarea name="Comment" id="comment" placeholder="Nhận xét của bạn..." rows="4"></textarea>
+
+                    <div class="popup-buttons">
+                        <button type="button" onclick="closePopup()">Hủy</button>
+                        <button type="submit" onclick="logSubmitInfo()">Gửi đánh giá</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Hiển thị thông báo TempData -->
+    @if (TempData["Success"] != null)
+    {
+        <div id="notification" class="notification success">
+            <i class="fas fa-check-circle"></i>
+            @TempData["Success"]
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showNotification();
+            });
+        </script>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div id="notification" class="notification error">
+            <i class="fas fa-exclamation-circle"></i>
+            @TempData["Error"]
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showNotification();
+            });
+        </script>
+    }
+
+    @section Scripts {
+        <script>
+            function confirmCancel(bookingId) {
+                if (confirm('Bạn có chắc chắn muốn hủy đặt phòng này không?')) {
+                    // Implement cancel booking logic here
+                    console.log('Cancel booking:', bookingId);
+                    alert('Chức năng hủy đặt phòng sẽ được implement sau.');
+                }
             }
-        }
-    </script>
-}
+        </script>
+        <script src="~/js/review-form.js"></script>
+    }
