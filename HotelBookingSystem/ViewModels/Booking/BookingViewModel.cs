@@ -25,7 +25,7 @@ namespace HotelBookingSystem.ViewModels.Booking
         [Required(ErrorMessage = "Vui lòng chọn số khách")]
         [Range(1, 10, ErrorMessage = "Số khách phải từ 1 đến 10 người")]
         [Display(Name = "Số khách")]
-        public int GuestCount { get; set; }
+        public int? GuestCount { get; set; }
 
         [Display(Name = "Yêu cầu đặc biệt")]
         public string? SpecialRequests { get; set; }

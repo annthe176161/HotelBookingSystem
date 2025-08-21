@@ -79,7 +79,7 @@ namespace HotelBookingSystem.Services.Implementations
                     RoomId = model.RoomId,
                     CheckIn = model.CheckInDate,
                     CheckOut = model.CheckOutDate,
-                    Guests = model.GuestCount,
+                    Guests = model.GuestCount ?? 1, // Default to 1 if null
                     TotalPrice = totalPrice,
                     CreatedDate = DateTime.Now,
                     BookingStatusId = pendingStatus.Id,

@@ -100,7 +100,8 @@
                                     Số khách
                                     <span class="text-danger">*</span>
                                 </label>
-                                <select asp-for="GuestCount" class="form-select" required>
+                                <select asp-for="GuestCount" class="form-select" required
+                                    data-msg-required="Vui lòng chọn số khách">
                                     <option value="">Chọn số khách</option>
                                     @for (int i = 1; i <= Model.MaxGuests; i++)
                                     {
@@ -466,4 +467,39 @@
 
 @section Scripts {
     <script src="~/js/booking-simple.js"></script>
+
+    <script>
+        // Tùy chỉnh thông báo validation cho trường số khách
+        $(document).ready(function () {
+            // Override default validation messages
+            $.validator.addMethod("required", function (value, element, param) {
+                return this.checkable(element) ? this.getLength(value, element) > 0 : $.trim(value).length > 0;
+            }, "Vui lòng điền thông tin này");
+
+            // Custom validation messages
+            $.extend($.validator.messages, {
+                required: "Vui lòng điền thông tin này",
+                number: "Vui lòng nhập một số hợp lệ",
+                min: "Giá trị phải lớn hơn hoặc bằng {0}",
+                max: "Giá trị phải nhỏ hơn hoặc bằng {0}"
+            });
+
+            // Specific validation for GuestCount field
+            $('select[name="GuestCount"]').rules("add", {
+                required: true,
+                messages: {
+                    required: "Vui lòng chọn số khách"
+                }
+            });
+
+            // Custom validation message for empty select
+            $('select[name="GuestCount"]').on('invalid', function () {
+                this.setCustomValidity('Vui lòng chọn số khách');
+            });
+
+            $('select[name="GuestCount"]').on('input', function () {
+                this.setCustomValidity('');
+            });
+        });
+    </script>
 }
