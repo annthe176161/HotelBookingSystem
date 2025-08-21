@@ -1,5 +1,6 @@
 using CloudinaryDotNet;
 using HotelBookingSystem.Data;
+using HotelBookingSystem.Infrastructure.Hubs;
 using HotelBookingSystem.Infrastructure.Options;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Implementations;
@@ -43,6 +44,9 @@ namespace HotelBookingSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // Add SignalR
+            builder.Services.AddSignalR();
             builder.Services.Configure<CloudinarySettings>(
                 builder.Configuration.GetSection("Cloudinary"));
             builder.Services.AddSingleton(sp =>
@@ -62,6 +66,7 @@ namespace HotelBookingSystem
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
 
             var app = builder.Build();
 
@@ -84,6 +89,9 @@ namespace HotelBookingSystem
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            // Map SignalR Hub
+            app.MapHub<NotificationHub>("/notificationHub");
 
             // Seed Database
             using (var scope = app.Services.CreateScope())

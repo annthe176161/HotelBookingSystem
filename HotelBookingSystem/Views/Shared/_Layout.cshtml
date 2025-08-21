@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/rooms-list.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/notifications.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
 
@@ -193,13 +194,32 @@
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@@microsoft/signalr@@latest/dist/browser/signalr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script src="~/js/signalr-notifications.js" asp-append-version="true"></script>
+    }
 
     <script>
         // Global variables for authentication status
         window.isUserAuthenticated = @Json.Serialize(User.Identity.IsAuthenticated);
-        window.loginUrl = "@Url.Action("Login", "Account")";
+        window.isUserAdmin = @Json.Serialize(User.IsInRole("Admin"));
+        window.currentUserId = '@(User.Identity.IsAuthenticated ? (User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "") : "")';
+
+        // Add CSRF token to all AJAX requests
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    xhr.setRequestHeader("RequestVerificationToken",
+                        $('input[name="__RequestVerificationToken"]').val());
+                }
+            }
+        });
     </script>
+
+    @Html.AntiForgeryToken()
 
     @await RenderSectionAsync("Scripts", required: false)
 

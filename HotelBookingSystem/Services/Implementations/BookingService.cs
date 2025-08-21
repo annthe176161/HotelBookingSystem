@@ -10,11 +10,13 @@ namespace HotelBookingSystem.Services.Implementations
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
-        public BookingService(ApplicationDbContext context, IEmailService emailService)
+        public BookingService(ApplicationDbContext context, IEmailService emailService, INotificationService notificationService)
         {
             _context = context;
             _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         public async Task<bool> IsRoomAvailableAsync(int roomId, DateTime checkIn, DateTime checkOut)
@@ -110,6 +112,39 @@ namespace HotelBookingSystem.Services.Implementations
                     .Include(b => b.BookingStatus)
                     .Include(b => b.Payment)
                     .FirstOrDefaultAsync(b => b.Id == booking.Id);
+
+                // Gửi thông báo real-time cho admin
+                if (bookingWithDetails != null)
+                {
+                    try
+                    {
+                        var customerName = bookingWithDetails.User?.FirstName + " " + bookingWithDetails.User?.LastName;
+                        var roomName = bookingWithDetails.Room?.Name + " (" + bookingWithDetails.Room?.RoomType + ")";
+
+                        // 1. Gửi thông báo cho Admin
+                        var adminMessage = $"Có đặt phòng mới từ khách hàng {customerName} cho phòng {roomName}";
+                        await _notificationService.SendBookingNotificationToAdminAsync(
+                            booking.Id.ToString(),
+                            customerName ?? "Khách hàng",
+                            roomName ?? "Phòng",
+                            adminMessage
+                        );
+
+                        // 2. Gửi thông báo xác nhận cho khách hàng
+                        var customerMessage = $"Bạn đã đặt thành công {roomName}. Mã đặt phòng của bạn là #{booking.Id}.";
+                        await _notificationService.SendBookingConfirmationToCustomerAsync(
+                            booking.UserId,
+                            booking.Id.ToString(),
+                            roomName ?? "Phòng",
+                            customerMessage
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[ERROR] Failed to send notification: {ex.Message}");
+                        // Don't throw, just log the error
+                    }
+                }
 
                 return bookingWithDetails ?? booking;
             }

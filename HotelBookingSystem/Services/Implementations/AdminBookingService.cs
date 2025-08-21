@@ -1,4 +1,5 @@
 ﻿using HotelBookingSystem.Data;
+using HotelBookingSystem.Services.Interfaces;
 using HotelBookingSystem.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,14 +8,17 @@ namespace HotelBookingSystem.Services.Implementations
     public interface IAdminBookingService
     {
         Task<BookingsViewModel> GetBookings(BookingQueryOptions options);
+        Task<bool> UpdateBookingStatusAsync(int bookingId, int statusId);
     }
     public class AdminBookingService : IAdminBookingService
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public AdminBookingService(ApplicationDbContext context)
+        public AdminBookingService(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         public async Task<BookingsViewModel> GetBookings(BookingQueryOptions options)
@@ -82,6 +86,44 @@ namespace HotelBookingSystem.Services.Implementations
                 Completed = completed,
                 Cancelled = cancelled
             };
+        }
+
+        public async Task<bool> UpdateBookingStatusAsync(int bookingId, int statusId)
+        {
+            try
+            {
+                var booking = await _context.Bookings
+                    .Include(b => b.User)
+                    .Include(b => b.Room)
+                    .Include(b => b.BookingStatus)
+                    .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+                if (booking == null || booking.User == null) return false;
+
+                var newStatus = await _context.BookingStatuses.FindAsync(statusId);
+                if (newStatus == null) return false;
+
+                var oldStatusName = booking.BookingStatus?.Name;
+                booking.BookingStatusId = statusId;
+
+                await _context.SaveChangesAsync();
+
+                // Gửi thông báo cho khách hàng về thay đổi trạng thái
+                var message = $"Trạng thái đặt phòng #{booking.Id} đã được cập nhật thành '{newStatus.Name}'";
+
+                await _notificationService.SendBookingStatusUpdateToCustomerAsync(
+                    booking.UserId ?? "",
+                    booking.Id.ToString(),
+                    newStatus.Name,
+                    message
+                );
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

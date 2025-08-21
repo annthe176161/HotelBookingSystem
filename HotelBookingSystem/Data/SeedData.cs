@@ -136,49 +136,57 @@ namespace HotelBookingSystem.Data
 
         private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, ILogger logger)
         {
-            logger.LogInformation("Checking if admin user exists...");
+            const string adminEmail = "admin@hoteltest.com";
+            const string adminPassword = "Test@123";
 
-            var adminUser = await userManager.FindByEmailAsync("admin@hotel.com");
+            logger.LogInformation("Seeding admin user '{AdminEmail}'...", adminEmail);
 
-            if (adminUser == null)
+            // Xóa admin user cũ nếu tồn tại để reset mật khẩu
+            var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+            if (existingAdmin != null)
             {
-                logger.LogInformation("Creating admin user...");
-
-                adminUser = new ApplicationUser
+                logger.LogInformation("Admin user '{AdminEmail}' already exists. Removing to reset password.", adminEmail);
+                var deletionResult = await userManager.DeleteAsync(existingAdmin);
+                if (!deletionResult.Succeeded)
                 {
-                    UserName = "admin@hotel.com",
-                    Email = "admin@hotel.com",
-                    EmailConfirmed = true,
-                    FullName = "Administrator"
-                };
+                    logger.LogError("Failed to remove existing admin user: {Errors}", string.Join(", ", deletionResult.Errors.Select(e => e.Description)));
+                    return; // Dừng lại nếu không xóa được
+                }
+                logger.LogInformation("Existing admin user removed successfully.");
+            }
 
-                var createResult = await userManager.CreateAsync(adminUser, "Admin123!");
+            // Tạo admin user mới
+            logger.LogInformation("Creating new admin user '{AdminEmail}'...", adminEmail);
+            var adminUser = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true,
+                FullName = "Hotel Administrator",
+                PhoneNumber = "0987654321",
+                IsActivated = true
+            };
 
-                if (createResult.Succeeded)
+            var creationResult = await userManager.CreateAsync(adminUser, adminPassword);
+            if (creationResult.Succeeded)
+            {
+                logger.LogInformation("Admin user created successfully.");
+
+                // Gán vai trò "Admin"
+                logger.LogInformation("Assigning 'Admin' role to the new admin user...");
+                var addToRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
+                if (addToRoleResult.Succeeded)
                 {
-                    logger.LogInformation("Admin user created successfully.");
-
-                    var roleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
-
-                    if (roleResult.Succeeded)
-                    {
-                        logger.LogInformation("Admin role assigned to user successfully.");
-                    }
-                    else
-                    {
-                        logger.LogError("Failed to assign Admin role: {Errors}",
-                            string.Join(", ", roleResult.Errors.Select(e => e.Description)));
-                    }
+                    logger.LogInformation("'Admin' role assigned successfully.");
                 }
                 else
                 {
-                    logger.LogError("Failed to create admin user: {Errors}",
-                        string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                    logger.LogError("Failed to assign 'Admin' role: {Errors}", string.Join(", ", addToRoleResult.Errors.Select(e => e.Description)));
                 }
             }
             else
             {
-                logger.LogInformation("Admin user already exists.");
+                logger.LogError("Failed to create admin user: {Errors}", string.Join(", ", creationResult.Errors.Select(e => e.Description)));
             }
         }
 

@@ -749,3 +749,44 @@ body {
         padding: 0;
     }
 }
+
+/* Toast Notification Styles */
+.toast {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 8px;
+}
+
+.toast-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+}
+
+.toast-header .btn-close {
+    filter: invert(1);
+}
+
+.toast-body {
+    background-color: white;
+    border-radius: 0 0 8px 8px;
+    padding: 1rem;
+}
+
+/* Notification Badge Styles */
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}

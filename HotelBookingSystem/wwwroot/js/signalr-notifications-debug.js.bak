@@ -1,0 +1,368 @@
+// SignalR Real-time Notifications
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('[DEBUG] Initializing SignalR notifications...');
+    
+    // Check if user is authenticated
+    if (!window.isUserAuthenticated) {
+        console.log('[DEBUG] User not authenticated, skipping SignalR');
+        return;
+    }
+    
+    console.log("[DEBUG] Current user info:", {
+        userId: window.currentUserId || 'undefined',
+        isAuthenticated: window.isUserAuthenticated,
+        isAdmin: window.isUserAdmin || 'undefined'
+    });
+    
+    // Initialize SignalR connection
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/notificationHub")
+        .withAutomaticReconnect()
+        .build();
+
+    // Store connection globally for debugging
+    window.signalRConnection = connection;
+
+    // Start connection
+    startConnection();
+
+    async function startConnection() {
+        try {
+            await connection.start();
+            console.log("[DEBUG] SignalR Connected successfully");
+            console.log("[DEBUG] Connection ID:", connection.connectionId);
+            
+            // Notify admin dashboard about successful connection
+            if (window.isUserAdmin === 'true' || window.isUserAdmin === true) {
+                console.log("[DEBUG] Admin user connected, updating admin status");
+                // Trigger admin status update
+                setTimeout(() => {
+                    if (document.getElementById('adminGroupStatus')) {
+                        document.getElementById('adminGroupStatus').className = 'badge bg-success';
+                        document.getElementById('adminGroupStatus').textContent = 'In AdminGroup';
+                        document.getElementById('adminGroupInfo').textContent = 'Connected and ready to receive notifications';
+                    }
+                }, 500);
+            }
+        } catch (err) {
+            console.error("[ERROR] SignalR Connection Error:", err);
+            // Retry connection after 5 seconds
+            setTimeout(startConnection, 5000);
+        }
+    }
+
+    // Listen for notifications
+    connection.on("ReceiveNotification", function (notification) {
+        console.log("[DEBUG] Received notification:", notification);
+        
+        // Add to notification list
+        addNotificationToList(notification);
+        
+        // Update notification count
+        updateNotificationCount();
+        
+        // Show toast notification
+        showToastNotification(notification);
+        
+        // Play notification sound (optional)
+        playNotificationSound();
+    });
+
+    // Listen for admin notifications (if user is admin)
+    connection.on("ReceiveAdminNotification", function (notification) {
+        console.log("[DEBUG] Received admin notification:", notification);
+        
+        // Add to notification list with admin styling
+        addAdminNotificationToList(notification);
+        
+        // Update notification count
+        updateNotificationCount();
+        
+        // Show toast notification
+        showToastNotification(notification);
+        
+        // Play notification sound
+        playNotificationSound();
+    });
+
+    // Handle connection errors
+    connection.onreconnecting((error) => {
+        console.log("SignalR reconnecting:", error);
+        showConnectionStatus('Đang kết nối lại...', 'warning');
+    });
+
+    connection.onreconnected((connectionId) => {
+        console.log("SignalR reconnected:", connectionId);
+        showConnectionStatus('Đã kết nối lại', 'success');
+        setTimeout(() => hideConnectionStatus(), 3000);
+    });
+
+    connection.onclose((error) => {
+        console.log("SignalR connection closed:", error);
+        showConnectionStatus('Mất kết nối', 'error');
+    });
+
+    // Add notification to dropdown list
+    function addNotificationToList(notification) {
+        console.log("[DEBUG] Adding notification to list:", notification);
+        const notificationsList = document.getElementById('notificationList');
+        if (!notificationsList) {
+            console.log("[WARNING] notificationList element not found");
+            return;
+        }
+
+        const notificationItem = createNotificationElement(notification);
+        
+        // Insert at the beginning
+        if (notificationsList.firstChild) {
+            notificationsList.insertBefore(notificationItem, notificationsList.firstChild);
+        } else {
+            notificationsList.appendChild(notificationItem);
+        }
+
+        // Limit to 10 notifications in dropdown
+        const notifications = notificationsList.children;
+        if (notifications.length > 10) {
+            notificationsList.removeChild(notifications[notifications.length - 1]);
+        }
+        
+        console.log("[DEBUG] Notification added to list successfully");
+    }
+
+    function addAdminNotificationToList(notification) {
+        const notificationsList = document.getElementById('notificationList');
+        if (!notificationsList) return;
+
+        const notificationItem = createNotificationElement(notification, true);
+        
+        // Insert at the beginning
+        if (notificationsList.firstChild) {
+            notificationsList.insertBefore(notificationItem, notificationsList.firstChild);
+        } else {
+            notificationsList.appendChild(notificationItem);
+        }
+
+        // Limit to 10 notifications in dropdown
+        const notifications = notificationsList.children;
+        if (notifications.length > 10) {
+            notificationsList.removeChild(notifications[notifications.length - 1]);
+        }
+    }
+
+    function createNotificationElement(notification, isAdmin = false) {
+        const div = document.createElement('div');
+        div.className = `notification-item ${notification.type} unread ${isAdmin ? 'admin-notification' : ''}`;
+        
+        const iconClass = getNotificationIcon(notification.type);
+        const timeAgo = getTimeAgo(new Date(notification.timestamp));
+        
+        div.innerHTML = `
+            <div class="notification-content">
+                <div class="notification-icon">
+                    <i class="${iconClass}"></i>
+                </div>
+                <div class="notification-details">
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${timeAgo}</div>
+                    ${isAdmin ? '<div class="admin-badge">Admin</div>' : ''}
+                </div>
+            </div>
+        `;
+
+        // Add click handler to mark as read and handle actions
+        div.addEventListener('click', function() {
+            markAsRead(div);
+            handleNotificationClick(notification);
+        });
+
+        return div;
+    }
+
+    function handleNotificationClick(notification) {
+        // Handle different notification types
+        if (notification.data) {
+            const data = notification.data;
+            
+            switch (data.action) {
+                case 'new_booking':
+                    if (data.bookingId) {
+                        window.location.href = `/Admin/Bookings/Details/${data.bookingId}`;
+                    }
+                    break;
+                case 'status_update':
+                    if (data.bookingId) {
+                        window.location.href = `/Bookings/Details/${data.bookingId}`;
+                    }
+                    break;
+                case 'payment_update':
+                    if (data.bookingId) {
+                        window.location.href = `/Bookings/Details/${data.bookingId}`;
+                    }
+                    break;
+            }
+        }
+    }
+
+    function getNotificationIcon(type) {
+        const icons = {
+            'booking': 'fas fa-bed text-primary',
+            'booking_status': 'fas fa-check-circle text-success',
+            'payment': 'fas fa-credit-card text-info',
+            'success': 'fas fa-check-circle text-success',
+            'warning': 'fas fa-exclamation-triangle text-warning',
+            'error': 'fas fa-times-circle text-danger',
+            'info': 'fas fa-info-circle text-info'
+        };
+        return icons[type] || 'fas fa-bell text-secondary';
+    }
+
+    function updateNotificationCount() {
+        console.log('[DEBUG] Updating notification count...');
+        const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+        const badge = document.getElementById('notificationBadge');
+        
+        console.log('[DEBUG] Unread count:', unreadCount);
+        console.log('[DEBUG] Badge element:', badge);
+        
+        if (badge) {
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.style.display = 'inline';
+                badge.classList.add('animate-pulse');
+                console.log('[DEBUG] Badge updated with count:', unreadCount);
+            } else {
+                badge.style.display = 'none';
+                badge.classList.remove('animate-pulse');
+                console.log('[DEBUG] Badge hidden (no unread notifications)');
+            }
+        } else {
+            console.log('[DEBUG] Badge element not found');
+        }
+    }
+
+    function markAsRead(notificationElement) {
+        notificationElement.classList.remove('unread');
+        updateNotificationCount();
+    }
+
+    function markAllAsRead() {
+        document.querySelectorAll('.notification-item.unread').forEach(item => {
+            item.classList.remove('unread');
+        });
+        updateNotificationCount();
+    }
+
+    function showToastNotification(notification) {
+        console.log("[DEBUG] Showing toast notification:", notification);
+        
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `notification-toast ${notification.type}`;
+        
+        const iconClass = getNotificationIcon(notification.type);
+        
+        toast.innerHTML = `
+            <div class="toast-content">
+                <div class="toast-icon">
+                    <i class="${iconClass}"></i>
+                </div>
+                <div class="toast-message">${notification.message}</div>
+                <button class="toast-close" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+
+        // Add to toast container
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+
+        toastContainer.appendChild(toast);
+        console.log("[DEBUG] Toast notification added to DOM");
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
+    }
+
+    function showConnectionStatus(message, type) {
+        let statusDiv = document.getElementById('connection-status');
+        if (!statusDiv) {
+            statusDiv = document.createElement('div');
+            statusDiv.id = 'connection-status';
+            statusDiv.className = 'connection-status';
+            document.body.appendChild(statusDiv);
+        }
+        
+        statusDiv.className = `connection-status ${type}`;
+        statusDiv.textContent = message;
+        statusDiv.style.display = 'block';
+    }
+
+    function hideConnectionStatus() {
+        const statusDiv = document.getElementById('connection-status');
+        if (statusDiv) {
+            statusDiv.style.display = 'none';
+        }
+    }
+
+    function playNotificationSound() {
+        // Create audio element for notification sound
+        try {
+            const audio = new Audio('/sounds/notification.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(e => {
+                // Audio play failed, possibly due to browser policy
+                console.log('Could not play notification sound:', e);
+            });
+        } catch (e) {
+            console.log('Notification sound not available:', e);
+        }
+    }
+
+    function getTimeAgo(date) {
+        const now = new Date();
+        const diff = now - date;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+
+        if (minutes < 1) return 'Vừa xong';
+        if (minutes < 60) return `${minutes} phút trước`;
+        if (hours < 24) return `${hours} giờ trước`;
+        return `${days} ngày trước`;
+    }
+
+    // Global functions
+    window.markAllNotificationsAsRead = markAllAsRead;
+    window.signalRConnection = connection;
+    
+    // Test function for debugging
+    window.testNotification = function() {
+        console.log("[DEBUG] Testing notification system...");
+        const testNotification = {
+            message: "Test notification from client",
+            type: "info",
+            timestamp: new Date(),
+            data: { test: true }
+        };
+        
+        showToastNotification(testNotification);
+        addNotificationToList(testNotification);
+        updateNotificationCount();
+    };
+    
+    // Initial count update
+    updateNotificationCount();
+    
+    console.log("[DEBUG] SignalR notifications initialization complete");
+});

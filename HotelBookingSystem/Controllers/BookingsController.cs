@@ -124,15 +124,6 @@ namespace HotelBookingSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookingViewModel model)
         {
-            // Debug: Log tất cả dữ liệu nhận được
-            Console.WriteLine($"=== DEBUG CREATE BOOKING ===");
-            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
-            Console.WriteLine($"RoomId: {model.RoomId}");
-            Console.WriteLine($"CheckIn: {model.CheckInDate}");
-            Console.WriteLine($"CheckOut: {model.CheckOutDate}");
-            Console.WriteLine($"Guests: {model.GuestCount}");
-            Console.WriteLine($"FirstName: {model.FirstName}");
-            Console.WriteLine($"LastName: {model.LastName}");
             Console.WriteLine($"Email: {model.Email}");
             Console.WriteLine($"Phone: {model.Phone}");
 
