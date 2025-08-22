@@ -84,7 +84,7 @@ namespace HotelBookingSystem.Data
                 .OnDelete(DeleteBehavior.ClientSetNull);
             builder.Entity<ApplicationUser>(u =>
             {
-                u.Property(x => x.Gender).HasConversion<int>();
+                u.Property(x => x.GenderType).HasConversion<int>();
                 u.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
 
                 // (tuỳ chọn) lặp lại max length bằng Fluent API cho đồng nhất

@@ -19,7 +19,7 @@ namespace HotelBookingSystem.Models
         public string? LastName { get; set; }
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
-        public GenderType Gender { get; set; } = GenderType.Unknow;
+        public GenderType GenderType { get; set; } = GenderType.Unknow;
         [MaxLength(200)]
         public string? Address { get; set; }
         [MaxLength(100)]
