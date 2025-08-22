@@ -22,11 +22,11 @@ namespace HotelBookingSystem.Services.Implementations
 
             // Filtering logic
             // Only filter by guests if > 0, otherwise show all rooms
-            if (searchModel.Guests > 0) 
+            if (searchModel.Guests > 0)
             {
                 query = query.Where(r => r.Capacity >= searchModel.Guests);
             }
-            if (!string.IsNullOrEmpty(searchModel.RoomType)) 
+            if (!string.IsNullOrEmpty(searchModel.RoomType))
             {
                 query = query.Where(r => r.RoomType == searchModel.RoomType);
             }
@@ -42,6 +42,13 @@ namespace HotelBookingSystem.Services.Implementations
 
             var allMatchingRooms = await query.ToListAsync();
             var totalRooms = allMatchingRooms.Count;
+            var totalPages = (int)Math.Ceiling(totalRooms / (double)searchModel.PageSize);
+
+            // Ensure current page is within valid range
+            if (searchModel.CurrentPage < 1)
+                searchModel.CurrentPage = 1;
+            if (searchModel.CurrentPage > totalPages && totalPages > 0)
+                searchModel.CurrentPage = totalPages;
 
             var roomsForPage = allMatchingRooms
                 .Skip((searchModel.CurrentPage - 1) * searchModel.PageSize)
@@ -66,7 +73,7 @@ namespace HotelBookingSystem.Services.Implementations
                 CurrentPage = searchModel.CurrentPage,
                 TotalRooms = totalRooms,
                 PageSize = searchModel.PageSize,
-                TotalPages = (int)Math.Ceiling(totalRooms / (double)searchModel.PageSize),
+                TotalPages = totalPages,
                 RoomTypes = await _context.Rooms.Select(r => r.RoomType).Distinct().ToListAsync()
             };
 
@@ -75,7 +82,7 @@ namespace HotelBookingSystem.Services.Implementations
             viewModel.CheckOutDate = searchModel.CheckOutDate;
             viewModel.Guests = searchModel.Guests;
             viewModel.RoomType = searchModel.RoomType;
-            viewModel.SortBy = searchModel.SortBy;
+            viewModel.SortBy = searchModel.SortBy ?? "recommended";
 
             return viewModel;
         }

@@ -256,7 +256,9 @@
                                                    page = Model.CurrentPage - 1, 
                                                    sortBy = Model.SortBy, 
                                                    guests = Model.Guests, 
-                                                   roomType = Model.RoomType 
+                                                   roomType = Model.RoomType,
+                                                   checkInDate = Model.CheckInDate?.ToString("yyyy-MM-dd"),
+                                                   checkOutDate = Model.CheckOutDate?.ToString("yyyy-MM-dd")
                                                })"
                                                aria-label="Trang trước">
                                                 <i class="fas fa-chevron-left" aria-hidden="true"></i>
@@ -272,7 +274,9 @@
                                                    page = i, 
                                                    sortBy = Model.SortBy, 
                                                    guests = Model.Guests, 
-                                                   roomType = Model.RoomType 
+                                                   roomType = Model.RoomType,
+                                                   checkInDate = Model.CheckInDate?.ToString("yyyy-MM-dd"),
+                                                   checkOutDate = Model.CheckOutDate?.ToString("yyyy-MM-dd")
                                                })"
                                                aria-label="@(i == Model.CurrentPage ? $"Trang {i} (hiện tại)" : $"Trang {i}")"
                                                @(i == Model.CurrentPage ? "aria-current=\"page\"" : "")>
@@ -289,7 +293,9 @@
                                                    page = Model.CurrentPage + 1, 
                                                    sortBy = Model.SortBy, 
                                                    guests = Model.Guests, 
-                                                   roomType = Model.RoomType 
+                                                   roomType = Model.RoomType,
+                                                   checkInDate = Model.CheckInDate?.ToString("yyyy-MM-dd"),
+                                                   checkOutDate = Model.CheckOutDate?.ToString("yyyy-MM-dd")
                                                })"
                                                aria-label="Trang tiếp theo">
                                                 <i class="fas fa-chevron-right" aria-hidden="true"></i>
@@ -390,6 +396,33 @@
 </div>
 
 @section Scripts {
+    <script>
+        // Handle form submission - reset to page 1
+        document.getElementById('filterForm').addEventListener('submit', function() {
+            document.querySelector('input[name="page"]').value = '1';
+        });
+
+        // Handle sort change - reset to page 1
+        document.getElementById('sortBy').addEventListener('change', function() {
+            document.querySelector('input[name="page"]').value = '1';
+            document.querySelector('input[name="sortBy"]').value = this.value;
+            document.getElementById('filterForm').submit();
+        });
+
+        // Optional: Add loading state for pagination links
+        document.querySelectorAll('.pagination .page-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                // Add loading indicator
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            });
+        });
+
+        // Optional: Smooth scroll to top when page changes
+        if (window.location.search.includes('page=') && window.location.search.match(/page=(\d+)/)[1] > 1) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+}
     <script src="~/js/rooms-list.js" asp-append-version="true"></script>
 }
 
