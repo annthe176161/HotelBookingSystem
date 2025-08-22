@@ -12,5 +12,6 @@ namespace HotelBookingSystem.Services.Interfaces
         Task<CustomerBookingsViewModel> GetCustomerBookingsAsync(string userId, string searchTerm = "", string status = "", string roomType = "", string paymentStatus = "");
         Task<BookingDetailsViewModel?> GetBookingDetailsAsync(int bookingId, string userId);
         Task<bool> CancelBookingAsync(int bookingId, string userId);
+        Task<string> CreateBookingReviewAsync(BookingReviewViewModel model, string userId);
     }
 }

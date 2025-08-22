@@ -54,7 +54,7 @@ namespace HotelBookingSystem.Data
                 await userManager.DeleteAsync(oldUser);
             }
 
-            const string userEmail = "thanhan01236339441@gmail.com";
+            const string userEmail = "test.customer@example.com";
             logger.LogInformation("Checking if default test user '{UserEmail}' exists...", userEmail);
 
             var testUser = await userManager.FindByEmailAsync(userEmail);
@@ -66,7 +66,7 @@ namespace HotelBookingSystem.Data
                     UserName = userEmail,
                     Email = userEmail,
                     EmailConfirmed = true,
-                    FullName = "Nguyễn Thành An",
+                    FullName = "Test Customer",
                     PhoneNumber = "0123456789"
                 };
 
@@ -391,7 +391,7 @@ namespace HotelBookingSystem.Data
             logger.LogInformation("Creating test bookings...");
 
             // Lấy test user
-            var testUser = await userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            var testUser = await userManager.FindByEmailAsync("test.customer@example.com");
             if (testUser == null)
             {
                 logger.LogWarning("Test user not found, cannot create test bookings.");

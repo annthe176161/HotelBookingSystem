@@ -8,6 +8,7 @@ using HotelBookingSystem.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -59,10 +60,20 @@ namespace HotelBookingSystem.Controllers
 
             if (result.Succeeded)
             {
-                // Nếu có returnUrl (đi từ trang đặt phòng) thì quay lại đó, ngược lại về Home
+                // Kiểm tra role để chuyển hướng phù hợp
+                var roles = await _userManager.GetRolesAsync(user);
+
+                // Nếu có returnUrl (đi từ trang đặt phòng) thì quay lại đó
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return LocalRedirect(returnUrl);
 
+                // Nếu là admin thì chuyển đến admin dashboard
+                if (roles.Contains("Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+
+                // Người dùng thường thì về Home
                 return RedirectToAction("Index", "Home");
             }
 
@@ -180,200 +191,60 @@ namespace HotelBookingSystem.Controllers
             return View();
         }
 
-        //public IActionResult Profile()
-        //{
-        //    // Tạo dữ liệu mẫu cho trang profile
-        //    var model = new ProfileViewModel
-        //    {
-        //        FirstName = "Nguyễn",
-        //        LastName = "Văn A",
-        //        Email = "nguyenvana@gmail.com",
-        //        PhoneNumber = "0987654321",
-        //        Birthdate = new DateTime(1990, 1, 1),
-        //        Gender = "male",
-        //        Address = "123 Nguyễn Văn Linh",
-        //        City = "Hồ Chí Minh",
-        //        State = "TP.HCM",
-        //        ZipCode = "70000",
-        //        CreatedAt = DateTime.Now.AddMonths(-6),
-        //        BookingsCount = 5,
-        //        ReviewsCount = 3,
-        //        LoyaltyPoints = 250,
-        //        LoyaltyTier = "Silver",
-        //        NextTier = "Gold",
-        //        PointsToNextTier = 150,
-        //        NextTierProgress = 62,
-        //        TwoFactorEnabled = false,
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
 
-        //        // Thêm dữ liệu đặt phòng mẫu
-        //        Bookings = new List<BookingItemViewModel>
-        //        {
-        //            new BookingItemViewModel
-        //            {
-        //                Id = 1,
-        //                BookingNumber = "BK001",
-        //                RoomName = "Phòng Deluxe Hướng Biển",
-        //                RoomImageUrl = "/images/rooms/deluxe-ocean.jpg",
-        //                CheckInDate = DateTime.Now.AddDays(14),
-        //                CheckOutDate = DateTime.Now.AddDays(17),
-        //                GuestsCount = 2,
-        //                TotalPrice = 6000000,
-        //                Status = "Confirmed",
-        //                BookingDate = DateTime.Now.AddDays(-10),
-        //                HasReview = false
-        //            },
-        //            new BookingItemViewModel
-        //            {
-        //                Id = 2,
-        //                BookingNumber = "BK002",
-        //                RoomName = "Phòng Suite Gia Đình",
-        //                RoomImageUrl = "/images/rooms/family-suite.jpg",
-        //                CheckInDate = DateTime.Now.AddDays(-14),
-        //                CheckOutDate = DateTime.Now.AddDays(-10),
-        //                GuestsCount = 4,
-        //                TotalPrice = 14000000,
-        //                Status = "Completed",
-        //                BookingDate = DateTime.Now.AddDays(-25),
-        //                HasReview = true
-        //            }
-        //        },
+            // Tách FirstName / LastName từ FullName nếu có
+            var firstName = user.FirstName ?? "";
+            var lastName = user.LastName ?? "";
 
-        //        // Thêm đánh giá mẫu
-        //        Reviews = new List<ReviewItemViewModel>
-        //        {
-        //            new ReviewItemViewModel
-        //            {
-        //                Id = 1,
-        //                RoomName = "Phòng Suite Gia Đình",
-        //                Rating = 5,
-        //                Comment = "Phòng rất tuyệt vời, rộng rãi và sạch sẽ. Nhân viên thân thiện và nhiệt tình. Sẽ quay lại lần sau!",
-        //                CreatedAt = DateTime.Now.AddDays(-9)
-        //            },
-        //            new ReviewItemViewModel
-        //            {
-        //                Id = 2,
-        //                RoomName = "Phòng Executive Business",
-        //                Rating = 4,
-        //                Comment = "Phòng tốt, đầy đủ tiện nghi cho chuyến công tác. Chỉ tiếc là wifi hơi chậm.",
-        //                CreatedAt = DateTime.Now.AddDays(-45)
-        //            }
-        //        },
+            if (string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(user.FullName))
+            {
+                var nameParts = user.FullName.Split(' ', 2);
+                firstName = nameParts.Length > 0 ? nameParts[0] : "";
+                lastName = nameParts.Length > 1 ? nameParts[1] : "";
+            }
 
-        //        // Thêm phòng yêu thích mẫu
-        //        FavoriteRooms = new List<FavoriteRoomViewModel>
-        //        {
-        //            new FavoriteRoomViewModel
-        //            {
-        //                Id = 1,
-        //                Name = "Phòng Tổng Thống",
-        //                ImageUrl = "/images/rooms/presidential-suite.jpg",
-        //                Price = 8000000,
-        //                Rating = 5.0,
-        //                Capacity = 2,
-        //                RoomType = "Presidential"
-        //            },
-        //            new FavoriteRoomViewModel
-        //            {
-        //                Id = 2,
-        //                Name = "Phòng Deluxe Hướng Biển",
-        //                ImageUrl = "/images/rooms/deluxe-ocean.jpg",
-        //                Price = 2000000,
-        //                Rating = 4.5,
-        //                Capacity = 2,
-        //                RoomType = "Deluxe"
-        //            }
-        //        },
-            
-        //        // Thêm lịch sử điểm thưởng mẫu
-        //        LoyaltyPointsHistory = new List<LoyaltyPointHistoryViewModel>
-        //        {
-        //            new LoyaltyPointHistoryViewModel
-        //            {
-        //                Date = DateTime.Now.AddDays(-10),
-        //                Description = "Đặt phòng BK001",
-        //                Points = 60,
-        //                Status = "Completed"
-        //            },
-        //            new LoyaltyPointHistoryViewModel
-        //            {
-        //                Date = DateTime.Now.AddDays(-25),
-        //                Description = "Đặt phòng BK002",
-        //                Points = 140,
-        //                Status = "Completed"
-        //            },
-        //            new LoyaltyPointHistoryViewModel
-        //            {
-        //                Date = DateTime.Now.AddDays(-60),
-        //                Description = "Điểm thưởng chào mừng",
-        //                Points = 50,
-        //                Status = "Completed"
-        //            }
-        //        },
+            var vm = new ProfileViewModel
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = user.Email ?? "",
+                PhoneNumber = user.PhoneNumber ?? "",
+                Birthdate = user.DateOfBirth ?? DateTime.Now.AddYears(-25),
+                Gender = user.Gender == GenderType.Name ? "male" :
+                        user.Gender == GenderType.Nu ? "female" : "other",
+                Address = user.Address ?? "",
+                City = user.City ?? "",
+                State = user.State ?? "",
+                ZipCode = user.ZipCode ?? "",
+                AvatarUrl = user.ProfilePictureUrl ?? "/images/default-avatar.png",
+                CreatedAt = user.CreatedAt,
 
-        //        // Thêm hoạt động đăng nhập mẫu
-        //        LoginActivities = new List<LoginActivityViewModel>
-        //        {
-        //            new LoginActivityViewModel
-        //            {
-        //                Device = "Windows Chrome 115.0.5790",
-        //                Location = "Hồ Chí Minh, Việt Nam",
-        //                IpAddress = "203.113.148.XX",
-        //                Time = DateTime.Now.AddHours(-1),
-        //                Status = "Current"
-        //            },
-        //            new LoginActivityViewModel
-        //            {
-        //                Device = "iPhone Safari iOS 16.5",
-        //                Location = "Hồ Chí Minh, Việt Nam",
-        //                IpAddress = "42.116.83.XX",
-        ////                Time = DateTime.Now.AddDays(-2),[HttpGet]
-        //public async Task<IActionResult> Profile()
-        //{
-        //    var user = await _userManager.GetUserAsync(User);
+                // Đếm số booking và review nếu có
+                BookingsCount = await _db.Bookings.CountAsync(b => b.UserId == user.Id),
+                ReviewsCount = await _db.Reviews.CountAsync(r => r.UserId == user.Id),
 
-        //    // Tách FirstName / LastName từ FullName nếu DB chỉ có FullName
-        //    var (first, last) = SplitFullName(user.FullName);
+                // Mock data cho loyalty system
+                LoyaltyPoints = 250,
+                LoyaltyTier = "Silver",
+                NextTier = "Gold",
+                PointsToNextTier = 150,
+                NextTierProgress = 62,
+                TwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user)
+            };
 
-        //    var vm = new ProfileViewModel
-        //    {
-        //        FirstName = first,
-        //        LastName = last,
-        //        Email = user.Email ?? "",
-        //        PhoneNumber = user.PhoneNumber ?? "",
+            return View(vm);
+        }
 
-        //        // Nếu ApplicationUser CHƯA có các cột bên dưới, hãy để trống hoặc lấy từ nơi khác
-        //        // BirthDate  = user.BirthDate,
-        //        // Gender     = user.Gender,
-        //        // Address    = user.Address,
-        //        // City       = user.City,
-        //        // State      = user.State,
-        //        // ZipCode    = user.ZipCode,
-
-        //        // Các con số hiển thị bên trái (nếu bạn có bảng Booking/Review):
-        //        BookingCount = await _db.Bookings.CountAsync(b => b.UserId == user.Id),
-        //        ReviewCount = await _db.Reviews.CountAsync(r => r.UserId == user.Id),
-        //        RewardPoints = 0 // nếu có cột/logic điểm thưởng thì thay ở đây
-        //    };
-
-        //    return View(vm); // View Profile.cshtml của bạn sẽ tự fill các ô
-        //}
-        //                Status = "Success"
-        //            },
-        //            new LoginActivityViewModel
-        //            {
-        //                Device = "Android Chrome 115.0.5790",
-        //                Location = "Hà Nội, Việt Nam",
-        //                IpAddress = "14.241.224.XX",
-        //                Time = DateTime.Now.AddDays(-7),
-        //                Status = "Success"
-        //            }
-        //        }
-        //    };
-
-        //    return View(model);
-        //}
-
-        
+        #region Helper Methods
 
         // Helper tách họ tên
         private static (string first, string last) SplitFullName(string? fullName)
@@ -385,8 +256,7 @@ namespace HotelBookingSystem.Controllers
             return (string.Join(' ', parts[..^1]), parts[^1]); // first = tất cả trừ từ cuối, last = từ cuối
         }
 
-        
+        #endregion
     }
-
 }
 

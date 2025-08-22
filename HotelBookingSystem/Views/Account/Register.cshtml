@@ -8,8 +8,8 @@
         <div class="col-lg-6 register-banner d-none d-lg-block">
             <div class="overlay"></div>
             <div class="banner-content">
-                <h1>Đăng ký thành viên</h1>
-                <p>Trải nghiệm đặc quyền và ưu đãi dành riêng cho thành viên Luxury Hotel</p>
+                <h1>Luxury Hotel</h1>
+                <p>Tham gia cộng đồng thành viên để nhận được những ưu đãi đặc biệt</p>
             </div>
         </div>
         <div class="col-lg-6 col-md-12 register-form-container">
@@ -19,11 +19,13 @@
                         <i class="fas fa-hotel"></i>
                     </a>
                     <h2>Tạo tài khoản mới</h2>
-                    <p>Đăng ký để nhận ưu đãi đặc biệt</p>
+                    <p>Đăng ký để trải nghiệm dịch vụ cao cấp</p>
                 </div>
 
-                <form asp-action="Register" asp-controller="Account" method="post" class="register-form needs-validation" novalidate>
+                <form asp-action="Register" asp-controller="Account" method="post"
+                    class="register-form needs-validation" novalidate>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @Html.AntiForgeryToken()
 
                     <div class="row">
                         <div class="col-md-6">
@@ -63,21 +65,21 @@
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
 
-                    <div class="form-floating mb-3 password-container">
-                        <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu" required />
+                    <div class="form-floating mb-3">
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu"
+                            required />
                         <label asp-for="Password">Mật khẩu</label>
                         <span asp-validation-for="Password" class="text-danger"></span>
-                        <button type="button" class="password-toggle"><i class="far fa-eye"></i></button>
                         <div class="invalid-feedback">
                             Mật khẩu phải có ít nhất 6 ký tự
                         </div>
                     </div>
 
-                    <div class="form-floating mb-3 password-container">
-                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Xác nhận mật khẩu" required />
+                    <div class="form-floating mb-3">
+                        <input asp-for="ConfirmPassword" type="password" class="form-control"
+                            placeholder="Xác nhận mật khẩu" required />
                         <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                        <button type="button" class="password-toggle"><i class="far fa-eye"></i></button>
                         <div class="invalid-feedback">
                             Mật khẩu xác nhận không khớp
                         </div>
@@ -86,7 +88,8 @@
                     <div class="password-strength">
                         <p>Độ mạnh mật khẩu: <span id="password-strength-text">Yếu</span></p>
                         <div class="progress">
-                            <div id="password-strength-meter" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div id="password-strength-meter" class="progress-bar bg-danger" role="progressbar"
+                                style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <ul class="password-hints">
                             <li class="hint-length"><i class="fas fa-times-circle"></i> Ít nhất 8 ký tự</li>
@@ -100,7 +103,9 @@
                     <div class="form-check mb-3">
                         <input asp-for="AcceptTerms" class="form-check-input" type="checkbox" required />
                         <label asp-for="AcceptTerms" class="form-check-label">
-                            Tôi đồng ý với <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">điều khoản sử dụng</a> và <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">chính sách bảo mật</a>
+                            Tôi đồng ý với <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">điều khoản sử
+                                dụng</a> và <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">chính sách
+                                bảo mật</a>
                         </label>
                         <span asp-validation-for="AcceptTerms" class="text-danger"></span>
                         <div class="invalid-feedback">
@@ -144,16 +149,20 @@
             </div>
             <div class="modal-body">
                 <h6>1. Điều khoản chung</h6>
-                <p>Khi sử dụng dịch vụ của Luxury Hotel, bạn đồng ý tuân thủ các điều khoản và điều kiện được quy định tại đây.</p>
+                <p>Khi sử dụng dịch vụ của Luxury Hotel, bạn đồng ý tuân thủ các điều khoản và điều kiện được quy định
+                    tại đây.</p>
 
                 <h6>2. Quy định đặt phòng</h6>
-                <p>Việc đặt phòng chỉ được xác nhận sau khi bạn nhận được email xác nhận từ chúng tôi. Đặt phòng có thể được hủy không mất phí trước 24 giờ so với giờ nhận phòng tiêu chuẩn.</p>
+                <p>Việc đặt phòng chỉ được xác nhận sau khi bạn nhận được email xác nhận từ chúng tôi. Đặt phòng có thể
+                    được hủy không mất phí trước 24 giờ so với giờ nhận phòng tiêu chuẩn.</p>
 
                 <h6>3. Thanh toán</h6>
-                <p>Chúng tôi chấp nhận nhiều hình thức thanh toán khác nhau bao gồm tiền mặt, thẻ tín dụng và chuyển khoản ngân hàng.</p>
+                <p>Chúng tôi chấp nhận nhiều hình thức thanh toán khác nhau bao gồm tiền mặt, thẻ tín dụng và chuyển
+                    khoản ngân hàng.</p>
 
                 <h6>4. Quyền riêng tư</h6>
-                <p>Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn. Thông tin cá nhân sẽ chỉ được sử dụng cho mục đích cung cấp dịch vụ và sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý của bạn.</p>
+                <p>Chúng tôi cam kết bảo vệ thông tin cá nhân của bạn. Thông tin cá nhân sẽ chỉ được sử dụng cho mục
+                    đích cung cấp dịch vụ và sẽ không được chia sẻ với bên thứ ba mà không có sự đồng ý của bạn.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -172,16 +181,21 @@
             </div>
             <div class="modal-body">
                 <h6>1. Thu thập thông tin</h6>
-                <p>Chúng tôi thu thập thông tin cá nhân như tên, địa chỉ email, số điện thoại và thông tin thanh toán khi bạn đặt phòng hoặc đăng ký tài khoản.</p>
+                <p>Chúng tôi thu thập thông tin cá nhân như tên, địa chỉ email, số điện thoại và thông tin thanh toán
+                    khi bạn đặt phòng hoặc đăng ký tài khoản.</p>
 
                 <h6>2. Sử dụng thông tin</h6>
-                <p>Thông tin cá nhân của bạn được sử dụng để xử lý đặt phòng, cung cấp dịch vụ khách hàng và gửi thông tin về các ưu đãi đặc biệt (nếu bạn chọn nhận).</p>
+                <p>Thông tin cá nhân của bạn được sử dụng để xử lý đặt phòng, cung cấp dịch vụ khách hàng và gửi thông
+                    tin về các ưu đãi đặc biệt (nếu bạn chọn nhận).</p>
 
                 <h6>3. Bảo mật thông tin</h6>
-                <p>Chúng tôi áp dụng các biện pháp bảo mật phù hợp để bảo vệ thông tin của bạn khỏi mất mát, truy cập trái phép hoặc tiết lộ.</p>
+                <p>Chúng tôi áp dụng các biện pháp bảo mật phù hợp để bảo vệ thông tin của bạn khỏi mất mát, truy cập
+                    trái phép hoặc tiết lộ.</p>
 
                 <h6>4. Chia sẻ thông tin</h6>
-                <p>Chúng tôi không bán hoặc cho thuê thông tin cá nhân của bạn cho bên thứ ba. Trong một số trường hợp nhất định, chúng tôi có thể chia sẻ thông tin với các đối tác đáng tin cậy để cung cấp dịch vụ cho bạn.</p>
+                <p>Chúng tôi không bán hoặc cho thuê thông tin cá nhân của bạn cho bên thứ ba. Trong một số trường hợp
+                    nhất định, chúng tôi có thể chia sẻ thông tin với các đối tác đáng tin cậy để cung cấp dịch vụ cho
+                    bạn.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>

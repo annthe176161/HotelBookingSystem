@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingSystem.Controllers
 {
+    [Authorize]
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,12 +30,12 @@ namespace HotelBookingSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string searchTerm = "", string status = "", string roomType = "", string paymentStatus = "")
         {
-            // Lấy user mặc định để test (có thể thay đổi khi có login)
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            // Lấy user hiện tại đã đăng nhập
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
-                return RedirectToAction("Index", "Home");
+                TempData["Error"] = "Bạn cần đăng nhập để xem lịch sử đặt phòng.";
+                return RedirectToAction("Login", "Account");
             }
 
             // Lấy danh sách status từ DB để hiển thị trong dropdown
@@ -60,6 +61,47 @@ namespace HotelBookingSystem.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Index(BookingReviewViewModel request) 
+        {
+            try
+            {
+                request.Comment ??= "";
+                if (!ModelState.IsValid)
+                {
+                    TempData["Error"] = "Dữ liệu không hợp lệ";
+                    return RedirectToAction("Index", "Bookings");
+                }
+                var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+                if (user == null)
+                {
+                    // Xử lý trường hợp không tìm thấy user test. 
+                    // Có thể tạo user ở đây hoặc báo lỗi.
+                    // Trong ví dụ này, chúng ta sẽ báo lỗi để đảm bảo SeedData đã chạy đúng.
+                    TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
+                    return RedirectToAction("Index", "Home");
+                }
+                string result = await _bookingService.CreateBookingReviewAsync(request, user.Id);
+
+                // Kiểm tra kết quả
+                if (result == "Đánh giá thành công")
+                {
+                    TempData["Success"] = result;
+                }
+                else
+                {
+                    // Tất cả các case khác đều là lỗi
+                    TempData["Error"] = result;
+                }
+                return RedirectToAction("Index", "Bookings");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                return RedirectToAction("Index", "Bookings");
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> Create(int roomId, DateTime? checkin, DateTime? checkout, int guests = 1)
         {
@@ -71,17 +113,13 @@ namespace HotelBookingSystem.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // --- BẮT ĐẦU THAY ĐỔI: Lấy user mặc định để test ---
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            // Lấy user hiện tại đã đăng nhập
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                // Xử lý trường hợp không tìm thấy user test. 
-                // Có thể tạo user ở đây hoặc báo lỗi.
-                // Trong ví dụ này, chúng ta sẽ báo lỗi để đảm bảo SeedData đã chạy đúng.
-                TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
-                return RedirectToAction("Index", "Home");
+                TempData["Error"] = "Bạn cần đăng nhập để đặt phòng.";
+                return RedirectToAction("Login", "Account", new { returnUrl = Request.Path + Request.QueryString });
             }
-            // --- KẾT THÚC THAY ĐỔI ---
 
             // Thiết lập ngày mặc định nếu không có
             var checkInDate = checkin ?? DateTime.Today.AddDays(1);
@@ -106,16 +144,20 @@ namespace HotelBookingSystem.Controllers
                 RoomPrice = room.PricePerNight
             };
 
-            // Điền thông tin từ user test vào model
-            model.Email = user.Email;
-            model.Phone = user.PhoneNumber;
+            // Điền thông tin từ user hiện tại vào model
+            model.Email = user.Email ?? "";
+            model.Phone = user.PhoneNumber ?? "";
             if (!string.IsNullOrEmpty(user.FullName))
             {
                 var nameParts = user.FullName.Split(' ', 2);
                 model.FirstName = nameParts.Length > 0 ? nameParts[0] : "";
                 model.LastName = nameParts.Length > 1 ? nameParts[1] : "";
             }
-
+            else
+            {
+                model.FirstName = user.FirstName ?? "";
+                model.LastName = user.LastName ?? "";
+            }
 
             return View(model);
         }
@@ -189,21 +231,18 @@ namespace HotelBookingSystem.Controllers
                         return View(model);
                     }
 
-                    // --- BẮT ĐẦU THAY ĐỔI: Lấy userId của user mặc định ---
-                    Console.WriteLine("Finding test user...");
-                    var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+                    // Lấy userId của user hiện tại đã đăng nhập
+                    Console.WriteLine("Getting current user...");
+                    var user = await _userManager.GetUserAsync(User);
                     var userId = user?.Id;
 
                     if (userId == null)
                     {
-                        Console.WriteLine("Error: Cannot find test user");
-                        // Trường hợp này không nên xảy ra nếu GET hoạt động đúng
-                        ModelState.AddModelError("", "Không thể xác định người dùng để đặt phòng.");
-                        await RepopulateRoomInfoForModel(model);
-                        return View(model);
+                        Console.WriteLine("Error: Cannot find current user");
+                        TempData["Error"] = "Không thể xác định thông tin người dùng. Vui lòng đăng nhập lại.";
+                        return RedirectToAction("Login", "Account");
                     }
                     Console.WriteLine($"Found user: {userId}");
-                    // --- KẾT THÚC THAY ĐỔI ---
 
                     // Tạo booking
                     Console.WriteLine("Creating booking...");
@@ -374,12 +413,12 @@ namespace HotelBookingSystem.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            // Lấy user mặc định để test
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            // Lấy user hiện tại đã đăng nhập
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
-                return RedirectToAction("Index", "Home");
+                TempData["Error"] = "Bạn cần đăng nhập để xem chi tiết đặt phòng.";
+                return RedirectToAction("Login", "Account");
             }
 
             var viewModel = await _bookingService.GetBookingDetailsAsync(id, user.Id);
@@ -395,12 +434,12 @@ namespace HotelBookingSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Cancel(int id)
         {
-            // Lấy user mặc định để test
-            var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
+            // Lấy user hiện tại đã đăng nhập
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                TempData["Error"] = "Tài khoản test mặc định chưa được tạo.";
-                return RedirectToAction("Index", "Home");
+                TempData["Error"] = "Bạn cần đăng nhập để hủy đặt phòng.";
+                return RedirectToAction("Login", "Account");
             }
 
             var result = await _bookingService.CancelBookingAsync(id, user.Id);

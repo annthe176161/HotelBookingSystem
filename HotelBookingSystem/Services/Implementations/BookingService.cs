@@ -373,5 +373,43 @@ namespace HotelBookingSystem.Services.Implementations
 
             return true;
         }
+
+        public async Task<string> CreateBookingReviewAsync(BookingReviewViewModel request, string userId)
+        {
+            if (request.BookingId <= 0)
+            {
+                return "Booking không hợp lệ";
+            }
+
+            var booking = await _context.Bookings.FindAsync(request.BookingId); // Sử dụng FindAsync
+            if (booking == null)
+            {
+                return "Booking không tồn tại";
+            }
+
+            // Kiểm tra xem đã có review chưa
+            var existingReview = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.BookingId == request.BookingId && r.UserId == userId);
+
+            if (existingReview != null)
+            {
+                return "Bạn đã đánh giá rồi"; // Đã đánh giá rồi
+            }
+
+            var bookingReview = new Models.Review
+            {
+                BookingId = booking.Id,
+                Rating = request.Rating,
+                RoomId = booking.RoomId,
+                Comment = request.Comment,
+                UserId = userId,
+                CreatedDate = DateTime.Now // Thêm thời gian tạo
+            };
+
+            _context.Reviews.Add(bookingReview);
+            await _context.SaveChangesAsync();
+            return "Đánh giá thành công";
+        }
+
     }
 }

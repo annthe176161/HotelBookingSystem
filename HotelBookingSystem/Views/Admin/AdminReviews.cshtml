@@ -1,0 +1,313 @@
+﻿@model HotelBookingSystem.ViewModels.Admin.ReviewsQueryViewModel
+@{
+    ViewData["Title"] = "Quản lý đánh giá";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-rooms">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <h1 class="h3 mb-0">Quản lý đánh giá</h1>
+        </div>
+    </div>
+
+    <!-- Review Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card status-card h-100 available">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="status-title">Số đánh giá</h6>
+                            <h3 class="status-value">@Model.TotalReviews</h3>
+                        </div>
+                        <div class="status-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card status-card h-100 occupied">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="status-title">Đánh giá tích cực</h6>
+                            <h3 class="status-value">@Model.PositiveCount</h3>
+                        </div>
+                        <div class="status-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card status-card h-100 maintenance">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="status-title">Đánh giá tiêu cực</h6>
+                            <h3 class="status-value">@Model.NegativeCount</h3>
+                        </div>
+                        <div class="status-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="reviewSearchForm" class="review-search-form">
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <select class="form-select" name="RoomId">
+                            <option value="">Tất cả loại phòng</option>
+                            @foreach (var room in Model.Rooms!)
+                            {
+                                <option value="@room.Id" selected="@(room.Id == Model.RoomId)">@room.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <select class="form-select" name="Rating">
+                            <option value="" selected="@(Model.Rating == null)">Tất cả đánh giá</option>
+                            <option value="1" selected="@(Model.Rating == 1)">★☆☆☆☆</option>
+                            <option value="2" selected="@(Model.Rating == 2)">★★☆☆☆</option>
+                            <option value="3" selected="@(Model.Rating == 3)">★★★☆☆</option>
+                            <option value="4" selected="@(Model.Rating == 4)">★★★★☆</option>
+                            <option value="5" selected="@(Model.Rating == 5)">★★★★★</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <select class="form-select" name="CreateDateSort">
+                            <option value="desc" selected="@(Model.CreateDateSort == "desc")">Sắp xếp ngày mới nhất</option>
+                            <option value="asc" selected="@(Model.CreateDateSort == "asc")">Sắp xếp ngày cũ nhất</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-12">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Tìm kiếm
+                            </button>
+                            <a href="@Url.Action("Reviews", "Admin")" class="btn btn-outline-secondary">
+                                <i class="fas fa-sync-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reviews Table -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Danh sách phòng</h5>
+                <div class="d-flex">
+                    <div class="dropdown me-2">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-download me-1"></i> Xuất
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="far fa-file-excel me-2"></i>Excel</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="far fa-file-pdf me-2"></i>PDF</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="far fa-file-csv me-2"></i>CSV</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Tên phòng</th>
+                            <th scope="col">Tên khách hàng</th>
+                            <th scope="col">Đánh giá</th>
+                            <th scope="col">Nội dung</th>
+                            <th scope="col">Ngày tạo</th>
+                            <th scope="col">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var review in Model.Reviews!)
+                        {
+                            <tr>
+                                <td>@review.Room.Name</td>
+                                <td>@review.User.FullName</td>
+                                <td>@review.Rating</td>
+                                <td>@review.Comment</td>
+                                <td>@review.CreatedDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Pagination info -->
+                <div class="pagination-info">
+                    @if (Model.TotalCount > 0)
+                    {
+                        var startItem = (Model.Page - 1) * Model.PageSize + 1;
+                        var endItem = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+                        <text>Hiển thị <span>@startItem</span> đến <span>@endItem</span> của <span>@Model.TotalCount</span> đánh giá</text>
+                    }
+                    else
+                    {
+                        <text>Không có đánh giá nào</text>
+                    }
+                </div>
+
+                <!-- Pagination controls -->
+                <ul class="pagination mb-0">
+                    <!-- Previous -->
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link"
+                           href="@Url.Action("Reviews", new {
+                        page = Model.Page - 1,
+                        rating = Model.Rating,
+                        roomId = Model.RoomId,
+                        createDateSort = Model.CreateDateSort,
+                        pageSize = Model.PageSize
+                   })">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+
+                    <!-- Page numbers -->
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link"
+                               href="@Url.Action("Reviews", new {
+                            page = i,
+                            rating = Model.Rating,
+                            roomId = Model.RoomId,
+                            createDateSort = Model.CreateDateSort,
+                            pageSize = Model.PageSize
+                       })">@i</a>
+                        </li>
+                    }
+
+                    <!-- Next -->
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link"
+                           href="@Url.Action("Reviews", new {
+                        page = Model.Page + 1,
+                        rating = Model.Rating,
+                        roomId = Model.RoomId,
+                        createDateSort = Model.CreateDateSort,
+                        pageSize = Model.PageSize
+                   })">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Items per page -->
+                <div class="items-per-page">
+                    <select class="form-select form-select-sm"
+                            onchange="location.href='@Url.Action("Reviews", new {
+                                rating = Model.Rating,
+                                roomId = Model.RoomId,
+                                createDateSort = Model.CreateDateSort,
+                                page = 1 // reset to first page when changing size
+                            })&pageSize=' + this.value">
+                        <option value="10" selected="@(Model.PageSize == 10)">10 / trang</option>
+                        <option value="25" selected="@(Model.PageSize == 25)">25 / trang</option>
+                        <option value="50" selected="@(Model.PageSize == 50)">50 / trang</option>
+                        <option value="100" selected="@(Model.PageSize == 100)">100 / trang</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Room status card styles */
+        .status-card.available {
+            border-left: 4px solid #1cc88a;
+        }
+
+        .status-card.occupied {
+            border-left: 4px solid #f6c23e;
+        }
+
+        .status-card.maintenance {
+            border-left: 4px solid #e74a3b;
+        }
+
+        .status-card.cleaning {
+            border-left: 4px solid #36b9cc;
+        }
+
+        .status-card.available .status-icon {
+            color: #1cc88a;
+        }
+
+        .status-card.occupied .status-icon {
+            color: #f6c23e;
+        }
+
+        .status-card.maintenance .status-icon {
+            color: #e74a3b;
+        }
+
+        .status-card.cleaning .status-icon {
+            color: #36b9cc;
+        }
+
+        /* Room images in table */
+        .room-image {
+            width: 60px;
+            height: 40px;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+            .room-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        /* Room rating */
+        .room-rating {
+            display: flex;
+            align-items: center;
+        }
+
+            .room-rating i {
+                color: #f6c23e;
+                margin-right: 4px;
+            }
+
+        /* Bulk actions bar */
+        .bulk-actions-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #3a3b45;
+            color: white;
+            padding: 0.75rem 1rem;
+            z-index: 1030;
+            box-shadow: 0 -0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+    </style>
+}
