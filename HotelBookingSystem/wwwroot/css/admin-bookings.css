@@ -1,0 +1,6 @@
+.admin-bookings .table-responsive,
+.admin-bookings .card,
+.admin-bookings .card-body,
+.admin-bookings .card-footer {
+    overflow: visible !important;
+}

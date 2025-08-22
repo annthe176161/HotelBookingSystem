@@ -8,7 +8,7 @@ namespace HotelBookingSystem.Services.Implementations
     public interface IAdminBookingService
     {
         Task<BookingsViewModel> GetBookings(BookingQueryOptions options);
-        Task<bool> UpdateBookingStatusAsync(int bookingId, int statusId);
+        Task<bool> UpdateBookingStatus(int bookingId, string newStatus);
     }
     public class AdminBookingService : IAdminBookingService
     {
@@ -57,7 +57,7 @@ namespace HotelBookingSystem.Services.Implementations
                 .Select(b => new BookingListItemViewModel
                 {
                     Id = b.Id,
-                    CustomerName = b.User.FullName,
+                    CustomerName = b.User.FullName ?? "",
                     CustomerEmail = b.User.Email ?? "",
                     RoomName = b.Room.Name,
                     CheckIn = b.CheckIn,
@@ -65,14 +65,14 @@ namespace HotelBookingSystem.Services.Implementations
                     Guests = b.Guests,
                     TotalPrice = b.TotalPrice,
                     BookingStatus = b.BookingStatus.Name,
-                    PaymentStatus = b.Payment != null ? b.Payment.PaymentStatus.Name : "Chưa thanh toán"
+                    PaymentStatus = b.Payment != null ? b.Payment.PaymentStatus.Name : "Thanh toán đang được xử lý"
                 })
                 .ToListAsync();
 
-            var pending = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Pending");
-            var confirmed = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Confirmed");
-            var completed = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Completed");
-            var cancelled = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Cancelled");
+            var pending = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Chờ xác nhận");
+            var confirmed = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Đã xác nhận");
+            var completed = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Hoàn thành");
+            var cancelled = await _context.Bookings.CountAsync(b => b.BookingStatus.Name == "Đã hủy");
 
             return new BookingsViewModel
             {
@@ -88,42 +88,29 @@ namespace HotelBookingSystem.Services.Implementations
             };
         }
 
-        public async Task<bool> UpdateBookingStatusAsync(int bookingId, int statusId)
+        public async Task<bool> UpdateBookingStatus(int bookingId, string newStatus)
         {
-            try
-            {
-                var booking = await _context.Bookings
-                    .Include(b => b.User)
-                    .Include(b => b.Room)
-                    .Include(b => b.BookingStatus)
-                    .FirstOrDefaultAsync(b => b.Id == bookingId);
+            var booking = await _context.Bookings
+                .Include(b => b.BookingStatus)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
 
-                if (booking == null || booking.User == null) return false;
+            if (booking == null) return false;
 
-                var newStatus = await _context.BookingStatuses.FindAsync(statusId);
-                if (newStatus == null) return false;
-
-                var oldStatusName = booking.BookingStatus?.Name;
-                booking.BookingStatusId = statusId;
-
-                await _context.SaveChangesAsync();
-
-                // Gửi thông báo cho khách hàng về thay đổi trạng thái
-                var message = $"Trạng thái đặt phòng #{booking.Id} đã được cập nhật thành '{newStatus.Name}'";
-
-                await _notificationService.SendBookingStatusUpdateToCustomerAsync(
-                    booking.UserId ?? "",
-                    booking.Id.ToString(),
-                    newStatus.Name,
-                    message
-                );
-
-                return true;
-            }
-            catch
-            {
+            // Prevent invalid updates (already completed or cancelled)
+            if (booking.BookingStatus.Name == "Hoàn thành" || booking.BookingStatus.Name == "Đã hủy")
                 return false;
-            }
+
+            // Set new status
+            var newBookingStatus = await _context.BookingStatuses.FirstOrDefaultAsync(s => s.Name == newStatus);
+            if (newBookingStatus != null)
+                booking.BookingStatus = newBookingStatus;
+
+            if (booking.BookingStatus == null) return false;
+
+            _context.Update(booking);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

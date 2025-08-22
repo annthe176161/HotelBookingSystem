@@ -95,25 +95,25 @@ namespace HotelBookingSystem
             app.MapHub<NotificationHub>("/notificationHub");
 
             // Seed Database
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    await SeedData.InitializeAsync(services);
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    try
+            //    {
+            //        await SeedData.InitializeAsync(services);
 
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogInformation("Database seeding completed successfully.");
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
+            //        var logger = services.GetRequiredService<ILogger<Program>>();
+            //        logger.LogInformation("Database seeding completed successfully.");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = services.GetRequiredService<ILogger<Program>>();
+            //        logger.LogError(ex, "An error occurred while seeding the database: {ErrorMessage}", ex.Message);
 
-                    Console.WriteLine($"Seed error: {ex.Message}");
-                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                }
-            }
+            //        Console.WriteLine($"Seed error: {ex.Message}");
+            //        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            //    }
+            //}
 
             app.Run();
         }
