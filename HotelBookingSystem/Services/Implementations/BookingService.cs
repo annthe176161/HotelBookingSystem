@@ -376,7 +376,6 @@ namespace HotelBookingSystem.Services.Implementations
 
         public async Task<string> CreateBookingReviewAsync(BookingReviewViewModel request, string userId)
         {
-            // Sửa: BookingId là int, không thể null, nên kiểm tra > 0
             if (request.BookingId <= 0)
             {
                 return "Booking không hợp lệ";

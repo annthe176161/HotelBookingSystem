@@ -32,14 +32,17 @@ function updateStars() {
 }
 
 function validateReview() {
+    console.log(">>> validateReview mới đã chạy <<<");
     const rating = document.getElementById('ratingValue').value;
+    const errorEl = document.getElementById('ratingError');
 
     if (rating == 0) {
-        alert('Vui lòng chọn số sao đánh giá');
+        errorEl.style.display = "block";
         return false;
     }
 
-    return true; // Cho phép submit form
+    errorEl.style.display = "none";
+    return true;
 }
 
 function logSubmitInfo() {

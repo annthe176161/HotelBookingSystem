@@ -16,12 +16,14 @@ namespace HotelBookingSystem.Controllers
         private readonly IAdminRoomService _adminRoomService;
         private readonly IAdminUserService _adminUserService;
         private readonly IAdminBookingService _adminBookingService;
+        private readonly IAdminReviewService _adminReviewService;
 
-        public AdminController(IAdminRoomService adminRoomService, IAdminUserService adminUserService, IAdminBookingService adminBookingService)
+        public AdminController(IAdminRoomService adminRoomService, IAdminUserService adminUserService, IAdminBookingService adminBookingService, IAdminReviewService adminReviewService)
         {
             _adminRoomService = adminRoomService;
             _adminUserService = adminUserService;
             _adminBookingService = adminBookingService;
+            _adminReviewService = adminReviewService;
         }
 
         [HttpGet("")]
@@ -179,13 +181,6 @@ namespace HotelBookingSystem.Controllers
             return View("AdminBookings", model);
         }
 
-        [HttpGet("Reviews")]
-        public IActionResult Reviews()
-        {
-            // Trả về giao diện quản lý đánh giá
-            return View("AdminReviews");
-        }
-
         [HttpGet("Promotions")]
         public IActionResult Promotions()
         {
@@ -211,6 +206,14 @@ namespace HotelBookingSystem.Controllers
         public IActionResult AddRoom()
         {
             return View();
+        }
+
+        [HttpGet("Reviews")]
+        public async Task<IActionResult> Reviews([FromQuery] ReviewsQueryViewModel query)
+        {
+            var result = await _adminReviewService.GetReviews(query);
+
+            return View("AdminReviews", result);
         }
     }
 }

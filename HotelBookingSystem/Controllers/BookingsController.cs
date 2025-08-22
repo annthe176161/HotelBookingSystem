@@ -66,16 +66,11 @@ namespace HotelBookingSystem.Controllers
         {
             try
             {
+                request.Comment ??= "";
                 if (!ModelState.IsValid)
                 {
                     TempData["Error"] = "Dữ liệu không hợp lệ";
-                    return RedirectToAction("Index");
-                }
-
-                if (request.Rating < 1 || request.Rating > 5)
-                {
-                    TempData["Error"] = "Đánh giá phải từ 1 đến 5 sao";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Bookings");
                 }
                 var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
                 if (user == null)

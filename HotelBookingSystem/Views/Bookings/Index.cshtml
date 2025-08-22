@@ -295,7 +295,7 @@
             }
         </div>
     </div>
-    <form method="post" asp-action="Index" id="reviewForm">
+    <form method="post" asp-action="Index" id="reviewForm" onsubmit="return validateReview()">
         @Html.AntiForgeryToken()
         <div id="reviewPopup" class="popup-overlay" style="display: none;">
             <div class="popup-content">
@@ -315,6 +315,9 @@
                         <i onclick="setRating(4)" class="fa-solid fa-star star-item"></i>
                         <i onclick="setRating(5)" class="fa-solid fa-star star-item"></i>
                     </div>
+                    <p id="ratingError" style="color: red; font-size: 14px; display: none; margin-top: 4px; text-align: center;">
+                        Vui lòng chọn số sao đánh giá
+                    </p>
 
                     <textarea name="Comment" id="comment" placeholder="Nhận xét của bạn..." rows="4"></textarea>
 
@@ -363,5 +366,5 @@
                 }
             }
         </script>
-        <script src="~/js/review-form.js"></script>
+        <script src="~/js/review-form.js?v=@DateTime.Now.Ticks"></script>
     }
