@@ -171,6 +171,24 @@ namespace HotelBookingSystem.Controllers
             return View("AdminBookings", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateBookingStatus(int id, string status)
+        {
+            var result = await _adminBookingService.UpdateBookingStatus(id, status);
+
+            if (!result)
+            {
+                TempData["Error"] = "Không thể cập nhật trạng thái đơn đặt phòng.";
+            }
+            else
+            {
+                TempData["Success"] = "Cập nhật trạng thái thành công.";
+            }
+
+            // Always redirect back to Bookings page after action
+            return RedirectToAction("Bookings");
+        }
+
         [HttpGet("Reviews")]
         public IActionResult Reviews()
         {
