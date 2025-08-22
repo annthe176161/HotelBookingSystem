@@ -7,10 +7,13 @@
 
     if (editProfileBtn) {
         editProfileBtn.addEventListener('click', function () {
-            // Enable all form fields
+            // Enable all form fields except email
             const formInputs = profileForm.querySelectorAll('input, select');
             formInputs.forEach(input => {
-                input.disabled = false;
+                // Don't enable email field as it should be readonly
+                if (input.type !== 'email') {
+                    input.disabled = false;
+                }
             });
 
             // Show action buttons
@@ -23,65 +26,111 @@
 
     if (cancelEditBtn) {
         cancelEditBtn.addEventListener('click', function () {
-            // Disable all form fields
-            const formInputs = profileForm.querySelectorAll('input, select');
-            formInputs.forEach(input => {
-                input.disabled = true;
-            });
-
-            // Reset form
-            profileForm.reset();
-
-            // Hide action buttons
-            actionButtons.style.display = 'none';
-
-            // Show edit button
-            editProfileBtn.style.display = 'inline-block';
+            // Reload the page to reset all form values
+            window.location.reload();
         });
     }
 
     // Profile form submission
     if (profileForm) {
         profileForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
+            // Don't preventDefault - let the form submit normally
+            
             if (!profileForm.checkValidity()) {
+                event.preventDefault();
                 event.stopPropagation();
                 profileForm.classList.add('was-validated');
                 return;
             }
 
-            // Collect form data
-            const formData = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
-                phoneNumber: document.getElementById('phone').value,
-                birthdate: document.getElementById('birthdate').value,
-                gender: document.getElementById('gender').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                zipCode: document.getElementById('zipCode').value
-            };
+            // Form is valid, let it submit normally
+            profileForm.classList.add('was-validated');
+        });
+    }
 
-            // Normally you would send this data to your server via AJAX
-            // For now, let's just simulate a successful update
+    // Avatar upload functionality
+    const avatarUpload = document.getElementById('avatar-upload');
+    if (avatarUpload) {
+        avatarUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            // Disable all form fields
-            const formInputs = profileForm.querySelectorAll('input, select');
-            formInputs.forEach(input => {
-                input.disabled = true;
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                showToast('Vui lòng chọn file ảnh (JPEG, PNG, WebP, GIF)', 'error');
+                return;
+            }
+
+            // Validate file size (5MB max)
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                showToast('Kích thước file không được vượt quá 5MB', 'error');
+                return;
+            }
+
+            // Show loading state
+            const avatarContainer = document.querySelector('.profile-avatar-container');
+            const originalContent = avatarContainer.innerHTML;
+            avatarContainer.innerHTML = `
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; background: #f8f9fa;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+            `;
+
+            // Create FormData
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            // Get antiforgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // Upload avatar
+            fetch('/Account/UploadAvatar', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update avatar image
+                    avatarContainer.innerHTML = `
+                        <img src="${data.avatarUrl}" alt="Avatar" class="profile-avatar rounded-circle" style="width: 120px; height: 120px; object-fit: cover;" />
+                        <div class="profile-avatar-edit position-absolute" style="bottom: 5px; right: 5px;">
+                            <label for="avatar-upload" class="btn btn-sm btn-primary rounded-circle p-2" style="width: 40px; height: 40px; cursor: pointer;">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="avatar-upload" class="d-none" accept="image/*" />
+                        </div>
+                    `;
+                    
+                    // Re-bind the event listener for the new file input
+                    const newAvatarUpload = document.getElementById('avatar-upload');
+                    if (newAvatarUpload) {
+                        newAvatarUpload.addEventListener('change', arguments.callee);
+                    }
+                    
+                    showToast(data.message, 'success');
+                } else {
+                    // Restore original content on error
+                    avatarContainer.innerHTML = originalContent;
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Restore original content on error
+                avatarContainer.innerHTML = originalContent;
+                showToast('Có lỗi xảy ra khi upload ảnh', 'error');
             });
 
-            // Hide action buttons
-            actionButtons.style.display = 'none';
-
-            // Show edit button
-            editProfileBtn.style.display = 'inline-block';
-
-            // Show success message
-            showToast('Thông tin cá nhân đã được cập nhật thành công!', 'success');
+            // Clear the input
+            event.target.value = '';
         });
     }
 
@@ -187,46 +236,6 @@
 
             // Show success message
             showToast('Mật khẩu đã được thay đổi thành công!', 'success');
-        });
-    }
-
-    // Avatar upload functionality
-    const avatarUpload = document.getElementById('avatar-upload');
-
-    if (avatarUpload) {
-        avatarUpload.addEventListener('change', function (event) {
-            const file = event.target.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (e) {
-                    // If there's an existing profile avatar image, update it
-                    const avatarImg = document.querySelector('.profile-avatar');
-                    if (avatarImg) {
-                        avatarImg.src = e.target.result;
-                    }
-                    // If there's a placeholder, replace it with an image
-                    else {
-                        const placeholder = document.querySelector('.profile-avatar-placeholder');
-                        if (placeholder) {
-                            const parent = placeholder.parentElement;
-                            placeholder.remove();
-
-                            const newImg = document.createElement('img');
-                            newImg.src = e.target.result;
-                            newImg.alt = 'Avatar';
-                            newImg.className = 'profile-avatar';
-                            parent.insertBefore(newImg, parent.firstChild);
-                        }
-                    }
-
-                    // Show success message
-                    showToast('Ảnh đại diện đã được cập nhật!', 'success');
-                };
-
-                reader.readAsDataURL(file);
-            }
         });
     }
 

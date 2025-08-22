@@ -62,6 +62,49 @@ namespace HotelBookingSystem.Services.Implementations
             );
         }
 
+        public async Task<ImageUploadResultDto> UploadAvatarImage(IFormFile file, CancellationToken ct = default)
+        {
+            if (file is null || file.Length == 0)
+                throw new ArgumentException("No file uploaded.");
+
+            if (!AllowedContentTypes.Contains(file.ContentType))
+                throw new InvalidOperationException("Unsupported image type.");
+
+            await using var stream = file.OpenReadStream();
+
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = string.IsNullOrWhiteSpace(_settings.Folder) ? "avatars" : $"{_settings.Folder}/avatars",
+                UseFilename = true,
+                UniqueFilename = true,
+                Overwrite = false,
+
+                // Avatar specific transformations:
+                Transformation = new Transformation()
+                    .Width(300)
+                    .Height(300)
+                    .Crop("fill")
+                    .Gravity("face")
+                    .Quality("auto")
+                    .FetchFormat("auto")
+                    .Dpr("auto")
+            };
+
+            var result = await _cloudinary.UploadAsync(uploadParams, ct);
+
+            if (result.StatusCode != HttpStatusCode.OK || result.Error != null)
+                throw new InvalidOperationException(result.Error?.Message ?? "Cloudinary upload failed.");
+
+            return new ImageUploadResultDto(
+                Url: result.SecureUrl?.ToString() ?? "",
+                PublicId: result.PublicId,
+                Width: result.Width,
+                Height: result.Height,
+                Format: result.Format
+            );
+        }
+
         public async Task Delete(string publicId, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(publicId)) return;

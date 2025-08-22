@@ -3,10 +3,10 @@
     public class ProfileViewModel
     {
         // Thông tin cá nhân
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string FirstName { get; set; } = "";
+        public string LastName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string PhoneNumber { get; set; } = "";
         public DateTime? Birthdate { get; set; }
         public string? Gender { get; set; }
         public string? Address { get; set; }
@@ -31,8 +31,8 @@
         public List<FavoriteRoomViewModel> FavoriteRooms { get; set; } = new();
 
         // Thông tin điểm thưởng
-        public string? LoyaltyTier { get; set; }
-        public string? NextTier { get; set; }
+        public string? LoyaltyTier { get; set; } = "Silver";
+        public string? NextTier { get; set; } = "Gold";
         public int PointsToNextTier { get; set; }
         public int NextTierProgress { get; set; }
         public List<LoyaltyPointHistoryViewModel> LoyaltyPointsHistory { get; set; } = new();

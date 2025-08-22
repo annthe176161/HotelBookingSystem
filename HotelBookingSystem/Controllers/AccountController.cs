@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HotelBookingSystem.Data;
 using HotelBookingSystem.Models;
+using HotelBookingSystem.Services.Interfaces;
 using HotelBookingSystem.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,16 +19,19 @@ namespace HotelBookingSystem.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _db;
+        private readonly IImageStorageService _imageStorageService;
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            ApplicationDbContext db)
+            ApplicationDbContext db,
+            IImageStorageService imageStorageService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
             _db = db;
+            _imageStorageService = imageStorageService;
         }
 
         public IActionResult Login(string? returnUrl = null)
@@ -250,6 +254,169 @@ namespace HotelBookingSystem.Controllers
             var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 1) return (parts[0], "");
             return (string.Join(' ', parts[..^1]), parts[^1]); // first = tất cả trừ từ cuối, last = từ cuối
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Thông tin không hợp lệ. Vui lòng kiểm tra lại.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                // Update user properties
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.PhoneNumber = model.PhoneNumber;
+                user.Address = model.Address;
+                user.City = model.City;
+                user.State = model.State;
+                user.ZipCode = model.ZipCode;
+                user.DateOfBirth = model.Birthdate;
+
+                // Handle gender conversion
+                if (!string.IsNullOrEmpty(model.Gender))
+                {
+                    user.GenderType = model.Gender.ToLower() switch
+                    {
+                        "male" => GenderType.Name,
+                        "female" => GenderType.Nu,
+                        _ => GenderType.Unknow
+                    };
+                }
+
+                var result = await _userManager.UpdateAsync(user);
+                
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Cập nhật thông tin cá nhân thành công!";
+                    return RedirectToAction(nameof(Profile));
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    TempData["ErrorMessage"] = "Có lỗi xảy ra khi cập nhật thông tin.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Có lỗi xảy ra: " + ex.Message;
+            }
+
+            // Always redirect back to GET to reload full data
+            return RedirectToAction(nameof(Profile));
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadAvatar(IFormFile avatar)
+        {
+            if (avatar == null || avatar.Length == 0)
+            {
+                return Json(new { success = false, message = "Vui lòng chọn ảnh để upload." });
+            }
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy người dùng." });
+                }
+
+                // Delete old avatar if exists
+                if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+                {
+                    try
+                    {
+                        // Extract public ID from old URL if it's a Cloudinary URL
+                        var oldPublicId = ExtractPublicIdFromUrl(user.ProfilePictureUrl);
+                        if (!string.IsNullOrEmpty(oldPublicId))
+                        {
+                            await _imageStorageService.Delete(oldPublicId);
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore delete errors for old avatar
+                    }
+                }
+
+                // Upload new avatar
+                var uploadResult = await _imageStorageService.UploadAvatarImage(avatar);
+                
+                // Update user profile picture URL
+                user.ProfilePictureUrl = uploadResult.Url;
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return Json(new { 
+                        success = true, 
+                        message = "Cập nhật ảnh đại diện thành công!", 
+                        avatarUrl = uploadResult.Url 
+                    });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Có lỗi xảy ra khi cập nhật ảnh đại diện." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
+            }
+        }
+
+        private string? ExtractPublicIdFromUrl(string imageUrl)
+        {
+            try
+            {
+                // Extract public ID from Cloudinary URL
+                // Format: https://res.cloudinary.com/cloud/image/upload/v1234567890/folder/public_id.format
+                var uri = new Uri(imageUrl);
+                var segments = uri.AbsolutePath.Split('/');
+                
+                if (segments.Length >= 3)
+                {
+                    // Find the segment after 'upload' and extract public ID
+                    var uploadIndex = Array.IndexOf(segments, "upload");
+                    if (uploadIndex != -1 && uploadIndex + 2 < segments.Length)
+                    {
+                        // Skip version (v1234567890) if present
+                        var startIndex = segments[uploadIndex + 1].StartsWith("v") ? uploadIndex + 2 : uploadIndex + 1;
+                        var pathParts = segments.Skip(startIndex).ToArray();
+                        var publicIdWithExtension = string.Join("/", pathParts);
+                        
+                        // Remove file extension
+                        var lastDotIndex = publicIdWithExtension.LastIndexOf('.');
+                        if (lastDotIndex > 0)
+                        {
+                            return publicIdWithExtension.Substring(0, lastDotIndex);
+                        }
+                        return publicIdWithExtension;
+                    }
+                }
+            }
+            catch
+            {
+                // Return null if URL parsing fails
+            }
+            return null;
         }
 
         #endregion
