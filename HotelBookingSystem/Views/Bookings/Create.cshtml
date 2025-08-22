@@ -100,7 +100,8 @@
                                     Số khách
                                     <span class="text-danger">*</span>
                                 </label>
-                                <select asp-for="GuestCount" class="form-select" required>
+                                <select asp-for="GuestCount" class="form-select" required
+                                    data-msg-required="Vui lòng chọn số khách">
                                     <option value="">Chọn số khách</option>
                                     @for (int i = 1; i <= Model.MaxGuests; i++)
                                     {
@@ -283,7 +284,7 @@
                                     <ul class="list-unstyled mb-0">
                                         <li class="mb-2">
                                             <i class="fas fa-calendar-check text-info me-2"></i>
-                                            Có thể hủy miễn phí trước 6 giờ nhận phòng
+                                            Có thể hủy miễn phí trước 24 giờ nhận phòng
                                         </li>
                                         <li class="mb-2">
                                             <i class="fas fa-gift text-warning me-2"></i>
@@ -402,7 +403,7 @@
                         Chính sách khách sạn
                     </h6>
                     <ul class="small mb-0 ps-3">
-                        <li>Miễn phí hủy phòng trước 6 giờ</li>
+                        <li>Miễn phí hủy phòng trước 24 giờ</li>
                         <li>Không phụ thu cho trẻ em dưới 6 tuổi</li>
                         <li>Wifi miễn phí toàn bộ khách sạn</li>
                         <li>Bãi đỗ xe miễn phí</li>
@@ -445,8 +446,8 @@
                 <p>- Thông tin đặt phòng phải chính xác và đầy đủ</p>
 
                 <h6>2. Chính sách hủy phòng</h6>
-                <p>- Hủy phòng trước 24h: Hoàn tiền 100%</p>
-                <p>- Hủy phòng trong vòng 24h: Tính phí 50% tổng hóa đơn</p>
+                <p>- Miễn phí hủy phòng trước 24 giờ kể từ thời điểm nhận phòng</p>
+                <p>- Không áp dụng phí hủy phòng do thanh toán tại khách sạn</p>
 
                 <h6>3. Chính sách thanh toán</h6>
                 <p>- Thanh toán khi nhận phòng</p>
@@ -466,4 +467,39 @@
 
 @section Scripts {
     <script src="~/js/booking-simple.js"></script>
+
+    <script>
+        // Tùy chỉnh thông báo validation cho trường số khách
+        $(document).ready(function () {
+            // Override default validation messages
+            $.validator.addMethod("required", function (value, element, param) {
+                return this.checkable(element) ? this.getLength(value, element) > 0 : $.trim(value).length > 0;
+            }, "Vui lòng điền thông tin này");
+
+            // Custom validation messages
+            $.extend($.validator.messages, {
+                required: "Vui lòng điền thông tin này",
+                number: "Vui lòng nhập một số hợp lệ",
+                min: "Giá trị phải lớn hơn hoặc bằng {0}",
+                max: "Giá trị phải nhỏ hơn hoặc bằng {0}"
+            });
+
+            // Specific validation for GuestCount field
+            $('select[name="GuestCount"]').rules("add", {
+                required: true,
+                messages: {
+                    required: "Vui lòng chọn số khách"
+                }
+            });
+
+            // Custom validation message for empty select
+            $('select[name="GuestCount"]').on('invalid', function () {
+                this.setCustomValidity('Vui lòng chọn số khách');
+            });
+
+            $('select[name="GuestCount"]').on('input', function () {
+                this.setCustomValidity('');
+            });
+        });
+    </script>
 }

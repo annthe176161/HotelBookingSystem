@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/HotelBookingSystem.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/rooms-list.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/notifications.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
 
@@ -73,76 +73,6 @@
                             <!-- If user is logged in -->
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <!-- Notification Bell -->
-                                <div class="notification-wrapper">
-                                    <button class="btn notification-btn" type="button" id="notificationDropdown"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-bell notification-icon"></i>
-                                        <span class="notification-badge" id="notificationBadge">3</span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown"
-                                        aria-labelledby="notificationDropdown">
-                                        <li class="notification-header">
-                                            <h6 class="mb-0">Thông báo</h6>
-                                            <button class="btn btn-sm mark-all-read" id="markAllRead">Đánh dấu đã
-                                                đọc</button>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <div class="notification-list" id="notificationList">
-                                            <!-- Notifications will be loaded here -->
-                                            <li class="notification-item unread">
-                                                <div class="notification-content">
-                                                    <div class="notification-icon-wrapper booking">
-                                                        <i class="fas fa-calendar-check"></i>
-                                                    </div>
-                                                    <div class="notification-text">
-                                                        <div class="notification-title">Đặt phòng thành công</div>
-                                                        <div class="notification-message">Phòng Deluxe Suite đã được đặt
-                                                            thành công</div>
-                                                        <div class="notification-time">2 phút trước</div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="notification-item unread">
-                                                <div class="notification-content">
-                                                    <div class="notification-icon-wrapper payment">
-                                                        <i class="fas fa-credit-card"></i>
-                                                    </div>
-                                                    <div class="notification-text">
-                                                        <div class="notification-title">Thanh toán hoàn tất</div>
-                                                        <div class="notification-message">Thanh toán 2,500,000 VNĐ đã được
-                                                            xử lý</div>
-                                                        <div class="notification-time">1 giờ trước</div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="notification-item">
-                                                <div class="notification-content">
-                                                    <div class="notification-icon-wrapper promotion">
-                                                        <i class="fas fa-gift"></i>
-                                                    </div>
-                                                    <div class="notification-text">
-                                                        <div class="notification-title">Ưu đãi đặc biệt</div>
-                                                        <div class="notification-message">Giảm 20% cho lần đặt phòng tiếp
-                                                            theo</div>
-                                                        <div class="notification-time">1 ngày trước</div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </div>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li class="notification-footer">
-                                            <a class="dropdown-item text-center" href="#" id="viewAllNotifications">
-                                                <i class="fas fa-list"></i> Xem tất cả thông báo
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
                                 <div class="dropdown">
                                     <button class="btn user-account-btn" type="button" id="userDropdown"
                                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -193,21 +123,35 @@
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@@microsoft/signalr@@latest/dist/browser/signalr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script src="~/js/signalr-notifications.js" asp-append-version="true"></script>
+    }
 
     <script>
         // Global variables for authentication status
         window.isUserAuthenticated = @Json.Serialize(User.Identity.IsAuthenticated);
-        window.loginUrl = "@Url.Action("Login", "Account")";
+        window.isUserAdmin = @Json.Serialize(User.IsInRole("Admin"));
+        window.currentUserId = '@(User.Identity.IsAuthenticated ? (User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "") : "")';
+        window.loginUrl = '@Url.Action("Login", "Account")';
+
+        // Add CSRF token to all AJAX requests
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    xhr.setRequestHeader("RequestVerificationToken",
+                        $('input[name="__RequestVerificationToken"]').val());
+                }
+            }
+        });
     </script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+    @Html.AntiForgeryToken()
 
-    <!-- User Notifications Script -->
-    @if (User.Identity?.IsAuthenticated == true)
-    {
-        <script src="~/js/user-notifications.js" asp-append-version="true"></script>
-    }
+    @await RenderSectionAsync("Scripts", required: false)
 
     <script>
         // Highlight active navigation menu item

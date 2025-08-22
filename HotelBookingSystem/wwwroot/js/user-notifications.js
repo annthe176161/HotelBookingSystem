@@ -37,45 +37,12 @@ class UserNotificationManager {
         this.viewAllNotifications();
       });
     }
-
-    // Auto-refresh notifications every 30 seconds
-    setInterval(() => {
-      this.loadNotifications();
-    }, 30000);
   }
 
   loadNotifications() {
-    // Simulate loading notifications from server
-    // In real implementation, this would be an AJAX call
-    this.notifications = [
-      {
-        id: 1,
-        type: "booking",
-        title: "Đặt phòng thành công",
-        message: "Phòng Deluxe Suite đã được đặt thành công",
-        time: "2 phút trước",
-        isRead: false,
-        icon: "fas fa-calendar-check",
-      },
-      {
-        id: 2,
-        type: "payment",
-        title: "Thanh toán hoàn tất",
-        message: "Thanh toán 2,500,000 VNĐ đã được xử lý",
-        time: "1 giờ trước",
-        isRead: false,
-        icon: "fas fa-credit-card",
-      },
-      {
-        id: 3,
-        type: "promotion",
-        title: "Ưu đãi đặc biệt",
-        message: "Giảm 20% cho lần đặt phòng tiếp theo",
-        time: "1 ngày trước",
-        isRead: true,
-        icon: "fas fa-gift",
-      },
-    ];
+    // Load real notifications from SignalR
+    // This will be populated by SignalR notifications only
+    this.notifications = [];
 
     this.renderNotifications();
     this.updateBadge();
@@ -271,40 +238,15 @@ class UserNotificationManager {
 
   viewAllNotifications() {
     // In real implementation, this would redirect to a full notifications page
-    this.showToast("Trang thông báo đầy đủ sẽ được cập nhật sớm!", "info");
+    this.showToast(
+      "Chức năng xem tất cả thông báo sẽ được phát triển thêm!",
+      "info"
+    );
   }
 
-  // Method to simulate receiving new notifications
-  simulateNewNotification() {
-    const sampleNotifications = [
-      {
-        type: "booking",
-        title: "Đặt phòng mới",
-        message: "Có một đặt phòng mới cần xác nhận",
-        time: "Vừa xong",
-        icon: "fas fa-calendar-plus",
-      },
-      {
-        type: "payment",
-        title: "Thanh toán nhận được",
-        message: "Đã nhận thanh toán 1,800,000 VNĐ",
-        time: "Vừa xong",
-        icon: "fas fa-money-bill-wave",
-      },
-      {
-        type: "promotion",
-        title: "Khuyến mãi mới",
-        message: "Ưu đãi cuối tuần - Giảm 15% tất cả phòng",
-        time: "Vừa xong",
-        icon: "fas fa-tags",
-      },
-    ];
-
-    const randomNotification =
-      sampleNotifications[
-        Math.floor(Math.random() * sampleNotifications.length)
-      ];
-    this.addNotification(randomNotification);
+  // Method to receive notifications from SignalR
+  receiveNotification(notification) {
+    this.addNotification(notification);
   }
 }
 
@@ -312,15 +254,7 @@ class UserNotificationManager {
 document.addEventListener("DOMContentLoaded", function () {
   const notificationManager = new UserNotificationManager();
 
-  // Demo: Add new notification every 30 seconds (remove in production)
-  setInterval(() => {
-    if (Math.random() > 0.7) {
-      // 30% chance
-      notificationManager.simulateNewNotification();
-    }
-  }, 30000);
-
-  // Expose to global scope for debugging (remove in production)
+  // Expose to global scope for SignalR integration
   window.notificationManager = notificationManager;
 });
 

@@ -1,0 +1,76 @@
+@if (User.Identity.IsAuthenticated)
+{
+    <div id="notification-test-panel" style="position: fixed; bottom: 20px; left: 20px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; display: none;">
+        <h6>Test Notifications</h6>
+        <button id="test-general-notification" class="btn btn-sm btn-primary mb-2">Test General</button>
+        <button id="test-booking-notification" class="btn btn-sm btn-success mb-2">Test Booking</button>
+        <button id="test-client-notification" class="btn btn-sm btn-info mb-2">Test Client</button>
+        <button id="toggle-debug" class="btn btn-sm btn-warning mb-2">Toggle Debug</button>
+        <button onclick="document.getElementById('notification-test-panel').style.display='none'" class="btn btn-sm btn-secondary">Close</button>
+    </div>
+    
+    <button onclick="document.getElementById('notification-test-panel').style.display='block'" 
+            style="position: fixed; bottom: 20px; left: 20px; background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; z-index: 999; font-size: 12px;">
+        Test Panel
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test general notification
+            document.getElementById('test-general-notification').addEventListener('click', function() {
+                fetch('/Test/SendTestNotification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('[TEST] General notification result:', data);
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('[TEST] Error:', error);
+                    alert('Error: ' + error.message);
+                });
+            });
+
+            // Test booking notification
+            document.getElementById('test-booking-notification').addEventListener('click', function() {
+                fetch('/Test/SendTestBookingNotification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('[TEST] Booking notification result:', data);
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('[TEST] Error:', error);
+                    alert('Error: ' + error.message);
+                });
+            });
+
+            // Test client notification
+            document.getElementById('test-client-notification').addEventListener('click', function() {
+                if (typeof window.testNotification === 'function') {
+                    window.testNotification();
+                    alert('Client test notification triggered');
+                } else {
+                    alert('testNotification function not available');
+                }
+            });
+
+            // Toggle debug logging
+            document.getElementById('toggle-debug').addEventListener('click', function() {
+                window.debugNotifications = !window.debugNotifications;
+                alert('Debug mode: ' + (window.debugNotifications ? 'ON' : 'OFF'));
+            });
+        });
+    </script>
+}

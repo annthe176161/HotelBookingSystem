@@ -1,64 +1,4 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-  // Enhanced password visibility toggle
-  const passwordField = document.getElementById("Password");
-
-  if (passwordField) {
-    // Create and append password toggle button with better styling
-    const toggleButton = document.createElement("button");
-    toggleButton.type = "button";
-    toggleButton.className = "password-toggle";
-    toggleButton.innerHTML = '<i class="far fa-eye"></i>';
-    toggleButton.setAttribute("aria-label", "Hiện/ẩn mật khẩu");
-
-    // Enhanced styling
-    Object.assign(toggleButton.style, {
-      position: "absolute",
-      right: "12px",
-      top: "50%",
-      transform: "translateY(-50%)",
-      border: "none",
-      background: "transparent",
-      color: "#6c757d",
-      cursor: "pointer",
-      zIndex: "10",
-      padding: "4px",
-      borderRadius: "4px",
-      transition: "all 0.2s ease",
-    });
-
-    // Append to parent element (with position relative)
-    const parentElement = passwordField.parentElement;
-    parentElement.style.position = "relative";
-    parentElement.appendChild(toggleButton);
-
-    // Enhanced hover effect
-    toggleButton.addEventListener("mouseenter", function () {
-      this.style.color = "#495057";
-      this.style.backgroundColor = "rgba(0,0,0,0.05)";
-    });
-
-    toggleButton.addEventListener("mouseleave", function () {
-      this.style.color = "#6c757d";
-      this.style.backgroundColor = "transparent";
-    });
-
-    // Toggle password visibility with animation
-    toggleButton.addEventListener("click", function () {
-      const type =
-        passwordField.getAttribute("type") === "password" ? "text" : "password";
-      passwordField.setAttribute("type", type);
-
-      // Toggle icon with smooth transition
-      const icon = toggleButton.querySelector("i");
-      icon.style.transform = "scale(0.8)";
-      setTimeout(() => {
-        icon.className =
-          type === "password" ? "far fa-eye" : "far fa-eye-slash";
-        icon.style.transform = "scale(1)";
-      }, 100);
-    });
-  }
-
   // Enhanced form validation and UX improvements
   const loginForm = document.querySelector(".login-form");
 
@@ -196,10 +136,6 @@
     
     .form-floating {
       transition: transform 0.2s ease;
-    }
-    
-    .password-toggle i {
-      transition: transform 0.1s ease;
     }
     
     .btn[type="submit"] {

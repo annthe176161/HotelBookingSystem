@@ -165,36 +165,10 @@ namespace HotelBookingSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookingViewModel model)
         {
-            // Debug: Log tất cả dữ liệu nhận được
-            Console.WriteLine($"=== DEBUG CREATE BOOKING ===");
-            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
-            Console.WriteLine($"RoomId: {model.RoomId}");
-            Console.WriteLine($"CheckIn: {model.CheckInDate}");
-            Console.WriteLine($"CheckOut: {model.CheckOutDate}");
-            Console.WriteLine($"Guests: {model.GuestCount}");
-            Console.WriteLine($"FirstName: {model.FirstName}");
-            Console.WriteLine($"LastName: {model.LastName}");
-            Console.WriteLine($"Email: {model.Email}");
-            Console.WriteLine($"Phone: {model.Phone}");
-
-            // Debug: Log ModelState errors
-            if (!ModelState.IsValid)
+            // Kiểm tra validation tùy chỉnh cho GuestCount
+            if (!model.GuestCount.HasValue || model.GuestCount.Value <= 0)
             {
-                Console.WriteLine("=== ModelState Errors ===");
-                var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
-                                     .Select(x => new { Field = x.Key, Errors = x.Value.Errors.Select(e => e.ErrorMessage) });
-
-                foreach (var error in errors)
-                {
-                    Console.WriteLine($"Field: {error.Field}");
-                    foreach (var errorMsg in error.Errors)
-                    {
-                        Console.WriteLine($"  Error: {errorMsg}");
-                        // Thêm lỗi vào ModelState để hiển thị
-                        ModelState.AddModelError("", $"{error.Field}: {errorMsg}");
-                    }
-                }
-                Console.WriteLine("=== End ModelState Errors ===");
+                ModelState.AddModelError("GuestCount", "Vui lòng chọn số khách");
             }
 
             if (ModelState.IsValid)
