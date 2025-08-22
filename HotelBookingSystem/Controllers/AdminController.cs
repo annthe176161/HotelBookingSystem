@@ -199,13 +199,6 @@ namespace HotelBookingSystem.Controllers
             return RedirectToAction("Bookings");
         }
 
-        [HttpGet("Reviews")]
-        public IActionResult Reviews()
-        {
-            // Trả về giao diện quản lý đánh giá
-            return View("AdminReviews");
-        }
-
         [HttpGet("Promotions")]
         public IActionResult Promotions()
         {

@@ -185,11 +185,7 @@ namespace HotelBookingSystem.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-        [HttpGet]
-        public IActionResult Profile()
-        {
-            return View();
-        }
+
 
         [Authorize]
         [HttpGet]
@@ -219,8 +215,8 @@ namespace HotelBookingSystem.Controllers
                 Email = user.Email ?? "",
                 PhoneNumber = user.PhoneNumber ?? "",
                 Birthdate = user.DateOfBirth ?? DateTime.Now.AddYears(-25),
-                Gender = user.Gender == GenderType.Name ? "male" :
-                        user.Gender == GenderType.Nu ? "female" : "other",
+                Gender = user.GenderType == GenderType.Name ? "male" :
+                        user.GenderType == GenderType.Nu ? "female" : "other",
                 Address = user.Address ?? "",
                 City = user.City ?? "",
                 State = user.State ?? "",
