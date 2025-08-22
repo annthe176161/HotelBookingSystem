@@ -74,7 +74,8 @@
                             <div class="thumbnails">
                                 @foreach (var image in Model.ImageUrls)
                                 {
-                                    <div class="thumbnail @(image == Model.MainImageUrl ? "active" : "")" role="button" tabindex="0">
+                                    <div class="thumbnail @(image == Model.MainImageUrl ? "active" : "")" role="button"
+                                        tabindex="0">
                                         <img src="@image" alt="@Model.Name" onclick="changeMainImage('@image')">
                                     </div>
                                 }
@@ -139,7 +140,8 @@
                                 </div>
                                 <div class="policy-content">
                                     <h5>Chính sách hủy phòng</h5>
-                                    <p>Miễn phí hủy phòng trước 24 giờ kể từ thời điểm nhận phòng. Không áp dụng phí hủy phòng do thanh toán tại khách sạn.</p>
+                                    <p>Miễn phí hủy phòng trước 24 giờ kể từ thời điểm nhận phòng. Không áp dụng phí hủy
+                                        phòng do thanh toán tại khách sạn.</p>
                                 </div>
                             </div>
                         </div>
@@ -172,7 +174,8 @@
                                 </div>
                                 <div class="policy-content">
                                     <h5>Thú cưng</h5>
-                                    <p>Không cho phép mang thú cưng vào khách sạn để đảm bảo vệ sinh và sự thoải mái cho tất cả khách hàng.</p>
+                                    <p>Không cho phép mang thú cưng vào khách sạn để đảm bảo vệ sinh và sự thoải mái cho
+                                        tất cả khách hàng.</p>
                                 </div>
                             </div>
                         </div>
@@ -205,7 +208,8 @@
                                 </div>
                                 <div class="policy-content">
                                     <h5>Giấy tờ tùy thân</h5>
-                                    <p>Bắt buộc xuất trình CMND/CCCD hoặc Passport khi nhận phòng theo quy định pháp luật.</p>
+                                    <p>Bắt buộc xuất trình CMND/CCCD hoặc Passport khi nhận phòng theo quy định pháp
+                                        luật.</p>
                                 </div>
                             </div>
                         </div>
@@ -216,7 +220,8 @@
                                 </div>
                                 <div class="policy-content">
                                     <h5>Số lượng khách</h5>
-                                    <p>Tối đa @Model.Capacity người/phòng. Không cho phép khách thêm qua đêm mà không đăng ký.</p>
+                                    <p>Tối đa @Model.Capacity người/phòng. Không cho phép khách thêm qua đêm mà không
+                                        đăng ký.</p>
                                 </div>
                             </div>
                         </div>
@@ -370,7 +375,8 @@
                         <div class="form-group">
                             <label for="checkin-date">Ngày nhận phòng</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
+                                <span class="input-group-text"><i class="far fa-calendar-alt"
+                                        aria-hidden="true"></i></span>
                                 <input type="date" class="form-control" id="checkin-date" name="checkin" required>
                             </div>
                         </div>
@@ -378,7 +384,8 @@
                         <div class="form-group">
                             <label for="checkout-date">Ngày trả phòng</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="far fa-calendar-alt" aria-hidden="true"></i></span>
+                                <span class="input-group-text"><i class="far fa-calendar-alt"
+                                        aria-hidden="true"></i></span>
                                 <input type="date" class="form-control" id="checkout-date" name="checkout" required>
                             </div>
                         </div>
@@ -386,7 +393,8 @@
                         <div class="form-group">
                             <label for="guests">Số lượng khách</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user-friends" aria-hidden="true"></i></span>
+                                <span class="input-group-text"><i class="fas fa-user-friends"
+                                        aria-hidden="true"></i></span>
                                 <select class="form-control" id="guests" name="guests" required>
                                     @for (int i = 1; i <= Model.Capacity; i++)
                                     {
@@ -404,8 +412,11 @@
                             </div>
                             <div class="summary-total text-center" style="flex-direction: column; align-items: center;">
                                 <span style="font-size: 1.2rem; font-weight: 700;">Tổng cộng</span>
-                                <span id="total-price" style="font-size: 1.5rem; font-weight: 700; color: #e74c3c;">@Model.PricePerNight.ToString("N0") VNĐ</span>
-                                <small class="text-muted d-block mt-2" style="font-size: 0.95rem;">Giá đã bao gồm thuế và phí dịch vụ</small>
+                                <span id="total-price"
+                                    style="font-size: 1.5rem; font-weight: 700; color: #e74c3c;">@Model.PricePerNight.ToString("N0")
+                                    VNĐ</span>
+                                <small class="text-muted d-block mt-2" style="font-size: 0.95rem;">Giá đã bao gồm thuế
+                                    và phí dịch vụ</small>
                             </div>
                         </div>
 
@@ -428,61 +439,12 @@
                             <i class="fas fa-credit-card" aria-hidden="true"></i>
                             <span>Thanh toán tại khách sạn</span>
                         </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Similar Rooms -->
-        @if (Model.SimilarRooms.Any())
-        {
-            <div class="similar-rooms-section">
-                <h3>Phòng tương tự</h3>
-                <div class="row">
-                    @foreach (var room in Model.SimilarRooms)
-                    {
-                        <div class="col-lg-3 col-md-6">
-                            <div class="similar-room-card" tabindex="0">
-                                <div class="room-img">
-                                    <img src="@room.ImageUrl" alt="@room.Name">
-                                    <div class="room-price">
-                                        <span>@room.Price.ToString("N0") VNĐ</span>
-                                        <small>/đêm</small>
-                                    </div>
-                                </div>
-                                <div class="room-info">
-                                    <h4>@room.Name</h4>
-                                    <div class="room-rating">
-                                        @for (int i = 1; i <= 5; i++)
-                                        {
-                                            if (i <= Math.Floor(room.Rating))
-                                            {
-                                                <i class="fas fa-star" aria-hidden="true"></i>
-                                            }
-                                            else if (i - room.Rating < 1 && i - room.Rating > 0)
-                                            {
-                                                <i class="fas fa-star-half-alt" aria-hidden="true"></i>
-                                            }
-                                            else
-                                            {
-                                                <i class="far fa-star" aria-hidden="true"></i>
-                                            }
-                                        }
-                                        <span>(@room.Rating.ToString("0.0"))</span>
-                                    </div>
-                                    <a href="@Url.Action("Details", "Rooms", new { id = room.Id })"
-                                       class="btn btn-outline-primary btn-sm">
-                                        Xem chi tiết
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
     </div>
+</div>
 </div>
 
 <!-- Share Modal -->
@@ -511,8 +473,8 @@
                 <div class="copy-link mt-3">
                     <div class="input-group">
                         <input type="text" class="form-control" id="share-link"
-                               value="@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path"
-                               readonly aria-label="Đường link chia sẻ">
+                            value="@Context.Request.Scheme://@Context.Request.Host@Context.Request.Path" readonly
+                            aria-label="Đường link chia sẻ">
                         <button class="btn btn-outline-secondary" type="button" id="copy-link-btn">
                             Sao chép
                         </button>
