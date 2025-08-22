@@ -92,6 +92,7 @@ namespace HotelBookingSystem.Services.Implementations
         {
             var booking = await _context.Bookings
                 .Include(b => b.BookingStatus)
+                .Include(b => b.Room)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
             if (booking == null) return false;
@@ -103,7 +104,25 @@ namespace HotelBookingSystem.Services.Implementations
             // Set new status
             var newBookingStatus = await _context.BookingStatuses.FirstOrDefaultAsync(s => s.Name == newStatus);
             if (newBookingStatus != null)
+            {
                 booking.BookingStatus = newBookingStatus;
+
+                // Cập nhật trạng thái phòng dựa trên trạng thái booking
+                if (booking.Room != null)
+                {
+                    if (newStatus == "Hoàn thành" || newStatus == "Đã hủy")
+                    {
+                        // Phòng trở lại khả dụng khi booking hoàn thành hoặc bị hủy
+                        booking.Room.IsAvailable = true;
+                    }
+                    else if (newStatus == "Đã xác nhận")
+                    {
+                        // Đảm bảo phòng không khả dụng khi booking được xác nhận
+                        booking.Room.IsAvailable = false;
+                    }
+                    _context.Rooms.Update(booking.Room);
+                }
+            }
 
             if (booking.BookingStatus == null) return false;
 

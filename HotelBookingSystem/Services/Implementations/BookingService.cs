@@ -89,6 +89,15 @@ namespace HotelBookingSystem.Services.Implementations
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
 
+                // Cập nhật trạng thái phòng thành không khả dụng
+                var room = await _context.Rooms.FindAsync(model.RoomId);
+                if (room != null)
+                {
+                    room.IsAvailable = false;
+                    _context.Rooms.Update(room);
+                    await _context.SaveChangesAsync();
+                }
+
                 // Tạo payment record
                 var payment = new Payment
                 {
@@ -378,6 +387,13 @@ namespace HotelBookingSystem.Services.Implementations
 
             // Cập nhật trạng thái booking
             booking.BookingStatusId = cancelledStatus.Id;
+
+            // Cập nhật trạng thái phòng - trở lại khả dụng khi hủy booking
+            if (booking.Room != null)
+            {
+                booking.Room.IsAvailable = true;
+                _context.Rooms.Update(booking.Room);
+            }
 
             // Cập nhật trạng thái payment nếu có
             if (booking.Payment != null)

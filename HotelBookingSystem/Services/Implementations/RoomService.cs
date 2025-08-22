@@ -18,7 +18,9 @@ namespace HotelBookingSystem.Services.Implementations
 
         public async Task<RoomListViewModel> GetFilteredRoomsAsync(RoomListViewModel searchModel)
         {
-            var query = _context.Rooms.Include(r => r.Reviews).AsQueryable();
+            var query = _context.Rooms.Include(r => r.Reviews)
+                .Where(r => r.IsAvailable == true && r.IsActivated == true)
+                .AsQueryable();
 
             // Filtering logic
             // Only filter by guests if > 0, otherwise show all rooms
@@ -149,6 +151,7 @@ namespace HotelBookingSystem.Services.Implementations
         public async Task<List<RoomCardViewModel>> GetFeaturedRoomsAsync(int count)
         {
             return await _context.Rooms
+                .Where(r => r.IsAvailable == true && r.IsActivated == true)
                 .OrderByDescending(r => r.AverageRating)
                 .Take(count)
                 .Select(r => new RoomCardViewModel
