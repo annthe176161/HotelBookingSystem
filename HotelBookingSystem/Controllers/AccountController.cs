@@ -296,7 +296,7 @@ namespace HotelBookingSystem.Controllers
                 }
 
                 var result = await _userManager.UpdateAsync(user);
-                
+
                 if (result.Succeeded)
                 {
                     TempData["SuccessMessage"] = "Cập nhật thông tin cá nhân thành công!";
@@ -358,17 +358,18 @@ namespace HotelBookingSystem.Controllers
 
                 // Upload new avatar
                 var uploadResult = await _imageStorageService.UploadAvatarImage(avatar);
-                
+
                 // Update user profile picture URL
                 user.ProfilePictureUrl = uploadResult.Url;
                 var result = await _userManager.UpdateAsync(user);
 
                 if (result.Succeeded)
                 {
-                    return Json(new { 
-                        success = true, 
-                        message = "Cập nhật ảnh đại diện thành công!", 
-                        avatarUrl = uploadResult.Url 
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Cập nhật ảnh đại diện thành công!",
+                        avatarUrl = uploadResult.Url
                     });
                 }
                 else
@@ -390,7 +391,7 @@ namespace HotelBookingSystem.Controllers
                 // Format: https://res.cloudinary.com/cloud/image/upload/v1234567890/folder/public_id.format
                 var uri = new Uri(imageUrl);
                 var segments = uri.AbsolutePath.Split('/');
-                
+
                 if (segments.Length >= 3)
                 {
                     // Find the segment after 'upload' and extract public ID
@@ -401,7 +402,7 @@ namespace HotelBookingSystem.Controllers
                         var startIndex = segments[uploadIndex + 1].StartsWith("v") ? uploadIndex + 2 : uploadIndex + 1;
                         var pathParts = segments.Skip(startIndex).ToArray();
                         var publicIdWithExtension = string.Join("/", pathParts);
-                        
+
                         // Remove file extension
                         var lastDotIndex = publicIdWithExtension.LastIndexOf('.');
                         if (lastDotIndex > 0)
