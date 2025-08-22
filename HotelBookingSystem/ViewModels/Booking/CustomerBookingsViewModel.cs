@@ -45,6 +45,7 @@ namespace HotelBookingSystem.ViewModels.Booking
         public int NightCount => (CheckOut - CheckIn).Days;
         public bool CanCancel => Status == "Confirmed" && CheckIn > DateTime.Now.AddDays(1);
         public bool CanReview => Status == "Hoàn thành" && CompletedDate.HasValue;
+        public bool HasReview { get; set; }
         public bool IsUpcoming => CheckIn > DateTime.Now && Status == "Confirmed";
         public bool IsActive => CheckIn <= DateTime.Now && CheckOut > DateTime.Now && Status == "Confirmed";
         public bool IsPast => CheckOut < DateTime.Now;

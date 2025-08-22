@@ -429,5 +429,68 @@ namespace HotelBookingSystem.Controllers
 
             return RedirectToAction("Details", new { id });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditReview(int bookingId)
+        {
+            // Lấy user hiện tại đang đăng nhập
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                TempData["Error"] = "Bạn cần đăng nhập để chỉnh sửa đánh giá.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var reviewData = await _bookingService.GetBookingReviewAsync(bookingId, currentUser.Id);
+            if (reviewData == null)
+            {
+                TempData["Error"] = "Không tìm thấy đánh giá hoặc bạn không có quyền chỉnh sửa.";
+                return RedirectToAction("Index");
+            }
+
+            return View(reviewData);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditReview(BookingReviewViewModel model)
+        {
+            try
+            {
+                model.Comment ??= "";
+                if (!ModelState.IsValid)
+                {
+                    TempData["Error"] = "Dữ liệu không hợp lệ";
+                    return View(model);
+                }
+
+                // Lấy user hiện tại đang đăng nhập
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    TempData["Error"] = "Bạn cần đăng nhập để chỉnh sửa đánh giá.";
+                    return RedirectToAction("Login", "Account");
+                }
+
+                string result = await _bookingService.UpdateBookingReviewAsync(model, currentUser.Id);
+
+                // Kiểm tra kết quả
+                if (result == "Cập nhật đánh giá thành công")
+                {
+                    TempData["Success"] = result;
+                    return RedirectToAction("Details", new { id = model.BookingId });
+                }
+                else
+                {
+                    // Tất cả các case khác đều là lỗi
+                    TempData["Error"] = result;
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                return View(model);
+            }
+        }
     }
 }

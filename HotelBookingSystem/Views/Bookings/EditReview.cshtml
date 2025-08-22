@@ -1,0 +1,104 @@
+@model HotelBookingSystem.ViewModels.Booking.BookingReviewViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa đánh giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/review-form.css" />
+</head>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Chỉnh sửa đánh giá</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="EditReview" id="editReviewForm" onsubmit="return validateEditReview()">
+                @Html.AntiForgeryToken()
+                
+                <!-- Hidden inputs để truyền dữ liệu -->
+                <input type="hidden" asp-for="BookingId" />
+                <input type="hidden" asp-for="Rating" id="editRatingValue" />
+
+                <div class="form-group">
+                    <label>Đánh giá của bạn:</label>
+                    <div class="rating-stars">
+                        <i onclick="setEditRating(1)" class="fa-solid fa-star star-item" data-rating="1"></i>
+                        <i onclick="setEditRating(2)" class="fa-solid fa-star star-item" data-rating="2"></i>
+                        <i onclick="setEditRating(3)" class="fa-solid fa-star star-item" data-rating="3"></i>
+                        <i onclick="setEditRating(4)" class="fa-solid fa-star star-item" data-rating="4"></i>
+                        <i onclick="setEditRating(5)" class="fa-solid fa-star star-item" data-rating="5"></i>
+                    </div>
+                    <p id="editRatingError" style="color: red; font-size: 14px; display: none; margin-top: 4px;">
+                        Vui lòng chọn số sao đánh giá
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Comment">Nhận xét:</label>
+                    <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Nhận xét của bạn..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Cập nhật đánh giá</button>
+                    <a asp-action="Details" asp-route-id="@Model.BookingId" class="btn btn-secondary">Quay lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let editCurrentRating = @Model.Rating;
+
+    // Khởi tạo hiển thị rating hiện tại
+    document.addEventListener('DOMContentLoaded', function() {
+        updateEditStarDisplay(editCurrentRating);
+        document.getElementById('editRatingValue').value = editCurrentRating;
+    });
+
+    function setEditRating(rating) {
+        editCurrentRating = rating;
+        document.getElementById('editRatingValue').value = rating;
+        updateEditStarDisplay(rating);
+        
+        // Ẩn thông báo lỗi nếu có
+        document.getElementById('editRatingError').style.display = 'none';
+    }
+
+    function updateEditStarDisplay(rating) {
+        const stars = document.querySelectorAll('.rating-stars .star-item');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.style.color = '#ffc107'; // Màu vàng cho sao được chọn
+            } else {
+                star.style.color = '#ddd'; // Màu xám cho sao chưa được chọn
+            }
+        });
+    }
+
+    function validateEditReview() {
+        const rating = document.getElementById('editRatingValue').value;
+        
+        if (!rating || rating == 0) {
+            document.getElementById('editRatingError').style.display = 'block';
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Thêm hiệu ứng hover cho các sao
+    document.querySelectorAll('.rating-stars .star-item').forEach((star, index) => {
+        star.addEventListener('mouseenter', function() {
+            const tempRating = index + 1;
+            updateEditStarDisplay(tempRating);
+        });
+    });
+
+    document.querySelector('.rating-stars').addEventListener('mouseleave', function() {
+        updateEditStarDisplay(editCurrentRating);
+    });
+</script>

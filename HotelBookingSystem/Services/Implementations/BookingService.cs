@@ -221,6 +221,7 @@ namespace HotelBookingSystem.Services.Implementations
             }
 
             var bookings = await query
+                .Include(b => b.Review) // Include review để check HasReview
                 .OrderByDescending(b => b.CreatedDate)
                 .ToListAsync();
 
@@ -248,7 +249,10 @@ namespace HotelBookingSystem.Services.Implementations
 
                 // Payment Information
                 PaymentStatus = b.Payment?.PaymentStatus?.Name ?? "Pending",
-                PaymentMethod = b.Payment?.PaymentMethod ?? "N/A"
+                PaymentMethod = b.Payment?.PaymentMethod ?? "N/A",
+
+                // Review Information
+                HasReview = b.Review != null && b.Review.UserId == userId
             }).ToList();
 
             var viewModel = new CustomerBookingsViewModel
@@ -459,7 +463,80 @@ namespace HotelBookingSystem.Services.Implementations
 
             _context.Reviews.Add(bookingReview);
             await _context.SaveChangesAsync();
+
+            // Cập nhật AverageRating cho phòng
+            await UpdateRoomAverageRatingAsync(booking.RoomId);
+
             return "Đánh giá thành công";
+        }
+
+        public async Task<string> UpdateBookingReviewAsync(BookingReviewViewModel request, string userId)
+        {
+            if (request.BookingId <= 0)
+            {
+                return "Booking không hợp lệ";
+            }
+
+            // Tìm review hiện tại
+            var existingReview = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.BookingId == request.BookingId && r.UserId == userId);
+
+            if (existingReview == null)
+            {
+                return "Không tìm thấy đánh giá để cập nhật";
+            }
+
+            // Cập nhật thông tin review
+            existingReview.Rating = request.Rating;
+            existingReview.Comment = request.Comment;
+            existingReview.CreatedDate = DateTime.Now; // Cập nhật thời gian chỉnh sửa
+
+            _context.Reviews.Update(existingReview);
+            await _context.SaveChangesAsync();
+
+            // Cập nhật lại AverageRating cho phòng
+            await UpdateRoomAverageRatingAsync(existingReview.RoomId);
+
+            return "Cập nhật đánh giá thành công";
+        }
+
+        public async Task<BookingReviewViewModel?> GetBookingReviewAsync(int bookingId, string userId)
+        {
+            var review = await _context.Reviews
+                .FirstOrDefaultAsync(r => r.BookingId == bookingId && r.UserId == userId);
+
+            if (review == null)
+                return null;
+
+            return new BookingReviewViewModel
+            {
+                BookingId = review.BookingId,
+                Rating = review.Rating,
+                Comment = review.Comment
+            };
+        }
+
+        private async Task UpdateRoomAverageRatingAsync(int roomId)
+        {
+            // Lấy tất cả reviews của phòng này
+            var roomReviews = await _context.Reviews
+                .Where(r => r.RoomId == roomId)
+                .ToListAsync();
+
+            // Tính rating trung bình
+            double averageRating = 0;
+            if (roomReviews.Any())
+            {
+                averageRating = roomReviews.Average(r => r.Rating);
+            }
+
+            // Cập nhật AverageRating cho phòng
+            var room = await _context.Rooms.FindAsync(roomId);
+            if (room != null)
+            {
+                room.AverageRating = averageRating;
+                await _context.SaveChangesAsync();
+            }
         }
 
     }
