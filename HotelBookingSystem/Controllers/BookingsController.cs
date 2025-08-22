@@ -62,7 +62,7 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(BookingReviewViewModel request) 
+        public async Task<IActionResult> Index(BookingReviewViewModel request)
         {
             try
             {
@@ -72,16 +72,16 @@ namespace HotelBookingSystem.Controllers
                     TempData["Error"] = "Dữ liệu không hợp lệ";
                     return RedirectToAction("Index", "Bookings");
                 }
-                var user = await _userManager.FindByEmailAsync("thanhan01236339441@gmail.com");
-                if (user == null)
+
+                // Lấy user hiện tại đang đăng nhập
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
                 {
-                    // Xử lý trường hợp không tìm thấy user test. 
-                    // Có thể tạo user ở đây hoặc báo lỗi.
-                    // Trong ví dụ này, chúng ta sẽ báo lỗi để đảm bảo SeedData đã chạy đúng.
-                    TempData["Error"] = "Tài khoản test mặc định chưa được tạo. Vui lòng chạy lại ứng dụng để seed dữ liệu.";
-                    return RedirectToAction("Index", "Home");
+                    TempData["Error"] = "Bạn cần đăng nhập để đánh giá.";
+                    return RedirectToAction("Login", "Account");
                 }
-                string result = await _bookingService.CreateBookingReviewAsync(request, user.Id);
+
+                string result = await _bookingService.CreateBookingReviewAsync(request, currentUser.Id);
 
                 // Kiểm tra kết quả
                 if (result == "Đánh giá thành công")
@@ -296,11 +296,11 @@ namespace HotelBookingSystem.Controllers
             return View(booking);
         }
 
-        public async Task<IActionResult> Index(string? status = null)
+        public IActionResult Index(string? status = null)
         {
             var viewModel = new BookingListViewModel
             {
-                Status = status,
+                Status = status ?? string.Empty,
                 Bookings = GetSampleBookings()
             };
 

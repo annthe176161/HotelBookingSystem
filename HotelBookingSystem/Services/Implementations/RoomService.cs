@@ -93,6 +93,7 @@ namespace HotelBookingSystem.Services.Implementations
         {
             var room = await _context.Rooms
                 .Include(r => r.Reviews)
+                    .ThenInclude(rev => rev.User)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id == roomId);
 
@@ -130,7 +131,7 @@ namespace HotelBookingSystem.Services.Implementations
                 ReviewsCount = room.Reviews.Count,
                 Reviews = room.Reviews.Select(rev => new ReviewViewModel
                 {
-                    UserName = "Anonymous",
+                    UserName = rev.User?.FullName ?? "Khách ẩn danh",
                     Rating = rev.Rating,
                     Comment = rev.Comment,
                     Date = rev.CreatedDate
