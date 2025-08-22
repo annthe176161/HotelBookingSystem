@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelBookingSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateDB : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ namespace HotelBookingSystem.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Gender = table.Column<int>(type: "int", nullable: false),
+                    GenderType = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     State = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),

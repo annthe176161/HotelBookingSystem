@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelBookingSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250820170149_UpdateDB")]
-    partial class UpdateDB
+    [Migration("20250822165251_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,7 +68,7 @@ namespace HotelBookingSystem.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int>("Gender")
+                    b.Property<int>("GenderType")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActivated")
