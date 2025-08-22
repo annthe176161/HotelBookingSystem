@@ -107,6 +107,12 @@ namespace HotelBookingSystem.Services.Implementations
             {
                 booking.BookingStatus = newBookingStatus;
 
+                // Cập nhật ngày hoàn thành khi trạng thái chuyển thành "Hoàn thành"
+                if (newStatus == "Hoàn thành")
+                {
+                    booking.CompletedDate = DateTime.Now;
+                }
+
                 // Cập nhật trạng thái phòng dựa trên trạng thái booking
                 if (booking.Room != null)
                 {
