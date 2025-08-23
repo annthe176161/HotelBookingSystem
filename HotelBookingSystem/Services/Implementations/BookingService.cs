@@ -24,6 +24,7 @@ namespace HotelBookingSystem.Services.Implementations
             var conflictingBookings = await _context.Bookings
                 .Where(b => b.RoomId == roomId &&
                            b.BookingStatus.Name != "Đã hủy" &&
+                           b.BookingStatus.Name != "Hoàn thành" &&
                            ((b.CheckIn < checkOut && b.CheckOut > checkIn)))
                 .AnyAsync();
 
