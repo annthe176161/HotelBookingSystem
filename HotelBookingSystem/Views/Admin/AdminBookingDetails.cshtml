@@ -1,5 +1,380 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model HotelBookingSystem.ViewModels.Admin.AdminBookingDetailsViewModel
 @{
+    ViewData["Title"] = "Chi tiết đặt phòng " + Model.BookingNumber;
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-booking-details">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h1 class="h3 mb-1">Chi tiết đặt phòng @Model.BookingNumber</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Bookings">Quản lý đặt phòng</a></li>
+                        <li class="breadcrumb-item active">Chi tiết đặt phòng</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-actions">
+                <a asp-action="Bookings" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status and Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-@Model.StatusColor fs-6 px-3 py-2">
+                    <i class="fas fa-calendar-check me-1"></i>@Model.Status
+                </span>
+                <span class="badge bg-@Model.PaymentStatusColor fs-6 px-3 py-2">
+                    <i class="fas fa-credit-card me-1"></i>@Model.PaymentStatus
+                </span>
+                @if (Model.HasReview)
+                {
+                    <span class="badge bg-success fs-6 px-3 py-2">
+                        <i class="fas fa-star me-1"></i>Đã đánh giá
+                    </span>
+                }
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            @if (Model.CanUpdate)
+            {
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-cog me-2"></i>Hành động
+                    </button>
+                    <ul class="dropdown-menu">
+                        @if (Model.Status == "Chờ xác nhận")
+                        {
+                            <li>
+                                <form asp-controller="Admin" asp-action="UpdateBookingStatus" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <input type="hidden" name="status" value="Đã xác nhận" />
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-check me-2 text-success"></i>Xác nhận đặt phòng
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        @if (Model.CanComplete)
+                        {
+                            <li>
+                                <form asp-controller="Admin" asp-action="UpdateBookingStatus" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <input type="hidden" name="status" value="Hoàn thành" />
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-flag-checkered me-2 text-primary"></i>Hoàn thành đặt phòng
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        @if (Model.PaymentStatus != "Thành công" && Model.PaymentStatus != "Đã hoàn tiền")
+                        {
+                            <li>
+                                <form asp-controller="Admin" asp-action="UpdatePaymentStatus" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <input type="hidden" name="paymentStatus" value="Thành công" />
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-check-circle me-2 text-success"></i>Xác nhận thanh toán
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        @if (Model.CanRefund)
+                        {
+                            <li>
+                                <form asp-controller="Admin" asp-action="UpdatePaymentStatus" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <input type="hidden" name="paymentStatus" value="Đã hoàn tiền" />
+                                    <button type="submit" class="dropdown-item" onclick="return confirm('Bạn có chắc muốn hoàn tiền?')">
+                                        <i class="fas fa-undo me-2 text-warning"></i>Hoàn tiền
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form asp-controller="Admin" asp-action="UpdateBookingStatus" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="hidden" name="status" value="Đã hủy" />
+                                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Bạn có chắc muốn hủy đặt phòng này?')">
+                                    <i class="fas fa-times me-2"></i>Hủy đặt phòng
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <!-- Booking Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>Thông tin đặt phòng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Mã đặt phòng:</strong></td>
+                                    <td>@Model.BookingNumber</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ngày đặt:</strong></td>
+                                    <td>@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nhận phòng:</strong></td>
+                                    <td>@Model.CheckIn.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trả phòng:</strong></td>
+                                    <td>@Model.CheckOut.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Số đêm:</strong></td>
+                                    <td>@Model.NightCount đêm</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Số khách:</strong></td>
+                                    <td>@Model.Guests người</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tổng tiền:</strong></td>
+                                    <td><span class="h5 text-primary">@Model.TotalPrice.ToString("N0") VNĐ</span></td>
+                                </tr>
+                                @if (Model.CompletedDate.HasValue)
+                                {
+                                    <tr>
+                                        <td><strong>Ngày hoàn thành:</strong></td>
+                                        <td>@Model.CompletedDate.Value.ToString("dd/MM/yyyy HH:mm")</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td><strong>Yêu cầu đặc biệt:</strong></td>
+                                    <td>@Model.SpecialRequests</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bed me-2"></i>Thông tin phòng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="@Model.RoomImageUrl" alt="@Model.RoomName" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-8">
+                            <h5>@Model.RoomName</h5>
+                            <p class="text-muted mb-2">@Model.RoomType</p>
+                            <p class="mb-3">@Model.RoomDescription</p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p><strong>Sức chứa:</strong> @Model.RoomCapacity người</p>
+                                    <p><strong>Giá/đêm:</strong> @Model.RoomPricePerNight.ToString("N0") VNĐ</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p><strong>Loại giường:</strong> @Model.RoomBedType</p>
+                                    <p><strong>Tầng:</strong> @Model.RoomFloor - @Model.RoomBuilding</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Information -->
+            @if (Model.HasReview)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-star me-2"></i>Đánh giá từ khách hàng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="rating-stars me-3">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= Model.ReviewRating)
+                                    {
+                                        <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star text-muted"></i>
+                                    }
+                                }
+                            </div>
+                            <span class="h6 mb-0">@Model.ReviewRating/5 sao</span>
+                            <small class="text-muted ms-3">@Model.ReviewDate?.ToString("dd/MM/yyyy")</small>
+                        </div>
+                        <p class="mb-0">@Model.ReviewComment</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <!-- Customer Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Thông tin khách hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="avatar-circle mx-auto mb-2" style="width: 60px; height: 60px; font-size: 24px;">
+                            <span>@(string.Join("", Model.CustomerName.Split(' ').Select(x => x[0])))</span>
+                        </div>
+                        <h6 class="mb-1">@Model.CustomerName</h6>
+                        <small class="text-muted">Khách hàng từ @Model.CustomerJoinDate.ToString("MM/yyyy")</small>
+                    </div>
+                    
+                    <table class="table table-borderless table-sm">
+                        <tr>
+                            <td><i class="fas fa-envelope text-muted me-2"></i></td>
+                            <td><a href="mailto:@Model.CustomerEmail">@Model.CustomerEmail</a></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-phone text-muted me-2"></i></td>
+                            <td><a href="tel:@Model.CustomerPhone">@Model.CustomerPhone</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Thông tin thanh toán
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless table-sm">
+                        <tr>
+                            <td><strong>Phương thức:</strong></td>
+                            <td>@Model.PaymentMethod</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trạng thái:</strong></td>
+                            <td>
+                                <span class="badge bg-@Model.PaymentStatusColor">@Model.PaymentStatus</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Số tiền:</strong></td>
+                            <td><strong>@Model.PaymentAmount.ToString("N0") VNĐ</strong></td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(Model.TransactionId))
+                        {
+                            <tr>
+                                <td><strong>Mã giao dịch:</strong></td>
+                                <td><code>@Model.TransactionId</code></td>
+                            </tr>
+                        }
+                        @if (Model.PaymentDate.HasValue)
+                        {
+                            <tr>
+                                <td><strong>Ngày thanh toán:</strong></td>
+                                <td>@Model.PaymentDate.Value.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .admin-booking-details .avatar-circle {
+            background-color: #6c5ce7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .admin-booking-details .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        
+        .admin-booking-details .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        
+        .admin-booking-details .rating-stars i {
+            font-size: 18px;
+        }
+        
+        .admin-booking-details .table td {
+            padding: 0.5rem 0;
+            border: none;
+            vertical-align: middle;
+        }
+        
+        .admin-booking-details .badge {
+            font-size: 0.875em;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header .breadcrumb {
+            background: none;
+            margin-bottom: 0;
+        }
+        
+        .page-header .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        
+        .page-header .breadcrumb-item.active {
+            color: white;
+        }
+    </style>
 }

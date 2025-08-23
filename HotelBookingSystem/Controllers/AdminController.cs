@@ -219,6 +219,20 @@ namespace HotelBookingSystem.Controllers
             return RedirectToAction("Bookings");
         }
 
+        [HttpGet("BookingDetails/{id}")]
+        public async Task<IActionResult> BookingDetails(int id)
+        {
+            var bookingDetails = await _adminBookingService.GetBookingDetails(id);
+
+            if (bookingDetails == null)
+            {
+                TempData["Error"] = "Không tìm thấy thông tin đặt phòng.";
+                return RedirectToAction("Bookings");
+            }
+
+            return View("AdminBookingDetails", bookingDetails);
+        }
+
         [HttpGet("Promotions")]
         public IActionResult Promotions()
         {

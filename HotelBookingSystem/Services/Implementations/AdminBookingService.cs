@@ -10,6 +10,7 @@ namespace HotelBookingSystem.Services.Implementations
         Task<BookingsViewModel> GetBookings(BookingQueryOptions query);
         Task<(bool success, string message)> UpdateBookingStatus(int bookingId, string newStatus);
         Task<bool> UpdatePaymentStatus(int bookingId, string newPaymentStatus);
+        Task<AdminBookingDetailsViewModel?> GetBookingDetails(int bookingId);
     }
 
     public class AdminBookingService : IAdminBookingService
@@ -30,14 +31,14 @@ namespace HotelBookingSystem.Services.Implementations
                 .Include(b => b.Room)
                 .Include(b => b.BookingStatus)
                 .Include(b => b.Payment)
-                    .ThenInclude(p => p.PaymentStatus)
+                    .ThenInclude(p => p!.PaymentStatus)
                 .AsQueryable();
 
             if (query.BookingId.HasValue)
                 queryable = queryable.Where(b => b.Id == query.BookingId.Value);
 
             if (!string.IsNullOrEmpty(query.CustomerName))
-                queryable = queryable.Where(b => b.User.FullName.Contains(query.CustomerName));
+                queryable = queryable.Where(b => b.User!.FullName!.Contains(query.CustomerName));
 
             if (!string.IsNullOrEmpty(query.Status))
                 queryable = queryable.Where(b => b.BookingStatus.Name == query.Status);
@@ -96,7 +97,7 @@ namespace HotelBookingSystem.Services.Implementations
                 .Include(b => b.BookingStatus)
                 .Include(b => b.Room)
                 .Include(b => b.Payment)
-                    .ThenInclude(p => p.PaymentStatus)
+                    .ThenInclude(p => p!.PaymentStatus)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
             if (booking == null)
@@ -182,7 +183,7 @@ namespace HotelBookingSystem.Services.Implementations
         {
             var booking = await _context.Bookings
                 .Include(b => b.Payment)
-                    .ThenInclude(p => p.PaymentStatus)
+                    .ThenInclude(p => p!.PaymentStatus)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
             if (booking == null || booking.Payment == null) return false;
@@ -199,6 +200,67 @@ namespace HotelBookingSystem.Services.Implementations
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<AdminBookingDetailsViewModel?> GetBookingDetails(int bookingId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.Room)
+                .Include(b => b.BookingStatus)
+                .Include(b => b.Payment)
+                    .ThenInclude(p => p!.PaymentStatus)
+                .Include(b => b.Review)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null) return null;
+
+            return new AdminBookingDetailsViewModel
+            {
+                // Booking Information
+                Id = booking.Id,
+                BookingNumber = $"#BK{booking.Id.ToString().PadLeft(6, '0')}",
+                CheckIn = booking.CheckIn,
+                CheckOut = booking.CheckOut,
+                Guests = booking.Guests,
+                TotalPrice = booking.TotalPrice,
+                CreatedDate = booking.CreatedDate,
+                CompletedDate = booking.CompletedDate,
+                Status = booking.BookingStatus.Name,
+                SpecialRequests = "Không có yêu cầu đặc biệt", // Có thể thêm field này vào model sau
+
+                // Customer Information
+                CustomerName = booking.User.FullName ?? $"{booking.User.FirstName} {booking.User.LastName}".Trim(),
+                CustomerEmail = booking.User.Email ?? "",
+                CustomerPhone = booking.User.PhoneNumber ?? "Chưa cập nhật",
+                CustomerJoinDate = DateTime.Now, // Sử dụng giá trị mặc định vì không có CreatedDate trong ApplicationUser
+
+                // Room Information
+                RoomId = booking.Room.Id,
+                RoomName = booking.Room.Name,
+                RoomType = booking.Room.RoomType,
+                RoomDescription = booking.Room.Description ?? "Không có mô tả",
+                RoomImageUrl = booking.Room.ImageUrl,
+                RoomPricePerNight = booking.Room.PricePerNight,
+                RoomCapacity = booking.Room.Capacity,
+                RoomBedType = "Giường đôi", // Giá trị mặc định vì không có BedType trong Room model
+                RoomFloor = "Tầng 1", // Giá trị mặc định vì không có Floor trong Room model
+                RoomBuilding = "Tòa nhà chính", // Giá trị mặc định vì không có Building trong Room model
+
+                // Payment Information
+                PaymentId = booking.Payment?.Id,
+                PaymentMethod = booking.Payment?.PaymentMethod ?? "Không xác định",
+                PaymentStatus = booking.Payment?.PaymentStatus?.Name ?? "Đang xử lý",
+                TransactionId = booking.Payment?.TransactionId ?? "",
+                PaymentDate = booking.Payment?.PaymentDate,
+                PaymentAmount = booking.Payment?.Amount ?? booking.TotalPrice,
+
+                // Review Information
+                HasReview = booking.Review != null,
+                ReviewRating = booking.Review?.Rating,
+                ReviewComment = booking.Review?.Comment ?? "",
+                ReviewDate = booking.Review?.CreatedDate
+            };
         }
     }
 }
