@@ -147,17 +147,20 @@ namespace HotelBookingSystem.Controllers
             // Điền thông tin từ user hiện tại vào model
             model.Email = user.Email ?? "";
             model.Phone = user.PhoneNumber ?? "";
-            if (!string.IsNullOrEmpty(user.FullName))
+
+            // Ưu tiên dùng FirstName/LastName từ database trước, fallback sang split FullName
+            var firstName = user.FirstName ?? "";
+            var lastName = user.LastName ?? "";
+
+            if (string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(user.FullName))
             {
                 var nameParts = user.FullName.Split(' ', 2);
-                model.FirstName = nameParts.Length > 0 ? nameParts[0] : "";
-                model.LastName = nameParts.Length > 1 ? nameParts[1] : "";
+                firstName = nameParts.Length > 0 ? nameParts[0] : "";
+                lastName = nameParts.Length > 1 ? nameParts[1] : "";
             }
-            else
-            {
-                model.FirstName = user.FirstName ?? "";
-                model.LastName = user.LastName ?? "";
-            }
+
+            model.FirstName = firstName;
+            model.LastName = lastName;
 
             return View(model);
         }
