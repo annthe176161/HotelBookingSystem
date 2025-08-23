@@ -59,6 +59,12 @@ namespace HotelBookingSystem.Controllers
                 return View(vm);
             }
 
+            if (user.IsActivated == false)
+            {
+                ModelState.AddModelError("", "Tài khoản đã bị khoá.");
+                return View(vm);
+            }
+
             var result = await _signInManager.PasswordSignInAsync(
                 user.UserName!, vm.Password, vm.RememberMe, lockoutOnFailure: true);
 
