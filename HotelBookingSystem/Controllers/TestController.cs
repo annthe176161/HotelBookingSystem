@@ -14,6 +14,11 @@ namespace HotelBookingSystem.Controllers
             _notificationService = notificationService;
         }
 
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> SendTestNotification()
         {
@@ -86,6 +91,36 @@ namespace HotelBookingSystem.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"[DEBUG] TestAdminNotification error: {ex.Message}");
+                return Json(new { success = false, message = ex.Message, error = ex.ToString() });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TestCustomerNotification()
+        {
+            try
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                Console.WriteLine($"[DEBUG] TestCustomerNotification called by user: {User.Identity.Name}, UserId: {userId}");
+
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    // Test booking status update notification
+                    await _notificationService.SendBookingStatusUpdateToCustomerAsync(
+                        userId,
+                        "TEST-001",
+                        "Đã xác nhận",
+                        $"TEST: Đặt phòng TEST-001 đã được xác nhận - {DateTime.Now:HH:mm:ss}"
+                    );
+
+                    return Json(new { success = true, message = "Test customer notification sent!", userId = userId, timestamp = DateTime.Now });
+                }
+
+                return Json(new { success = false, message = "User not found" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DEBUG] TestCustomerNotification error: {ex.Message}");
                 return Json(new { success = false, message = ex.Message, error = ex.ToString() });
             }
         }

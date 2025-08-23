@@ -97,6 +97,7 @@ namespace HotelBookingSystem.Services.Implementations
             var booking = await _context.Bookings
                 .Include(b => b.BookingStatus)
                 .Include(b => b.Room)
+                .Include(b => b.User)
                 .Include(b => b.Payment)
                     .ThenInclude(p => p!.PaymentStatus)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
@@ -107,6 +108,8 @@ namespace HotelBookingSystem.Services.Implementations
             // Prevent invalid updates (already completed or cancelled)
             if (booking.BookingStatus.Name == "Hoàn thành" || booking.BookingStatus.Name == "Đã hủy")
                 return (false, "Không thể cập nhật đặt phòng đã hoàn thành hoặc đã hủy.");
+
+            var oldStatus = booking.BookingStatus.Name;
 
             // Kiểm tra logic business khi hoàn thành booking
             if (newStatus == "Hoàn thành")
@@ -173,6 +176,25 @@ namespace HotelBookingSystem.Services.Implementations
                 _ => "Cập nhật trạng thái thành công."
             };
 
+            // Gửi thông báo real-time cho khách hàng
+            if (booking.User != null)
+            {
+                var customerMessage = newStatus switch
+                {
+                    "Đã xác nhận" => $"Đặt phòng #{bookingId} của bạn tại {booking.Room?.Name} đã được xác nhận.",
+                    "Hoàn thành" => $"Đặt phòng #{bookingId} của bạn tại {booking.Room?.Name} đã hoàn thành thành công.",
+                    "Đã hủy" => $"Đặt phòng #{bookingId} của bạn tại {booking.Room?.Name} đã bị hủy.",
+                    _ => $"Trạng thái đặt phòng #{bookingId} của bạn đã được cập nhật thành: {newStatus}"
+                };
+
+                await _notificationService.SendBookingStatusUpdateToCustomerAsync(
+                    booking.User.Id,
+                    bookingId.ToString(),
+                    newStatus,
+                    customerMessage
+                );
+            }
+
             return (true, successMessage);
         }
 
@@ -180,12 +202,16 @@ namespace HotelBookingSystem.Services.Implementations
         {
             var booking = await _context.Bookings
                 .Include(b => b.BookingStatus)
+                .Include(b => b.User)
+                .Include(b => b.Room)
                 .Include(b => b.Payment)
                     .ThenInclude(p => p!.PaymentStatus)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
             if (booking == null || booking.Payment == null)
                 return (false, "Không tìm thấy đặt phòng hoặc thông tin thanh toán.");
+
+            var oldPaymentStatus = booking.Payment.PaymentStatus.Name;
 
             // LOGIC MỚI: Chặn cập nhật payment thành "Thành công" nếu booking chưa hoàn thành
             if (newPaymentStatus == "Thành công")
@@ -216,6 +242,24 @@ namespace HotelBookingSystem.Services.Implementations
 
             _context.Update(booking.Payment);
             await _context.SaveChangesAsync();
+
+            // Gửi thông báo real-time cho khách hàng về cập nhật thanh toán
+            if (booking.User != null && oldPaymentStatus != newPaymentStatus)
+            {
+                var customerMessage = newPaymentStatus switch
+                {
+                    "Thành công" => $"Thanh toán cho đặt phòng #{bookingId} tại {booking.Room?.Name} đã được xác nhận thành công.",
+                    "Đang xử lý" => $"Trạng thái thanh toán cho đặt phòng #{bookingId} tại {booking.Room?.Name} đang được xử lý.",
+                    _ => $"Trạng thái thanh toán cho đặt phòng #{bookingId} đã được cập nhật."
+                };
+
+                await _notificationService.SendPaymentNotificationAsync(
+                    booking.User.Id,
+                    bookingId.ToString(),
+                    newPaymentStatus,
+                    customerMessage
+                );
+            }
 
             return (true, $"Cập nhật trạng thái thanh toán thành '{newPaymentStatus}' thành công.");
         }
@@ -288,6 +332,7 @@ namespace HotelBookingSystem.Services.Implementations
                 .Include(b => b.Payment)
                     .ThenInclude(p => p!.PaymentStatus)
                 .Include(b => b.User)
+                .Include(b => b.Room)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
             if (booking == null)
@@ -313,24 +358,30 @@ namespace HotelBookingSystem.Services.Implementations
 
             booking.BookingStatus = cancelledStatus;
 
+            // Cập nhật trạng thái phòng về khả dụng
+            if (booking.Room != null)
+            {
+                booking.Room.IsAvailable = true;
+                _context.Rooms.Update(booking.Room);
+            }
+
             _context.Update(booking);
             await _context.SaveChangesAsync();
 
-            // Gửi thông báo cho khách hàng (có thể gửi email hoặc SMS)
-            // Lý do hủy sẽ được gửi trong thông báo mà không lưu vào database
-            try
+            // Gửi thông báo real-time cho khách hàng về việc hủy đặt phòng
+            if (booking.User != null)
             {
-                // TODO: Implement notification for booking cancellation
-                // await _notificationService.NotifyBookingCancelled(booking.User, booking, cancelReason);
-                Console.WriteLine($"Thông báo hủy phòng cho khách: {booking.User.Email}, Lý do: {cancelReason}");
-            }
-            catch (Exception ex)
-            {
-                // Log lỗi nhưng vẫn return success vì booking đã được hủy thành công
-                Console.WriteLine($"Lỗi gửi thông báo hủy phòng: {ex.Message}");
+                var customerMessage = $"Đặt phòng #{bookingId} tại {booking.Room?.Name} đã bị hủy. Lý do: {cancelReason}";
+
+                await _notificationService.SendBookingStatusUpdateToCustomerAsync(
+                    booking.User.Id,
+                    bookingId.ToString(),
+                    "Đã hủy",
+                    customerMessage
+                );
             }
 
-            return (true, $"Đã hủy đặt phòng thành công. Lý do: {cancelReason}");
+            return (true, "Đã hủy đặt phòng thành công và thông báo khách hàng.");
         }
     }
 }

@@ -38,7 +38,7 @@ namespace HotelBookingSystem.Services.Implementations
             {
                 message,
                 type = "booking_confirmation",
-                timestamp = DateTime.Now,
+                timestamp = DateTime.Now.ToString("o"), // ISO 8601 format
                 data = new
                 {
                     bookingId,
@@ -56,7 +56,7 @@ namespace HotelBookingSystem.Services.Implementations
             {
                 message = message,
                 type = "booking_status",
-                timestamp = DateTime.Now,
+                timestamp = DateTime.Now.ToString("o"), // ISO 8601 format
                 data = new
                 {
                     bookingId,
@@ -74,7 +74,7 @@ namespace HotelBookingSystem.Services.Implementations
             {
                 message = message,
                 type = "payment",
-                timestamp = DateTime.Now,
+                timestamp = DateTime.Now.ToString("o"), // ISO 8601 format
                 data = new
                 {
                     bookingId,

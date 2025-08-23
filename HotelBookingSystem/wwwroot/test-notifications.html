@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Global Notifications</title>
+    <script src="https://unpkg.com/@microsoft/signalr@latest/dist/browser/signalr.min.js"></script>
+</head>
+<body>
+    <h1>Test Global Notifications</h1>
+    <button onclick="testConnection()">Test SignalR Connection</button>
+    <button onclick="simulateNotification()">Simulate Notification</button>
+    <div id="log"></div>
+
+    <script>
+        let connection = null;
+        const log = document.getElementById('log');
+
+        function logMessage(message) {
+            const div = document.createElement('div');
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            log.appendChild(div);
+            console.log(message);
+        }
+
+        async function testConnection() {
+            try {
+                logMessage('🔄 Testing SignalR connection...');
+                
+                connection = new signalR.HubConnectionBuilder()
+                    .withUrl("/notificationHub")
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.on("ReceiveNotification", function (notification) {
+                    logMessage('📨 Received notification: ' + JSON.stringify(notification));
+                });
+
+                await connection.start();
+                logMessage('✅ Connected to SignalR successfully!');
+                
+            } catch (err) {
+                logMessage('❌ Connection failed: ' + err.message);
+            }
+        }
+
+        function simulateNotification() {
+            const testNotification = {
+                type: 'booking_status',
+                message: 'Test notification - ' + new Date().toLocaleTimeString(),
+                timestamp: new Date().toISOString(),
+                data: { bookingId: 'TEST-001' }
+            };
+
+            // Store in localStorage to test the system
+            const notifications = JSON.parse(localStorage.getItem('customerNotifications') || '[]');
+            notifications.unshift({
+                id: Date.now(),
+                ...testNotification,
+                isRead: false,
+                isNew: true
+            });
+            localStorage.setItem('customerNotifications', JSON.stringify(notifications));
+            
+            logMessage('💾 Simulated notification added to localStorage');
+            
+            // Try to update badge if function exists
+            if (window.globalNotificationManager && window.globalNotificationManager.updateNotificationBadge) {
+                window.globalNotificationManager.updateNotificationBadge();
+                logMessage('🔄 Badge updated');
+            }
+        }
+
+        // Auto start on load
+        window.addEventListener('load', testConnection);
+    </script>
+</body>
+</html>

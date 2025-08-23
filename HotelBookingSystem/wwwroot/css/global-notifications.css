@@ -1,0 +1,106 @@
+/* Global Notification System Styles */
+
+/* Notification badge in menu */
+#notificationBadge {
+    font-size: 0.75rem !important;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 2px 6px;
+}
+
+/* Pulse animation for new notifications */
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+/* Toast container positioning */
+.toast-container {
+    z-index: 9999 !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+}
+
+/* Custom toast styles */
+.toast {
+    min-width: 350px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: none;
+}
+
+.toast-header {
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    font-weight: 500;
+}
+
+.toast-body {
+    padding: 12px 16px;
+}
+
+.toast-body .btn {
+    font-size: 0.875rem;
+    padding: 4px 12px;
+}
+
+/* Dropdown notification items (if needed) */
+.notification-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 14px;
+    color: white;
+}
+
+.notification-icon.booking_status { background: #28a745; }
+.notification-icon.booking { background: #007bff; }
+.notification-icon.payment { background: #ffc107; color: #000; }
+.notification-icon.booking_confirmation { background: #17a2b8; }
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-text {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+}

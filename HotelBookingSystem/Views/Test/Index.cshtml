@@ -1,0 +1,172 @@
+@{
+    ViewData["Title"] = "Test Notifications";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>🧪 Test Notification System</h2>
+            <p class="text-muted">Dùng để test hệ thống thông báo real-time</p>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Customer Notifications Test</h5>
+                    
+                    <button class="btn btn-primary me-2" onclick="testCustomerNotification()">
+                        <i class="fas fa-bell"></i> Test Customer Notification
+                    </button>
+                    
+                    <button class="btn btn-info me-2" onclick="testPaymentNotification()">
+                        <i class="fas fa-credit-card"></i> Test Payment Notification
+                    </button>
+                    
+                    <button class="btn btn-success me-2" onclick="testBookingConfirmation()">
+                        <i class="fas fa-check-circle"></i> Test Booking Confirmation
+                    </button>
+                    
+                    <hr>
+                    
+                    <h5 class="card-title">Debug Information</h5>
+                    <div id="debugInfo" class="bg-light p-3 rounded">
+                        <p><strong>User ID:</strong> @(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "N/A")</p>
+                        <p><strong>User Name:</strong> @(User.Identity?.Name ?? "N/A")</p>
+                        <p><strong>Is Authenticated:</strong> @User.Identity.IsAuthenticated</p>
+                        <p><strong>Is Admin:</strong> @User.IsInRole("Admin")</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="card-title">Test Results</h5>
+                    <div id="testResults" class="alert alert-info" style="display: none;">
+                        Test results will appear here...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        console.log("🧪 Test page loaded");
+        
+        async function testCustomerNotification() {
+            try {
+                showLoading("Testing customer notification...");
+                
+                const response = await fetch('/Test/TestCustomerNotification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    }
+                });
+                
+                const result = await response.json();
+                showResult(result);
+                
+                if (result.success) {
+                    showSuccess("✅ Customer notification sent! Check console for logs.");
+                } else {
+                    showError("❌ Failed: " + result.message);
+                }
+            } catch (error) {
+                showError("❌ Error: " + error.message);
+                console.error("Test error:", error);
+            }
+        }
+        
+        async function testPaymentNotification() {
+            try {
+                showLoading("Testing payment notification...");
+                
+                // We'll use the same endpoint but with different message
+                const response = await fetch('/Test/TestCustomerNotification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    }
+                });
+                
+                const result = await response.json();
+                showResult(result);
+                
+                if (result.success) {
+                    showSuccess("✅ Payment notification test completed!");
+                } else {
+                    showError("❌ Failed: " + result.message);
+                }
+            } catch (error) {
+                showError("❌ Error: " + error.message);
+            }
+        }
+        
+        async function testBookingConfirmation() {
+            try {
+                showLoading("Testing booking confirmation...");
+                
+                const response = await fetch('/Test/TestCustomerNotification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    }
+                });
+                
+                const result = await response.json();
+                showResult(result);
+                
+                if (result.success) {
+                    showSuccess("✅ Booking confirmation test completed!");
+                } else {
+                    showError("❌ Failed: " + result.message);
+                }
+            } catch (error) {
+                showError("❌ Error: " + error.message);
+            }
+        }
+        
+        function showLoading(message) {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.className = 'alert alert-info';
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message}`;
+        }
+        
+        function showSuccess(message) {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.className = 'alert alert-success';
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = message;
+        }
+        
+        function showError(message) {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.className = 'alert alert-danger';
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = message;
+        }
+        
+        function showResult(result) {
+            console.log("🔍 Test result:", result);
+        }
+        
+        // Monitor SignalR connection
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (window.globalNotificationManager) {
+                    console.log("✅ Global notification manager is available");
+                } else {
+                    console.warn("⚠️ Global notification manager not found");
+                }
+                
+                // Check notification count
+                const count = window.getUnreadNotificationCount ? window.getUnreadNotificationCount() : 0;
+                console.log(`📊 Current unread notifications: ${count}`);
+            }, 2000);
+        });
+    </script>
+}
+
+@Html.AntiForgeryToken()
