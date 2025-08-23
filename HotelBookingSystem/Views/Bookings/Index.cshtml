@@ -341,12 +341,12 @@
             </div>
         </div>
     </form>
-    <!-- Hiển thị thông báo TempData -->
-@if (TempData["Success"] != null)
+    <!-- Hiển thị thông báo Review -->
+@if (TempData["ReviewSuccess"] != null)
 {
         <div id="notification" class="notification success">
             <i class="fas fa-check-circle"></i>
-            @TempData["Success"]
+            @TempData["ReviewSuccess"]
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -355,11 +355,11 @@
         </script>
 }
 
-@if (TempData["Error"] != null)
+@if (TempData["ReviewError"] != null)
 {
         <div id="notification" class="notification error">
             <i class="fas fa-exclamation-circle"></i>
-            @TempData["Error"]
+            @TempData["ReviewError"]
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function () {

@@ -69,7 +69,7 @@ namespace HotelBookingSystem.Controllers
                 request.Comment ??= "";
                 if (!ModelState.IsValid)
                 {
-                    TempData["Error"] = "Dữ liệu không hợp lệ";
+                    TempData["ReviewError"] = "Dữ liệu không hợp lệ";
                     return RedirectToAction("Index", "Bookings");
                 }
 
@@ -77,7 +77,7 @@ namespace HotelBookingSystem.Controllers
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser == null)
                 {
-                    TempData["Error"] = "Bạn cần đăng nhập để đánh giá.";
+                    TempData["ReviewError"] = "Bạn cần đăng nhập để đánh giá.";
                     return RedirectToAction("Login", "Account");
                 }
 
@@ -86,18 +86,18 @@ namespace HotelBookingSystem.Controllers
                 // Kiểm tra kết quả
                 if (result == "Đánh giá thành công")
                 {
-                    TempData["Success"] = result;
+                    TempData["ReviewSuccess"] = result;
                 }
                 else
                 {
                     // Tất cả các case khác đều là lỗi
-                    TempData["Error"] = result;
+                    TempData["ReviewError"] = result;
                 }
                 return RedirectToAction("Index", "Bookings");
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["ReviewError"] = "Có lỗi xảy ra: " + ex.Message;
                 return RedirectToAction("Index", "Bookings");
             }
         }
@@ -437,14 +437,14 @@ namespace HotelBookingSystem.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
             {
-                TempData["Error"] = "Bạn cần đăng nhập để chỉnh sửa đánh giá.";
+                TempData["ReviewError"] = "Bạn cần đăng nhập để chỉnh sửa đánh giá.";
                 return RedirectToAction("Login", "Account");
             }
 
             var reviewData = await _bookingService.GetBookingReviewAsync(bookingId, currentUser.Id);
             if (reviewData == null)
             {
-                TempData["Error"] = "Không tìm thấy đánh giá hoặc bạn không có quyền chỉnh sửa.";
+                TempData["ReviewError"] = "Không tìm thấy đánh giá hoặc bạn không có quyền chỉnh sửa.";
                 return RedirectToAction("Index");
             }
 
@@ -459,7 +459,7 @@ namespace HotelBookingSystem.Controllers
                 model.Comment ??= "";
                 if (!ModelState.IsValid)
                 {
-                    TempData["Error"] = "Dữ liệu không hợp lệ";
+                    TempData["ReviewError"] = "Dữ liệu không hợp lệ";
                     return View(model);
                 }
 
@@ -467,7 +467,7 @@ namespace HotelBookingSystem.Controllers
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser == null)
                 {
-                    TempData["Error"] = "Bạn cần đăng nhập để chỉnh sửa đánh giá.";
+                    TempData["ReviewError"] = "Bạn cần đăng nhập để chỉnh sửa đánh giá.";
                     return RedirectToAction("Login", "Account");
                 }
 
@@ -476,19 +476,19 @@ namespace HotelBookingSystem.Controllers
                 // Kiểm tra kết quả
                 if (result == "Cập nhật đánh giá thành công")
                 {
-                    TempData["Success"] = result;
+                    TempData["ReviewSuccess"] = result;
                     return RedirectToAction("Details", new { id = model.BookingId });
                 }
                 else
                 {
                     // Tất cả các case khác đều là lỗi
-                    TempData["Error"] = result;
+                    TempData["ReviewError"] = result;
                     return View(model);
                 }
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+                TempData["ReviewError"] = "Có lỗi xảy ra: " + ex.Message;
                 return View(model);
             }
         }
