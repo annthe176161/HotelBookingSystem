@@ -17,13 +17,20 @@ namespace HotelBookingSystem.Controllers
         private readonly IAdminUserService _adminUserService;
         private readonly IAdminBookingService _adminBookingService;
         private readonly IAdminReviewService _adminReviewService;
+        private readonly IAdminDashboardService _dashboardService;
 
-        public AdminController(IAdminRoomService adminRoomService, IAdminUserService adminUserService, IAdminBookingService adminBookingService, IAdminReviewService adminReviewService)
+        public AdminController(
+            IAdminRoomService adminRoomService, 
+            IAdminUserService adminUserService, 
+            IAdminBookingService adminBookingService, 
+            IAdminReviewService adminReviewService,
+            IAdminDashboardService dashboardService)
         {
             _adminRoomService = adminRoomService;
             _adminUserService = adminUserService;
             _adminBookingService = adminBookingService;
             _adminReviewService = adminReviewService;
+            _dashboardService = dashboardService;
         }
 
         [HttpGet("")]
@@ -35,10 +42,14 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpGet("Dashboard")]
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
-            // Trả về giao diện Dashboard
-            return View("Dashboard");
+            var today = DateTime.Today;
+            var startOfMonth = new DateTime(today.Year, today.Month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+
+            var dashboardData = await _dashboardService.GetDashboardData(startOfMonth, endOfMonth);
+            return View(dashboardData);
         }
 
         [HttpGet("Rooms")]

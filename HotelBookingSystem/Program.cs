@@ -44,6 +44,7 @@ namespace HotelBookingSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
             // Add SignalR
             builder.Services.AddSignalR();
@@ -68,6 +69,7 @@ namespace HotelBookingSystem
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 
             var app = builder.Build();
 
