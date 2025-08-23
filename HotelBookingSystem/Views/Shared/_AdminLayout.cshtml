@@ -61,29 +61,6 @@
                             <span>Đánh giá</span>
                         </a>
                     </li>
-                    <li class="sidebar-item">
-                        <a href="/Admin/Promotions" class="sidebar-link">
-                            <i class="fas fa-tags"></i>
-                            <span>Khuyến mãi</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#reports" class="sidebar-link has-dropdown" data-bs-toggle="collapse">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Báo cáo</span>
-                        </a>
-                        <ul class="collapse" id="reports">
-                            <li><a href="/Admin/Reports/Revenue">Doanh thu</a></li>
-                            <li><a href="/Admin/Reports/Occupancy">Công suất</a></li>
-                            <li><a href="/Admin/Reports/Customers">Khách hàng</a></li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="/Admin/Settings" class="sidebar-link">
-                            <i class="fas fa-cog"></i>
-                            <span>Cài đặt</span>
-                        </a>
-                    </li>
                 </ul>
 
                 <div class="sidebar-footer">
@@ -147,17 +124,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/Admin/Profile">
-                                    <i class="fas fa-user me-2"></i>Hồ sơ
-                                </a>
-                                <a class="dropdown-item" href="/Admin/Settings">
-                                    <i class="fas fa-cogs me-2"></i>Cài đặt
-                                </a>
-                                <a class="dropdown-item" href="/Admin/ActivityLog">
-                                    <i class="fas fa-list me-2"></i>Nhật ký hoạt động
-                                </a>
-                                <div class="dropdown-divider"></div>
                                 <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
                                     <button type="submit" class="dropdown-item text-danger"
                                         style="border: none; background: none; width: 100%; text-align: left;">
