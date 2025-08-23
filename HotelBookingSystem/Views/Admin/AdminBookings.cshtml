@@ -210,47 +210,97 @@
                                                 </a>
                                             </li>
 
-                                            @if (booking.BookingStatus == "Chờ xác nhận")
+                                            <!-- Booking Status Section -->
+                                            @if (booking.BookingStatus != "Hoàn thành" && booking.BookingStatus != "Đã hủy")
                                             {
-                                                <li>
-                                                    <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
-                                                        <input type="hidden" name="id" value="@booking.Id" />
-                                                        <input type="hidden" name="status" value="Đã xác nhận" />
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="fas fa-check me-2"></i>Xác nhận
-                                                        </button>
-                                                    </form>
-                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li class="dropdown-header"><i class="fas fa-calendar-alt me-1"></i>Trạng thái đặt phòng</li>
+                                                
+                                                @if (booking.BookingStatus == "Chờ xác nhận")
+                                                {
+                                                    <li>
+                                                        <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@booking.Id" />
+                                                            <input type="hidden" name="status" value="Đã xác nhận" />
+                                                            <button type="submit" class="dropdown-item">
+                                                                <i class="fas fa-check me-2 text-success"></i>Xác nhận đặt phòng
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                }
+                                                
+                                                @if (booking.BookingStatus == "Đã xác nhận")
+                                                {
+                                                    <li>
+                                                        <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@booking.Id" />
+                                                            <input type="hidden" name="status" value="Hoàn thành" />
+                                                            <button type="submit" class="dropdown-item @(booking.PaymentStatus != "Thành công" ? "disabled" : "")">
+                                                                <i class="fas fa-flag-checkered me-2 text-primary"></i>Hoàn thành đặt phòng
+                                                                @if (booking.PaymentStatus != "Thành công")
+                                                                {
+                                                                    <small class="text-muted d-block ms-3">Cần thanh toán thành công trước</small>
+                                                                }
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                }
+                                                
                                                 <li>
                                                     <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
                                                         <input type="hidden" name="id" value="@booking.Id" />
                                                         <input type="hidden" name="status" value="Đã hủy" />
-                                                        <button type="submit" class="dropdown-item text-danger">
-                                                            <i class="fas fa-times me-2"></i>Hủy
+                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Bạn có chắc muốn hủy đặt phòng này? Nếu đã thanh toán, tiền sẽ được hoàn lại.')">
+                                                            <i class="fas fa-times me-2"></i>Hủy đặt phòng
                                                         </button>
                                                     </form>
                                                 </li>
                                             }
-                                            else if (booking.BookingStatus == "Đã xác nhận")
+
+                                            <!-- Payment Status Section -->
+                                            @if (booking.BookingStatus != "Đã hủy" && booking.BookingStatus != "Hoàn thành")
                                             {
-                                                <li>
-                                                    <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
-                                                        <input type="hidden" name="id" value="@booking.Id" />
-                                                        <input type="hidden" name="status" value="Hoàn thành" />
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="fas fa-flag-checkered me-2"></i>Hoàn thành
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                                <li>
-                                                    <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
-                                                        <input type="hidden" name="id" value="@booking.Id" />
-                                                        <input type="hidden" name="status" value="Đã hủy" />
-                                                        <button type="submit" class="dropdown-item text-danger">
-                                                            <i class="fas fa-times me-2"></i>Hủy
-                                                        </button>
-                                                    </form>
-                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li class="dropdown-header"><i class="fas fa-credit-card me-1"></i>Trạng thái thanh toán</li>
+                                                
+                                                @if (booking.PaymentStatus != "Thành công" && booking.PaymentStatus != "Đã hoàn tiền")
+                                                {
+                                                    <li>
+                                                        <form asp-action="UpdatePaymentStatus" asp-controller="Admin" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@booking.Id" />
+                                                            <input type="hidden" name="paymentStatus" value="Thành công" />
+                                                            <button type="submit" class="dropdown-item">
+                                                                <i class="fas fa-check-circle me-2 text-success"></i>Xác nhận thanh toán
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                }
+                                                
+                                                @if (booking.PaymentStatus != "Thất bại" && booking.PaymentStatus != "Đã hoàn tiền")
+                                                {
+                                                    <li>
+                                                        <form asp-action="UpdatePaymentStatus" asp-controller="Admin" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@booking.Id" />
+                                                            <input type="hidden" name="paymentStatus" value="Thất bại" />
+                                                            <button type="submit" class="dropdown-item" onclick="return confirm('Bạn có chắc muốn đánh dấu thanh toán này là thất bại?')">
+                                                                <i class="fas fa-times-circle me-2 text-danger"></i>Đánh dấu thất bại
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                }
+                                                
+                                                @if (booking.PaymentStatus == "Thành công")
+                                                {
+                                                    <li>
+                                                        <form asp-action="UpdatePaymentStatus" asp-controller="Admin" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@booking.Id" />
+                                                            <input type="hidden" name="paymentStatus" value="Đã hoàn tiền" />
+                                                            <button type="submit" class="dropdown-item" onclick="return confirm('Bạn có chắc muốn hoàn tiền cho đặt phòng này?')">
+                                                                <i class="fas fa-undo me-2 text-warning"></i>Hoàn tiền
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                }
                                             }
                                         </ul>
                                     </div>
@@ -301,6 +351,47 @@
     <style>
         .admin-bookings .dropdown-menu {
             z-index: 1055 !important;
+        }
+        
+        /* Enhanced dropdown styling */
+        .dropdown-header {
+            font-weight: 600;
+            color: #495057;
+            background-color: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin: 4px 0;
+        }
+        
+        .dropdown-item.disabled {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: transparent;
+        }
+        
+        .dropdown-item.disabled:hover {
+            background-color: transparent;
+        }
+        
+        .dropdown-item small {
+            font-size: 11px;
+        }
+        
+        /* Different colors for different actions */
+        .dropdown-item:has(.text-success):hover {
+            background-color: #d4edda;
+        }
+        
+        .dropdown-item:has(.text-danger):hover {
+            background-color: #f8d7da;
+        }
+        
+        .dropdown-item:has(.text-warning):hover {
+            background-color: #fff3cd;
+        }
+        
+        .dropdown-item:has(.text-primary):hover {
+            background-color: #cce7ff;
         }
     </style>
 }

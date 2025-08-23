@@ -182,17 +182,37 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpPost]
+        [Route("Admin/UpdateBookingStatus")]
         public async Task<IActionResult> UpdateBookingStatus(int id, string status)
         {
             var result = await _adminBookingService.UpdateBookingStatus(id, status);
 
-            if (!result)
+            if (!result.success)
             {
-                TempData["Error"] = "Không thể cập nhật trạng thái đơn đặt phòng.";
+                TempData["Error"] = result.message;
             }
             else
             {
-                TempData["Success"] = "Cập nhật trạng thái thành công.";
+                TempData["Success"] = result.message;
+            }
+
+            // Always redirect back to Bookings page after action
+            return RedirectToAction("Bookings");
+        }
+
+        [HttpPost]
+        [Route("Admin/UpdatePaymentStatus")]
+        public async Task<IActionResult> UpdatePaymentStatus(int id, string paymentStatus)
+        {
+            var result = await _adminBookingService.UpdatePaymentStatus(id, paymentStatus);
+
+            if (!result)
+            {
+                TempData["Error"] = "Không thể cập nhật trạng thái thanh toán.";
+            }
+            else
+            {
+                TempData["Success"] = "Cập nhật trạng thái thanh toán thành công.";
             }
 
             // Always redirect back to Bookings page after action
