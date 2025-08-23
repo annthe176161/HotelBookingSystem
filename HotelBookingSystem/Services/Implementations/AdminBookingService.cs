@@ -9,6 +9,7 @@ namespace HotelBookingSystem.Services.Implementations
     {
         Task<BookingsViewModel> GetBookings(BookingQueryOptions query);
         Task<(bool success, string message)> UpdateBookingStatus(int bookingId, string newStatus);
+        Task<(bool success, string message)> CancelBookingWithReason(int bookingId, string cancelReason);
         Task<bool> UpdatePaymentStatus(int bookingId, string newPaymentStatus);
         Task<AdminBookingDetailsViewModel?> GetBookingDetails(int bookingId);
     }
@@ -107,29 +108,25 @@ namespace HotelBookingSystem.Services.Implementations
             if (booking.BookingStatus.Name == "Hoàn thành" || booking.BookingStatus.Name == "Đã hủy")
                 return (false, "Không thể cập nhật đặt phòng đã hoàn thành hoặc đã hủy.");
 
-            // Kiểm tra payment status nếu muốn hoàn thành booking
+            // Kiểm tra logic business khi hoàn thành booking
             if (newStatus == "Hoàn thành")
             {
-                if (booking.Payment == null || booking.Payment.PaymentStatus.Name != "Thành công")
+                // Logic mới: Hoàn thành có nghĩa là khách đã check-out và thanh toán
+                // Tự động cập nhật payment status thành "Thành công" khi hoàn thành
+                if (booking.Payment != null && booking.Payment.PaymentStatus.Name == "Đang xử lý")
                 {
-                    return (false, "Không thể hoàn thành đặt phòng. Trạng thái thanh toán phải là 'Thành công' trước khi hoàn thành đặt phòng.");
-                }
-            }
-
-            // Xử lý hủy phòng và hoàn tiền
-            if (newStatus == "Đã hủy")
-            {
-                // Nếu đã thanh toán thành công, tự động hoàn tiền
-                if (booking.Payment != null && booking.Payment.PaymentStatus.Name == "Thành công")
-                {
-                    var refundStatus = await _context.PaymentStatuses.FirstOrDefaultAsync(s => s.Name == "Đã hoàn tiền");
-                    if (refundStatus != null)
+                    var successStatus = await _context.PaymentStatuses.FirstOrDefaultAsync(s => s.Name == "Thành công");
+                    if (successStatus != null)
                     {
-                        booking.Payment.PaymentStatus = refundStatus;
+                        booking.Payment.PaymentStatus = successStatus;
                         _context.Update(booking.Payment);
                     }
                 }
             }
+
+            // Xử lý hủy phòng - Logic mới: Chỉ thanh toán tại khách sạn
+            // Khi hủy phòng, payment status giữ nguyên "Đang xử lý" (vì chưa thanh toán)
+            // Không cần logic hoàn tiền vì khách chưa thanh toán
 
             // Set new status
             var newBookingStatus = await _context.BookingStatuses.FirstOrDefaultAsync(s => s.Name == newStatus);
@@ -261,6 +258,58 @@ namespace HotelBookingSystem.Services.Implementations
                 ReviewComment = booking.Review?.Comment ?? "",
                 ReviewDate = booking.Review?.CreatedDate
             };
+        }
+
+        public async Task<(bool success, string message)> CancelBookingWithReason(int bookingId, string cancelReason)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.BookingStatus)
+                .Include(b => b.Payment)
+                    .ThenInclude(p => p!.PaymentStatus)
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null)
+                return (false, "Không tìm thấy đặt phòng.");
+
+            // Chỉ cho phép hủy phòng ở trạng thái "Chờ xác nhận" hoặc "Đã xác nhận"
+            if (booking.BookingStatus.Name == "Hoàn thành")
+                return (false, "Không thể hủy đặt phòng đã hoàn thành.");
+
+            if (booking.BookingStatus.Name == "Đã hủy")
+                return (false, "Đặt phòng này đã được hủy trước đó.");
+
+            // Kiểm tra logic thanh toán - với flow mới chỉ thanh toán tại khách sạn
+            if (booking.Payment != null && booking.Payment.PaymentStatus.Name == "Thành công")
+            {
+                return (false, "Không thể hủy đặt phòng đã thanh toán thành công. Vui lòng liên hệ quản lý để xử lý.");
+            }
+
+            // Cập nhật trạng thái thành "Đã hủy"
+            var cancelledStatus = await _context.BookingStatuses.FirstOrDefaultAsync(s => s.Name == "Đã hủy");
+            if (cancelledStatus == null)
+                return (false, "Không tìm thấy trạng thái 'Đã hủy' trong hệ thống.");
+
+            booking.BookingStatus = cancelledStatus;
+
+            _context.Update(booking);
+            await _context.SaveChangesAsync();
+
+            // Gửi thông báo cho khách hàng (có thể gửi email hoặc SMS)
+            // Lý do hủy sẽ được gửi trong thông báo mà không lưu vào database
+            try
+            {
+                // TODO: Implement notification for booking cancellation
+                // await _notificationService.NotifyBookingCancelled(booking.User, booking, cancelReason);
+                Console.WriteLine($"Thông báo hủy phòng cho khách: {booking.User.Email}, Lý do: {cancelReason}");
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nhưng vẫn return success vì booking đã được hủy thành công
+                Console.WriteLine($"Lỗi gửi thông báo hủy phòng: {ex.Message}");
+            }
+
+            return (true, $"Đã hủy đặt phòng thành công. Lý do: {cancelReason}");
         }
     }
 }

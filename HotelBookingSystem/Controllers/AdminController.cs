@@ -219,6 +219,31 @@ namespace HotelBookingSystem.Controllers
             return RedirectToAction("Bookings");
         }
 
+        [HttpPost]
+        [Route("Admin/CancelBooking")]
+        public async Task<IActionResult> CancelBooking(int id, string cancelReason)
+        {
+            if (string.IsNullOrWhiteSpace(cancelReason))
+            {
+                TempData["Error"] = "Vui lòng nhập lý do hủy phòng.";
+                return RedirectToAction("Bookings");
+            }
+
+            var result = await _adminBookingService.CancelBookingWithReason(id, cancelReason);
+
+            if (!result.success)
+            {
+                TempData["Error"] = result.message;
+            }
+            else
+            {
+                TempData["Success"] = result.message;
+            }
+
+            // Always redirect back to Bookings page after action
+            return RedirectToAction("Bookings");
+        }
+
         [HttpGet("BookingDetails/{id}")]
         public async Task<IActionResult> BookingDetails(int id)
         {

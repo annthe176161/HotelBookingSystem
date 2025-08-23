@@ -28,6 +28,9 @@ namespace HotelBookingSystem.Data
                 await SeedBookingStatusesAsync(context, logger);
                 await SeedPaymentStatusesAsync(context, logger);
 
+                // Update Status Descriptions với logic mới
+                await UpdateStatusDescriptionsAsync(context, logger);
+
                 // Cập nhật dữ liệu Rooms thành tiếng Việt
                 await UpdateRoomsToVietnameseAsync(context, logger);
 
@@ -274,10 +277,10 @@ namespace HotelBookingSystem.Data
 
                 var statuses = new List<BookingStatus>
         {
-            new BookingStatus { Name = "Chờ xác nhận", Description = "Đơn đặt phòng đang chờ xác nhận", IsActive = true },
-            new BookingStatus { Name = "Đã xác nhận", Description = "Đơn đặt phòng đã được xác nhận và thanh toán", IsActive = true },
-            new BookingStatus { Name = "Hoàn thành", Description = "Khách đã check-out", IsActive = true },
-            new BookingStatus { Name = "Đã hủy", Description = "Đơn đặt phòng đã bị hủy", IsActive = true }
+            new BookingStatus { Name = "Chờ xác nhận", Description = "Đơn đặt phòng đang chờ xác nhận từ khách sạn", IsActive = true },
+            new BookingStatus { Name = "Đã xác nhận", Description = "Đơn đặt phòng đã được xác nhận, phòng sẵn sàng phục vụ khách hàng", IsActive = true },
+            new BookingStatus { Name = "Hoàn thành", Description = "Khách hàng đã check-out thành công và hoàn tất thanh toán", IsActive = true },
+            new BookingStatus { Name = "Đã hủy", Description = "Đơn đặt phòng đã bị hủy bởi khách hàng hoặc khách sạn", IsActive = true }
         };
 
                 context.BookingStatuses.AddRange(statuses);
@@ -295,10 +298,10 @@ namespace HotelBookingSystem.Data
 
                 var statuses = new List<PaymentStatus>
         {
-            new PaymentStatus { Name = "Đang xử lý", Description = "Thanh toán đang được xử lý", IsActive = true },
-            new PaymentStatus { Name = "Thành công", Description = "Thanh toán thành công", IsActive = true },
-            new PaymentStatus { Name = "Thất bại", Description = "Thanh toán thất bại", IsActive = true },
-            new PaymentStatus { Name = "Đã hoàn tiền", Description = "Đã hoàn tiền", IsActive = true }
+            new PaymentStatus { Name = "Đang xử lý", Description = "Chưa thanh toán hoặc đang xử lý thanh toán", IsActive = true },
+            new PaymentStatus { Name = "Thành công", Description = "Đã thanh toán đầy đủ và thành công", IsActive = true },
+            new PaymentStatus { Name = "Thất bại", Description = "Thanh toán không thành công", IsActive = true },
+            new PaymentStatus { Name = "Đã hoàn tiền", Description = "Đã hoàn tiền cho khách hàng", IsActive = true }
         };
 
                 context.PaymentStatuses.AddRange(statuses);
@@ -306,6 +309,76 @@ namespace HotelBookingSystem.Data
 
                 logger.LogInformation("Payment statuses seeded successfully.");
             }
+        }
+
+        private static async Task UpdateStatusDescriptionsAsync(ApplicationDbContext context, ILogger logger)
+        {
+            logger.LogInformation("Updating status descriptions with new business logic...");
+
+            // Cập nhật BookingStatus descriptions
+            var bookingStatuses = await context.BookingStatuses.ToListAsync();
+
+            var pendingStatus = bookingStatuses.FirstOrDefault(s => s.Name == "Chờ xác nhận");
+            if (pendingStatus != null)
+            {
+                pendingStatus.Description = "Đơn đặt phòng đang chờ xác nhận từ khách sạn";
+                context.Update(pendingStatus);
+            }
+
+            var confirmedStatus = bookingStatuses.FirstOrDefault(s => s.Name == "Đã xác nhận");
+            if (confirmedStatus != null)
+            {
+                confirmedStatus.Description = "Đơn đặt phòng đã được xác nhận, phòng sẵn sàng phục vụ khách hàng";
+                context.Update(confirmedStatus);
+            }
+
+            var completedStatus = bookingStatuses.FirstOrDefault(s => s.Name == "Hoàn thành");
+            if (completedStatus != null)
+            {
+                completedStatus.Description = "Khách hàng đã check-out thành công và hoàn tất thanh toán";
+                context.Update(completedStatus);
+            }
+
+            var cancelledStatus = bookingStatuses.FirstOrDefault(s => s.Name == "Đã hủy");
+            if (cancelledStatus != null)
+            {
+                cancelledStatus.Description = "Đơn đặt phòng đã bị hủy bởi khách hàng hoặc khách sạn";
+                context.Update(cancelledStatus);
+            }
+
+            // Cập nhật PaymentStatus descriptions
+            var paymentStatuses = await context.PaymentStatuses.ToListAsync();
+
+            var processingStatus = paymentStatuses.FirstOrDefault(s => s.Name == "Đang xử lý");
+            if (processingStatus != null)
+            {
+                processingStatus.Description = "Chưa thanh toán hoặc đang xử lý thanh toán";
+                context.Update(processingStatus);
+            }
+
+            var successStatus = paymentStatuses.FirstOrDefault(s => s.Name == "Thành công");
+            if (successStatus != null)
+            {
+                successStatus.Description = "Đã thanh toán đầy đủ và thành công";
+                context.Update(successStatus);
+            }
+
+            var failedStatus = paymentStatuses.FirstOrDefault(s => s.Name == "Thất bại");
+            if (failedStatus != null)
+            {
+                failedStatus.Description = "Thanh toán không thành công";
+                context.Update(failedStatus);
+            }
+
+            var refundedStatus = paymentStatuses.FirstOrDefault(s => s.Name == "Đã hoàn tiền");
+            if (refundedStatus != null)
+            {
+                refundedStatus.Description = "Đã hoàn tiền cho khách hàng";
+                context.Update(refundedStatus);
+            }
+
+            await context.SaveChangesAsync();
+            logger.LogInformation("Status descriptions updated successfully with new business logic.");
         }
 
         private static async Task UpdateRoomsToVietnameseAsync(ApplicationDbContext context, ILogger logger)

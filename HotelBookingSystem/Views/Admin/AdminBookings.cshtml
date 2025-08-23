@@ -247,13 +247,10 @@
                                                 }
                                                 
                                                 <li>
-                                                    <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
-                                                        <input type="hidden" name="id" value="@booking.Id" />
-                                                        <input type="hidden" name="status" value="Đã hủy" />
-                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Bạn có chắc muốn hủy đặt phòng này? Nếu đã thanh toán, tiền sẽ được hoàn lại.')">
-                                                            <i class="fas fa-times me-2"></i>Hủy đặt phòng
-                                                        </button>
-                                                    </form>
+                                                    <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#cancelModal" 
+                                                            data-booking-id="@booking.Id" data-customer-name="@booking.CustomerName">
+                                                        <i class="fas fa-times me-2"></i>Hủy đặt phòng
+                                                    </button>
                                                 </li>
                                             }
 
@@ -394,4 +391,139 @@
             background-color: #cce7ff;
         }
     </style>
+}
+
+<!-- Modal hủy đặt phòng -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">
+                    <i class="fas fa-times text-danger me-2"></i>Hủy đặt phòng
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="CancelBooking" asp-controller="Admin" method="post">
+                <div class="modal-body">
+                    <input type="hidden" id="cancelBookingId" name="id" value="" />
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Xác nhận hủy đặt phòng</strong>
+                        <p class="mb-0 mt-2">Bạn đang hủy đặt phòng cho khách: <strong id="cancelCustomerName"></strong></p>
+                        <p class="mb-0">Mã đặt phòng: <strong>#<span id="cancelBookingIdDisplay"></span></strong></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cancelReason" class="form-label">
+                            <i class="fas fa-comment me-1"></i>Lý do hủy phòng <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="cancelReason" name="cancelReason" required>
+                            <option value="">-- Chọn lý do hủy phòng --</option>
+                            <option value="Khách sạn hết phòng">Khách sạn hết phòng</option>
+                            <option value="Phòng bị hỏng đột xuất">Phòng bị hỏng đột xuất</option>
+                            <option value="Khách vi phạm quy định">Khách vi phạm quy định</option>
+                            <option value="Yêu cầu của khách hàng">Yêu cầu của khách hàng</option>
+                            <option value="Lý do bất khả kháng">Lý do bất khả kháng</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="customReasonGroup" style="display: none;">
+                        <label for="customReason" class="form-label">
+                            <i class="fas fa-edit me-1"></i>Lý do cụ thể
+                        </label>
+                        <textarea class="form-control" id="customReason" name="customReason" rows="3" 
+                                  placeholder="Nhập lý do hủy phòng cụ thể..."></textarea>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Lưu ý:</strong> Khách hàng sẽ nhận được thông báo về việc hủy phòng qua email.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Đóng
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-check me-2"></i>Xác nhận hủy phòng
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Xử lý modal hủy đặt phòng
+        document.addEventListener('DOMContentLoaded', function() {
+            const cancelModal = document.getElementById('cancelModal');
+            const cancelReason = document.getElementById('cancelReason');
+            const customReasonGroup = document.getElementById('customReasonGroup');
+            const customReason = document.getElementById('customReason');
+
+            // Khi modal được mở
+            cancelModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const bookingId = button.getAttribute('data-booking-id');
+                const customerName = button.getAttribute('data-customer-name');
+
+                document.getElementById('cancelBookingId').value = bookingId;
+                document.getElementById('cancelBookingIdDisplay').textContent = bookingId;
+                document.getElementById('cancelCustomerName').textContent = customerName;
+
+                // Reset form
+                cancelReason.value = '';
+                customReason.value = '';
+                customReasonGroup.style.display = 'none';
+            });
+
+            // Hiển thị/ẩn ô nhập lý do tùy chỉnh
+            cancelReason.addEventListener('change', function() {
+                if (this.value === 'Khác') {
+                    customReasonGroup.style.display = 'block';
+                    customReason.required = true;
+                } else {
+                    customReasonGroup.style.display = 'none';
+                    customReason.required = false;
+                }
+            });
+
+            // Xử lý submit form
+            const cancelForm = document.querySelector('#cancelModal form');
+            cancelForm.addEventListener('submit', function(e) {
+                const reasonValue = cancelReason.value;
+                let finalReason = reasonValue;
+
+                if (reasonValue === 'Khác') {
+                    finalReason = customReason.value.trim();
+                    if (!finalReason) {
+                        e.preventDefault();
+                        alert('Vui lòng nhập lý do hủy phòng cụ thể.');
+                        return;
+                    }
+                }
+
+                if (!reasonValue) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn lý do hủy phòng.');
+                    return;
+                }
+
+                // Cập nhật giá trị cuối cùng
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'cancelReason';
+                hiddenInput.value = finalReason;
+                this.appendChild(hiddenInput);
+
+                // Xác nhận cuối cùng
+                if (!confirm(`Bạn có chắc muốn hủy đặt phòng này?\nLý do: ${finalReason}`)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 }
