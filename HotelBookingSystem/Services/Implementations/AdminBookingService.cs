@@ -10,7 +10,7 @@ namespace HotelBookingSystem.Services.Implementations
         Task<BookingsViewModel> GetBookings(BookingQueryOptions query);
         Task<(bool success, string message)> UpdateBookingStatus(int bookingId, string newStatus);
         Task<(bool success, string message)> CancelBookingWithReason(int bookingId, string cancelReason);
-        Task<bool> UpdatePaymentStatus(int bookingId, string newPaymentStatus);
+        Task<(bool success, string message)> UpdatePaymentStatus(int bookingId, string newPaymentStatus);
         Task<AdminBookingDetailsViewModel?> GetBookingDetails(int bookingId);
     }
 
@@ -176,27 +176,48 @@ namespace HotelBookingSystem.Services.Implementations
             return (true, successMessage);
         }
 
-        public async Task<bool> UpdatePaymentStatus(int bookingId, string newPaymentStatus)
+        public async Task<(bool success, string message)> UpdatePaymentStatus(int bookingId, string newPaymentStatus)
         {
             var booking = await _context.Bookings
+                .Include(b => b.BookingStatus)
                 .Include(b => b.Payment)
                     .ThenInclude(p => p!.PaymentStatus)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
 
-            if (booking == null || booking.Payment == null) return false;
+            if (booking == null || booking.Payment == null)
+                return (false, "Không tìm thấy đặt phòng hoặc thông tin thanh toán.");
+
+            // LOGIC MỚI: Chặn cập nhật payment thành "Thành công" nếu booking chưa hoàn thành
+            if (newPaymentStatus == "Thành công")
+            {
+                if (booking.BookingStatus.Name == "Chờ xác nhận" || booking.BookingStatus.Name == "Đã xác nhận")
+                {
+                    return (false, "Không thể cập nhật thanh toán thành 'Thành công' khi booking chưa hoàn thành. Vui lòng hoàn thành đặt phòng trước.");
+                }
+            }
+
+            // Chỉ cho phép 2 trạng thái: "Đang xử lý" và "Thành công"
+            if (newPaymentStatus != "Đang xử lý" && newPaymentStatus != "Thành công")
+            {
+                return (false, "Chỉ có thể cập nhật trạng thái thanh toán thành 'Đang xử lý' hoặc 'Thành công'.");
+            }
 
             // Tìm payment status mới
             var newStatus = await _context.PaymentStatuses.FirstOrDefaultAsync(s => s.Name == newPaymentStatus);
-            if (newStatus == null) return false;
+            if (newStatus == null)
+                return (false, $"Không tìm thấy trạng thái thanh toán '{newPaymentStatus}' trong hệ thống.");
 
             // Cập nhật payment status
             booking.Payment.PaymentStatus = newStatus;
-            // booking.Payment.UpdatedDate = DateTime.Now; // Remove this line if UpdatedDate doesn't exist
+            if (newPaymentStatus == "Thành công")
+            {
+                booking.Payment.PaymentDate = DateTime.Now;
+            }
 
             _context.Update(booking.Payment);
             await _context.SaveChangesAsync();
 
-            return true;
+            return (true, $"Cập nhật trạng thái thanh toán thành '{newPaymentStatus}' thành công.");
         }
 
         public async Task<AdminBookingDetailsViewModel?> GetBookingDetails(int bookingId)

@@ -206,13 +206,13 @@ namespace HotelBookingSystem.Controllers
         {
             var result = await _adminBookingService.UpdatePaymentStatus(id, paymentStatus);
 
-            if (!result)
+            if (!result.success)
             {
-                TempData["Error"] = "Không thể cập nhật trạng thái thanh toán.";
+                TempData["Error"] = result.message;
             }
             else
             {
-                TempData["Success"] = "Cập nhật trạng thái thanh toán thành công.";
+                TempData["Success"] = result.message;
             }
 
             // Always redirect back to Bookings page after action

@@ -299,9 +299,7 @@ namespace HotelBookingSystem.Data
                 var statuses = new List<PaymentStatus>
         {
             new PaymentStatus { Name = "Đang xử lý", Description = "Chưa thanh toán hoặc đang xử lý thanh toán", IsActive = true },
-            new PaymentStatus { Name = "Thành công", Description = "Đã thanh toán đầy đủ và thành công", IsActive = true },
-            new PaymentStatus { Name = "Thất bại", Description = "Thanh toán không thành công", IsActive = true },
-            new PaymentStatus { Name = "Đã hoàn tiền", Description = "Đã hoàn tiền cho khách hàng", IsActive = true }
+            new PaymentStatus { Name = "Thành công", Description = "Đã thanh toán đầy đủ và thành công", IsActive = true }
         };
 
                 context.PaymentStatuses.AddRange(statuses);
@@ -363,18 +361,12 @@ namespace HotelBookingSystem.Data
                 context.Update(successStatus);
             }
 
-            var failedStatus = paymentStatuses.FirstOrDefault(s => s.Name == "Thất bại");
-            if (failedStatus != null)
+            // Xóa các trạng thái không cần thiết nếu tồn tại
+            var obsoleteStatuses = paymentStatuses.Where(s => s.Name == "Thất bại" || s.Name == "Đã hoàn tiền").ToList();
+            if (obsoleteStatuses.Any())
             {
-                failedStatus.Description = "Thanh toán không thành công";
-                context.Update(failedStatus);
-            }
-
-            var refundedStatus = paymentStatuses.FirstOrDefault(s => s.Name == "Đã hoàn tiền");
-            if (refundedStatus != null)
-            {
-                refundedStatus.Description = "Đã hoàn tiền cho khách hàng";
-                context.Update(refundedStatus);
+                context.PaymentStatuses.RemoveRange(obsoleteStatuses);
+                logger.LogInformation($"Removed {obsoleteStatuses.Count} obsolete payment statuses: {string.Join(", ", obsoleteStatuses.Select(s => s.Name))}");
             }
 
             await context.SaveChangesAsync();

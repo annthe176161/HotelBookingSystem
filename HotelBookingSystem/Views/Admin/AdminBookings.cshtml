@@ -235,12 +235,10 @@
                                                         <form asp-action="UpdateBookingStatus" asp-controller="Admin" method="post" class="d-inline">
                                                             <input type="hidden" name="id" value="@booking.Id" />
                                                             <input type="hidden" name="status" value="Hoàn thành" />
-                                                            <button type="submit" class="dropdown-item @(booking.PaymentStatus != "Thành công" ? "disabled" : "")">
+                                                            <button type="submit" class="dropdown-item" 
+                                                                    onclick="return confirm('⚠️ XÁC NHẬN HOÀN THÀNH ĐẶT PHÒNG\n\nBạn có chắc chắn rằng:\n✅ Khách hàng đã check-out thành công\n✅ Khách hàng đã thanh toán đầy đủ\n\nSau khi xác nhận, trạng thái thanh toán sẽ tự động chuyển thành \'Thành công\'')">
                                                                 <i class="fas fa-flag-checkered me-2 text-primary"></i>Hoàn thành đặt phòng
-                                                                @if (booking.PaymentStatus != "Thành công")
-                                                                {
-                                                                    <small class="text-muted d-block ms-3">Cần thanh toán thành công trước</small>
-                                                                }
+                                                                <small class="text-muted d-block ms-3">Tự động cập nhật thanh toán thành công</small>
                                                             </button>
                                                         </form>
                                                     </li>
@@ -260,7 +258,8 @@
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li class="dropdown-header"><i class="fas fa-credit-card me-1"></i>Trạng thái thanh toán</li>
                                                 
-                                                @if (booking.PaymentStatus != "Thành công" && booking.PaymentStatus != "Đã hoàn tiền")
+                                                @* Chỉ cho phép xác nhận thanh toán khi booking đã hoàn thành *@
+                                                @if (booking.PaymentStatus == "Đang xử lý" && booking.BookingStatus == "Hoàn thành")
                                                 {
                                                     <li>
                                                         <form asp-action="UpdatePaymentStatus" asp-controller="Admin" method="post" class="d-inline">
@@ -272,30 +271,12 @@
                                                         </form>
                                                     </li>
                                                 }
-                                                
-                                                @if (booking.PaymentStatus != "Thất bại" && booking.PaymentStatus != "Đã hoàn tiền")
+                                                else if (booking.PaymentStatus == "Đang xử lý" && booking.BookingStatus != "Hoàn thành")
                                                 {
                                                     <li>
-                                                        <form asp-action="UpdatePaymentStatus" asp-controller="Admin" method="post" class="d-inline">
-                                                            <input type="hidden" name="id" value="@booking.Id" />
-                                                            <input type="hidden" name="paymentStatus" value="Thất bại" />
-                                                            <button type="submit" class="dropdown-item" onclick="return confirm('Bạn có chắc muốn đánh dấu thanh toán này là thất bại?')">
-                                                                <i class="fas fa-times-circle me-2 text-danger"></i>Đánh dấu thất bại
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                }
-                                                
-                                                @if (booking.PaymentStatus == "Thành công")
-                                                {
-                                                    <li>
-                                                        <form asp-action="UpdatePaymentStatus" asp-controller="Admin" method="post" class="d-inline">
-                                                            <input type="hidden" name="id" value="@booking.Id" />
-                                                            <input type="hidden" name="paymentStatus" value="Đã hoàn tiền" />
-                                                            <button type="submit" class="dropdown-item" onclick="return confirm('Bạn có chắc muốn hoàn tiền cho đặt phòng này?')">
-                                                                <i class="fas fa-undo me-2 text-warning"></i>Hoàn tiền
-                                                            </button>
-                                                        </form>
+                                                        <span class="dropdown-item text-muted">
+                                                            <i class="fas fa-info-circle me-2"></i>Xác nhận thanh toán sau khi hoàn thành booking
+                                                        </span>
                                                     </li>
                                                 }
                                             }
