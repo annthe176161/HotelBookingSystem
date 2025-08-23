@@ -110,5 +110,50 @@ namespace HotelBookingSystem.Services.Implementations
 
             await _hubContext.Clients.Group("AdminGroup").SendAsync("ReceiveAdminNotification", notification);
         }
+
+        public async Task SendBookingCancellationToAdminAsync(int bookingId, string customerName, string roomName, string reason)
+        {
+            var message = $"Khách hàng {customerName} đã hủy đặt phòng #{bookingId} - {roomName}";
+
+            var notification = new
+            {
+                message = message,
+                type = "cancellation",
+                timestamp = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                data = new
+                {
+                    bookingId = bookingId,
+                    customerName = customerName,
+                    roomName = roomName,
+                    action = "customer_cancelled",
+                    reason = reason
+                }
+            };
+
+            await _hubContext.Clients.Group("AdminGroup").SendAsync("ReceiveAdminNotification", notification);
+        }
+
+        public async Task SendReviewNotificationToAdminAsync(int bookingId, string customerName, string roomName, int rating, string comment)
+        {
+            var message = $"Khách hàng {customerName} đã đánh giá {rating} sao cho phòng {roomName}";
+
+            var notification = new
+            {
+                message = message,
+                type = "review",
+                timestamp = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                data = new
+                {
+                    bookingId = bookingId,
+                    customerName = customerName,
+                    roomName = roomName,
+                    action = "customer_reviewed",
+                    rating = rating,
+                    comment = comment
+                }
+            };
+
+            await _hubContext.Clients.Group("AdminGroup").SendAsync("ReceiveAdminNotification", notification);
+        }
     }
 }

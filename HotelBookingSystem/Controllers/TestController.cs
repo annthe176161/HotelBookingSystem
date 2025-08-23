@@ -124,5 +124,52 @@ namespace HotelBookingSystem.Controllers
                 return Json(new { success = false, message = ex.Message, error = ex.ToString() });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> TestCancellationNotification()
+        {
+            try
+            {
+                Console.WriteLine($"[DEBUG] TestCancellationNotification called by user: {User.Identity.Name}");
+
+                await _notificationService.SendBookingCancellationToAdminAsync(
+                    12345,
+                    "Test Customer Name",
+                    "Test Room Deluxe",
+                    "Khách hàng yêu cầu hủy đặt phòng"
+                );
+
+                return Json(new { success = true, message = "Test cancellation notification sent to admins!", timestamp = DateTime.Now });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DEBUG] TestCancellationNotification error: {ex.Message}");
+                return Json(new { success = false, message = ex.Message, error = ex.ToString() });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TestReviewNotification()
+        {
+            try
+            {
+                Console.WriteLine($"[DEBUG] TestReviewNotification called by user: {User.Identity.Name}");
+
+                await _notificationService.SendReviewNotificationToAdminAsync(
+                    67890,
+                    "Test Reviewer Name",
+                    "Test Room Standard",
+                    5,
+                    "Phòng rất tuyệt vời, sạch sẽ và dịch vụ tốt!"
+                );
+
+                return Json(new { success = true, message = "Test review notification sent to admins!", timestamp = DateTime.Now });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DEBUG] TestReviewNotification error: {ex.Message}");
+                return Json(new { success = false, message = ex.Message, error = ex.ToString() });
+            }
+        }
     }
 }

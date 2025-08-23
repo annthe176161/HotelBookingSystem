@@ -416,6 +416,22 @@ namespace HotelBookingSystem.Services.Implementations
 
             await _context.SaveChangesAsync();
 
+            // Gửi thông báo real-time cho admin về việc khách hàng hủy đặt phòng
+            try
+            {
+                await _notificationService.SendBookingCancellationToAdminAsync(
+                    bookingId,
+                    booking.User?.FullName ?? "Khách hàng",
+                    booking.Room?.Name ?? "Phòng",
+                    "Khách hàng yêu cầu hủy đặt phòng"
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi notification nhưng không làm fail transaction
+                Console.WriteLine($"Notification sending failed during booking cancellation: {ex.Message}");
+            }
+
             // Gửi email thông báo hủy đặt phòng
             try
             {
@@ -439,7 +455,11 @@ namespace HotelBookingSystem.Services.Implementations
                 return "Booking không hợp lệ";
             }
 
-            var booking = await _context.Bookings.FindAsync(request.BookingId); // Sử dụng FindAsync
+            var booking = await _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.Room)
+                .FirstOrDefaultAsync(b => b.Id == request.BookingId);
+
             if (booking == null)
             {
                 return "Booking không tồn tại";
@@ -467,6 +487,23 @@ namespace HotelBookingSystem.Services.Implementations
             _context.Reviews.Add(bookingReview);
             await _context.SaveChangesAsync();
 
+            // Gửi thông báo real-time cho admin về việc khách hàng đánh giá
+            try
+            {
+                await _notificationService.SendReviewNotificationToAdminAsync(
+                    booking.Id,
+                    booking.User?.FullName ?? "Khách hàng",
+                    booking.Room?.Name ?? "Phòng",
+                    request.Rating,
+                    request.Comment ?? ""
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi notification nhưng không làm fail transaction
+                Console.WriteLine($"Notification sending failed during review creation: {ex.Message}");
+            }
+
             // Cập nhật AverageRating cho phòng
             await UpdateRoomAverageRatingAsync(booking.RoomId);
 
@@ -480,8 +517,11 @@ namespace HotelBookingSystem.Services.Implementations
                 return "Booking không hợp lệ";
             }
 
-            // Tìm review hiện tại
+            // Tìm review hiện tại với thông tin booking và room
             var existingReview = await _context.Reviews
+                .Include(r => r.Booking)
+                    .ThenInclude(b => b.User)
+                .Include(r => r.Room)
                 .FirstOrDefaultAsync(r => r.BookingId == request.BookingId && r.UserId == userId);
 
             if (existingReview == null)
@@ -496,6 +536,23 @@ namespace HotelBookingSystem.Services.Implementations
 
             _context.Reviews.Update(existingReview);
             await _context.SaveChangesAsync();
+
+            // Gửi thông báo real-time cho admin về việc khách hàng cập nhật đánh giá
+            try
+            {
+                await _notificationService.SendReviewNotificationToAdminAsync(
+                    existingReview.BookingId,
+                    existingReview.Booking?.User?.FullName ?? "Khách hàng",
+                    existingReview.Room?.Name ?? "Phòng",
+                    request.Rating,
+                    request.Comment ?? ""
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi notification nhưng không làm fail transaction
+                Console.WriteLine($"Notification sending failed during review update: {ex.Message}");
+            }
 
             // Cập nhật lại AverageRating cho phòng
             await UpdateRoomAverageRatingAsync(existingReview.RoomId);
