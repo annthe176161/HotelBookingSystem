@@ -291,6 +291,7 @@ namespace HotelBookingSystem.Services.Implementations
                 .Include(b => b.Payment)
                 .ThenInclude(p => p!.PaymentStatus)
                 .Include(b => b.User)
+                .Include(b => b.Review)
                 .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
 
             if (booking == null)
@@ -298,6 +299,7 @@ namespace HotelBookingSystem.Services.Implementations
 
             var nightCount = (booking.CheckOut - booking.CheckIn).Days;
             var canCancel = booking.BookingStatus.Name != "Hoàn thành" && booking.BookingStatus.Name != "Đã hủy";
+            var hasReview = booking.Review != null && booking.Review.UserId == userId;
 
             return new BookingDetailsViewModel
             {
@@ -345,8 +347,8 @@ namespace HotelBookingSystem.Services.Implementations
                 FreeCancellationDeadline = booking.CheckIn.AddDays(-1), // Có thể hủy miễn phí trước 1 ngày
 
                 // Đánh giá
-                CanReview = booking.BookingStatus.Name == "Hoàn thành" && booking.CheckOut < DateTime.Now,
-                HasReview = false, // Có thể thêm logic kiểm tra review
+                CanReview = booking.BookingStatus.Name == "Hoàn thành" && booking.CheckOut < DateTime.Now && !hasReview,
+                HasReview = hasReview,
 
                 // Lịch sử hoạt động
                 BookingActivities = new List<BookingActivityViewModel>

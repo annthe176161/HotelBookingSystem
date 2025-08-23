@@ -402,6 +402,12 @@
 
                                 @if (Model.HasReview)
                                 {
+                                    <div class="alert alert-info mb-3" style="padding: 10px 15px;">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Bạn đã đánh giá phòng này rồi!</strong> 
+                                        <br><small>Bạn có thể xem lại hoặc chỉnh sửa đánh giá của mình bằng các nút bên dưới.</small>
+                                    </div>
+                                    
                                     <a href="@Url.Action("ViewReview", "Reviews", new { bookingId = Model.Id })"
                                         class="btn btn-outline-success">
                                         <i class="fas fa-comment-alt"></i> Xem đánh giá của bạn
@@ -411,9 +417,7 @@
                                         class="btn btn-outline-primary ms-2">
                                         <i class="fas fa-edit"></i> Chỉnh sửa đánh giá
                                     </a>
-                                }
-
-                                <button class="btn btn-primary" onclick="window.print()">
+                                }                                <button class="btn btn-primary" onclick="window.print()">
                                     <i class="fas fa-print"></i> In thông tin đặt phòng
                                 </button>
                             </div>
