@@ -248,3 +248,151 @@ html, body {
         height: calc(100vh - 56px);
     }
 }
+
+/* Enhanced Forgot Password Styles */
+.login-form .btn-primary i {
+    transition: transform 0.3s ease;
+}
+
+.login-form .btn-primary:hover i {
+    transform: translateX(3px);
+}
+
+.text-info {
+    color: var(--primary-color) !important;
+}
+
+.login-form .form-floating input:focus + label {
+    color: var(--primary-color);
+}
+
+.login-header .login-logo:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+/* Animation for validation messages */
+.text-danger {
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Success message styling */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.alert-success i {
+    margin-right: 8px;
+}
+
+/* Loading state for submit button */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Enhanced mobile responsiveness for forgot password */
+@media (max-width: 768px) {
+    .login-container .row {
+        margin: 0;
+    }
+    
+    .login-form-container {
+        padding: 20px 15px;
+    }
+    
+    .login-form-wrapper {
+        padding: 25px 20px;
+        margin: 0;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .login-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .login-header p {
+        font-size: 0.95rem;
+    }
+    
+    .login-logo {
+        font-size: 2.5rem !important;
+    }
+    
+    .form-floating input {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .btn-primary {
+        padding: 14px 20px;
+        font-size: 1.1rem;
+    }
+}
+
+/* Accessibility improvements */
+.form-floating input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(58, 110, 165, 0.2);
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.3);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .login-form-wrapper {
+        border: 2px solid #000;
+    }
+    
+    .btn-primary {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .login-form .btn-primary i,
+    .login-header .login-logo,
+    .text-danger {
+        transition: none;
+        animation: none;
+    }
+}
