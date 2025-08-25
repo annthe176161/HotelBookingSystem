@@ -29,7 +29,7 @@ namespace HotelBookingSystem.Worker
                         var bookingStatusService = scope.ServiceProvider.GetRequiredService<IBookingStatusService>();
                         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                        var expirationTime = DateTime.Now.AddMinutes(-5);
+                        var expirationTime = DateTime.Now.AddMinutes(-0.5);
 
                         // Tìm các booking chờ xác nhận quá 5 phút
                         var expiredBookings = dbContext.Bookings
@@ -49,7 +49,7 @@ namespace HotelBookingSystem.Worker
                 }
 
                 // Chạy lại sau 1 phút
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(0.5), stoppingToken);
             }
         }
     }
