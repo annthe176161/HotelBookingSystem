@@ -13,5 +13,7 @@ namespace HotelBookingSystem.Services.Interfaces
         Task SendGeneralNotificationToAdminsAsync(string message, string type = "info", object? data = null);
         Task SendBookingCancellationToAdminAsync(int bookingId, string customerName, string roomName, string reason);
         Task SendReviewNotificationToAdminAsync(int bookingId, string customerName, string roomName, int rating, string comment);
+        Task SendAutoCancellationToAdminAsync(int bookingId, string customerName, string roomName, string reason);
+        Task SendAutoCancellationToCustomerAsync(string userId, int bookingId, string roomName, string reason);
     }
 }

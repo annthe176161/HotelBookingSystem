@@ -155,5 +155,48 @@ namespace HotelBookingSystem.Services.Implementations
 
             await _hubContext.Clients.Group("AdminGroup").SendAsync("ReceiveAdminNotification", notification);
         }
+
+        public async Task SendAutoCancellationToAdminAsync(int bookingId, string customerName, string roomName, string reason)
+        {
+            var message = $"Hệ thống đã tự động hủy đặt phòng #{bookingId} của {customerName} - {roomName}";
+
+            var notification = new
+            {
+                message = message,
+                type = "auto_cancellation",
+                timestamp = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                data = new
+                {
+                    bookingId = bookingId,
+                    customerName = customerName,
+                    roomName = roomName,
+                    action = "system_auto_cancelled",
+                    reason = reason
+                }
+            };
+
+            await _hubContext.Clients.Group("AdminGroup").SendAsync("ReceiveAdminNotification", notification);
+        }
+
+        public async Task SendAutoCancellationToCustomerAsync(string userId, int bookingId, string roomName, string reason)
+        {
+            var message = $"Đặt phòng #{bookingId} - {roomName} đã bị hủy tự động. Lý do: {reason}";
+
+            var notification = new
+            {
+                message = message,
+                type = "auto_cancellation",
+                timestamp = DateTime.Now.ToString("o"), // ISO 8601 format
+                data = new
+                {
+                    bookingId = bookingId,
+                    roomName = roomName,
+                    action = "auto_cancelled",
+                    reason = reason
+                }
+            };
+
+            await _hubContext.Clients.Group($"User_{userId}").SendAsync("ReceiveNotification", notification);
+        }
     }
 }

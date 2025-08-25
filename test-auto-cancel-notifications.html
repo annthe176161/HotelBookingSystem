@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Auto-Cancel Notifications</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .section {
+            flex: 1;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .notification {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .auto-cancellation {
+            background: #ffe6e6;
+            border-color: #ff9999;
+        }
+
+        .timestamp {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .connected {
+            background: #d4edda;
+        }
+
+        .disconnected {
+            background: #f8d7da;
+        }
+
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test Auto-Cancel Notifications</h1>
+    <p>Đây là trang test để kiểm tra thông báo real-time khi WorkerService tự động hủy booking.</p>
+
+    <div class="container">
+        <div class="section">
+            <h3>🔧 Admin Notifications</h3>
+            <div id="adminStatus" class="status disconnected">Disconnected</div>
+            <button class="clear-btn" onclick="clearAdminNotifications()">Clear</button>
+            <div id="adminNotifications"></div>
+        </div>
+
+        <div class="section">
+            <h3>👤 Customer Notifications</h3>
+            <div id="customerStatus" class="status disconnected">Disconnected</div>
+            <button class="clear-btn" onclick="clearCustomerNotifications()">Clear</button>
+            <div id="customerNotifications"></div>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px; padding: 20px; background: #e7f3ff; border-radius: 8px;">
+        <h4>📋 Test Instructions:</h4>
+        <ol>
+            <li>Mở trang này trong 2 tab khác nhau</li>
+            <li>Trong tab 1: Login với admin account</li>
+            <li>Trong tab 2: Login với customer account và đặt phòng</li>
+            <li>Đợi 30 giây để WorkerService tự động hủy booking</li>
+            <li>Kiểm tra notifications xuất hiện ở cả 2 bên</li>
+        </ol>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <script>
+        let adminConnection;
+        let customerConnection;
+
+        // Admin Connection
+        async function connectAdmin() {
+            adminConnection = new signalR.HubConnectionBuilder()
+                .withUrl("/notificationHub")
+                .build();
+
+            adminConnection.start().then(function () {
+                document.getElementById('adminStatus').textContent = 'Connected as Admin';
+                document.getElementById('adminStatus').className = 'status connected';
+
+                // Join admin group
+                adminConnection.invoke("JoinAdminGroup");
+
+                addAdminNotification('✅ Admin connected to SignalR hub', 'info');
+            }).catch(function (err) {
+                console.error(err.toString());
+                document.getElementById('adminStatus').textContent = 'Connection failed';
+            });
+
+            adminConnection.on("ReceiveAdminNotification", function (notification) {
+                addAdminNotification(notification.message, notification.type, notification.data);
+            });
+        }
+
+        // Customer Connection  
+        async function connectCustomer() {
+            customerConnection = new signalR.HubConnectionBuilder()
+                .withUrl("/notificationHub")
+                .build();
+
+            customerConnection.start().then(function () {
+                document.getElementById('customerStatus').textContent = 'Connected as Customer';
+                document.getElementById('customerStatus').className = 'status connected';
+
+                // Join customer group (simulate user ID)
+                const userId = "test-customer-123";
+                customerConnection.invoke("JoinUserGroup", userId);
+
+                addCustomerNotification('✅ Customer connected to SignalR hub', 'info');
+            }).catch(function (err) {
+                console.error(err.toString());
+                document.getElementById('customerStatus').textContent = 'Connection failed';
+            });
+
+            customerConnection.on("ReceiveNotification", function (notification) {
+                addCustomerNotification(notification.message, notification.type, notification.data);
+            });
+        }
+
+        function addAdminNotification(message, type, data = null) {
+            const container = document.getElementById('adminNotifications');
+            const div = document.createElement('div');
+            div.className = `notification ${type === 'auto_cancellation' ? 'auto-cancellation' : ''}`;
+
+            const timestamp = new Date().toLocaleTimeString();
+            let content = `
+                <div><strong>${message}</strong></div>
+                <div class="timestamp">${timestamp} - Type: ${type}</div>
+            `;
+
+            if (data) {
+                content += `<div><small>Data: ${JSON.stringify(data, null, 2)}</small></div>`;
+            }
+
+            div.innerHTML = content;
+            container.insertBefore(div, container.firstChild);
+        }
+
+        function addCustomerNotification(message, type, data = null) {
+            const container = document.getElementById('customerNotifications');
+            const div = document.createElement('div');
+            div.className = `notification ${type === 'auto_cancellation' ? 'auto-cancellation' : ''}`;
+
+            const timestamp = new Date().toLocaleTimeString();
+            let content = `
+                <div><strong>${message}</strong></div>
+                <div class="timestamp">${timestamp} - Type: ${type}</div>
+            `;
+
+            if (data) {
+                content += `<div><small>Data: ${JSON.stringify(data, null, 2)}</small></div>`;
+            }
+
+            div.innerHTML = content;
+            container.insertBefore(div, container.firstChild);
+        }
+
+        function clearAdminNotifications() {
+            document.getElementById('adminNotifications').innerHTML = '';
+        }
+
+        function clearCustomerNotifications() {
+            document.getElementById('customerNotifications').innerHTML = '';
+        }
+
+        // Auto-connect when page loads
+        window.onload = function () {
+            connectAdmin();
+            connectCustomer();
+        };
+    </script>
+</body>
+
+</html>

@@ -9,15 +9,18 @@ namespace HotelBookingSystem.Services.Implementations
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
         private readonly ILogger<BookingStatusService> _logger;
 
         public BookingStatusService(
             ApplicationDbContext context,
             IEmailService emailService,
+            INotificationService notificationService,
             ILogger<BookingStatusService> logger)
         {
             _context = context;
             _emailService = emailService;
+            _notificationService = notificationService;
             _logger = logger;
         }
 
@@ -181,6 +184,13 @@ namespace HotelBookingSystem.Services.Implementations
                 // Gửi email thông báo hủy
                 await _emailService.SendBookingCancellationToCustomerAsync(booking, reason);
                 await _emailService.SendBookingCancellationToHotelAsync(booking, reason);
+
+                // Gửi thông báo real-time cho admin và khách hàng
+                var customerName = booking.User?.FullName ?? "Khách hàng";
+                var roomName = booking.Room?.Name ?? "Phòng";
+                
+                await _notificationService.SendAutoCancellationToAdminAsync(booking.Id, customerName, roomName, reason);
+                await _notificationService.SendAutoCancellationToCustomerAsync(booking.UserId, booking.Id, roomName, reason);
 
                 _logger.LogInformation($"Cancelled booking {bookingId} with reason: {reason}");
             }
