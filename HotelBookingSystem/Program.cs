@@ -6,6 +6,7 @@ using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Implementations;
 using HotelBookingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
+using HotelBookingSystem.Worker;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -48,6 +49,9 @@ namespace HotelBookingSystem
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
+            //worker
+            builder.Services.AddHostedService<BookingExpirationWorker>();
+
 
             // Add SignalR
             builder.Services.AddSignalR();
