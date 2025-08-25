@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using HotelBookingSystem.Data;
+using HotelBookingSystem.Infrastructure.Filters;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Interfaces;
 using HotelBookingSystem.ViewModels.Account;
@@ -42,12 +43,14 @@ namespace HotelBookingSystem.Controllers
             _emailService = emailService;
         }
 
+        [SkipAccountActiveCheck]
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
+        [SkipAccountActiveCheck]
         public IActionResult Register()
         {
             return View();
@@ -55,6 +58,7 @@ namespace HotelBookingSystem.Controllers
 
         [AllowAnonymous]
         [HttpPost, ValidateAntiForgeryToken]
+        [SkipAccountActiveCheck]
         public async Task<IActionResult> Login(LoginViewModel vm, string? returnUrl = null)
         {
             if (!ModelState.IsValid) return View(vm);
@@ -106,6 +110,7 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
+        [SkipAccountActiveCheck]
         public async Task<IActionResult> Register(RegisterViewModel vm, string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -217,6 +222,7 @@ namespace HotelBookingSystem.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
+        [SkipAccountActiveCheck]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -405,6 +411,7 @@ namespace HotelBookingSystem.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [SkipAccountActiveCheck]
         public IActionResult ExternalLogin(string provider, string? returnUrl = null)
         {
             var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
@@ -414,6 +421,7 @@ namespace HotelBookingSystem.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        [SkipAccountActiveCheck]
         public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
         {
             returnUrl ??= Url.Action("Index", "Home");
@@ -472,6 +480,13 @@ namespace HotelBookingSystem.Controllers
             }
             else
             {
+                // Kiểm tra xem tài khoản có bị khóa không
+                if (!user.IsActivated)
+                {
+                    TempData["ErrorMessage"] = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin để được hỗ trợ.";
+                    return RedirectToAction(nameof(Login), new { message = "account_deactivated" });
+                }
+                
                 // ĐÃ CÓ USER: nếu chưa có tên thì cập nhật
                 if (string.IsNullOrWhiteSpace(user.FullName) && !string.IsNullOrWhiteSpace(displayName))
                 {
@@ -482,7 +497,14 @@ namespace HotelBookingSystem.Controllers
 
             // Liên kết Google login (nếu chưa)
             var addLoginResult = await _userManager.AddLoginAsync(user, info);
-            // nếu đã liên kết từ trước, AddLoginAsync có thể trả lỗi LoginAlreadyAssociated -> bỏ qua
+            // nếu đã liên kết từ trước, AddLoginResult có thể trả lỗi LoginAlreadyAssociated -> bỏ qua
+
+            // Kiểm tra cuối cùng trước khi sign in - đảm bảo tài khoản không bị khóa
+            if (!user.IsActivated)
+            {
+                TempData["ErrorMessage"] = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin để được hỗ trợ.";
+                return RedirectToAction(nameof(Login), new { message = "account_deactivated" });
+            }
 
             await _signInManager.SignInAsync(user, false);
             return LocalRedirect(returnUrl!);
@@ -770,6 +792,49 @@ namespace HotelBookingSystem.Controllers
                 // Return null if URL parsing fails
             }
             return null;
+        }
+
+        // Endpoint để test account status
+        [HttpGet]
+        [SkipAccountActiveCheck]
+        public async Task<IActionResult> CheckStatus()
+        {
+            if (!User.Identity?.IsAuthenticated == true)
+            {
+                return Json(new { authenticated = false, isActive = false, message = "User not authenticated" });
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                await _signInManager.SignOutAsync();
+                return StatusCode(401, new { 
+                    error = "Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.",
+                    redirectUrl = "/Account/Login?message=account_deactivated" 
+                });
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null || !user.IsActivated)
+            {
+                await _signInManager.SignOutAsync();
+                HttpContext.Session.Clear();
+                
+                return StatusCode(401, new { 
+                    error = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin để được hỗ trợ.",
+                    redirectUrl = "/Account/Login?message=account_deactivated" 
+                });
+            }
+
+            return Json(new 
+            { 
+                authenticated = true,
+                isActive = true,
+                userId = user.Id,
+                email = user.Email,
+                fullName = user.FullName,
+                status = "Active"
+            });
         }
     }
 }

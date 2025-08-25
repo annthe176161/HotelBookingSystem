@@ -29,9 +29,9 @@ namespace HotelBookingSystem.Worker
                         var bookingStatusService = scope.ServiceProvider.GetRequiredService<IBookingStatusService>();
                         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                        var expirationTime = DateTime.Now.AddMinutes(-0.5);
+                        var expirationTime = DateTime.Now.AddDays(-1);
 
-                        // Tìm các booking chờ xác nhận quá 5 phút
+                        // Tìm các booking chờ xác nhận quá 1 ngày
                         var expiredBookings = dbContext.Bookings
                             .Where(b => b.BookingStatusId == 1 && b.CreatedDate <= expirationTime)
                             .ToList();
@@ -48,8 +48,8 @@ namespace HotelBookingSystem.Worker
                     _logger.LogError(ex, "Error while processing expired bookings.");
                 }
 
-                // Chạy lại sau 1 phút
-                await Task.Delay(TimeSpan.FromMinutes(0.5), stoppingToken);
+                // Chạy lại sau 1 giờ
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
             }
         }
     }

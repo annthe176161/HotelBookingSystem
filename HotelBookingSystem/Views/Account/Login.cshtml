@@ -22,6 +22,15 @@
                     <p>Đăng nhập để truy cập tài khoản của bạn</p>
                 </div>
 
+                @if (Context.Request.Query["message"] == "account_deactivated")
+                {
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Tài khoản đã bị khóa!</strong><br>
+                        Tài khoản của bạn đã bị quản trị viên khóa. Vui lòng liên hệ admin để được hỗ trợ.
+                    </div>
+                }
+
                 <form asp-route-returnUrl="@(ViewData["ReturnUrl"])"  asp-action="Login" asp-controller="Account" method="post" class="login-form">
                     <div asp-validation-summary="All" class="text-danger"></div>
 					@Html.AntiForgeryToken()

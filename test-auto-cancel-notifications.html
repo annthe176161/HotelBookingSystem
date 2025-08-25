@@ -95,9 +95,14 @@
             <li>Mở trang này trong 2 tab khác nhau</li>
             <li>Trong tab 1: Login với admin account</li>
             <li>Trong tab 2: Login với customer account và đặt phòng</li>
-            <li>Đợi 30 giây để WorkerService tự động hủy booking</li>
+            <li>Đợi 1 ngày để WorkerService tự động hủy booking (hoặc test bằng cách thay đổi CreatedDate trong
+                database)</li>
             <li>Kiểm tra notifications xuất hiện ở cả 2 bên</li>
         </ol>
+        <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 4px;">
+            <strong>⚠️ Lưu ý:</strong> Thời gian tự động hủy hiện tại là <strong>1 ngày</strong>.
+            Worker service sẽ check mỗi <strong>1 giờ</strong> để tìm booking cần hủy.
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>

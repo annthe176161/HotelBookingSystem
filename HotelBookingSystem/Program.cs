@@ -1,6 +1,8 @@
 using CloudinaryDotNet;
 using HotelBookingSystem.Data;
+using HotelBookingSystem.Infrastructure.Filters;
 using HotelBookingSystem.Infrastructure.Hubs;
+using HotelBookingSystem.Infrastructure.Middleware;
 using HotelBookingSystem.Infrastructure.Options;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Implementations;
@@ -47,8 +49,21 @@ namespace HotelBookingSystem
                 .AddDefaultTokenProviders();
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                // Đăng ký AccountActiveFilter để kiểm tra trạng thái tài khoản
+                options.Filters.Add<AccountActiveFilter>();
+            });
             builder.Services.AddRazorPages();
+            
+            // Add Session support
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            
             //worker
             builder.Services.AddHostedService<BookingExpirationWorker>();
 
@@ -100,9 +115,13 @@ namespace HotelBookingSystem
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            // Thêm middleware kiểm tra trạng thái tài khoản sau authentication
+            app.UseMiddleware<AccountStatusCheckMiddleware>();
 
             app.MapControllerRoute(
                 name: "default",
