@@ -10,6 +10,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Linq;
 
 namespace HotelBookingSystem.Controllers
 {
@@ -20,18 +25,21 @@ namespace HotelBookingSystem.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _db;
         private readonly IImageStorageService _imageStorageService;
+        private readonly IEmailService _emailService;
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             ApplicationDbContext db,
-            IImageStorageService imageStorageService)
+            IImageStorageService imageStorageService,
+            IEmailService emailService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
             _db = db;
             _imageStorageService = imageStorageService;
+            _emailService = emailService;
         }
 
         public IActionResult Login(string? returnUrl = null)
@@ -97,7 +105,6 @@ namespace HotelBookingSystem.Controllers
             return View(vm);
         }
 
-
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel vm, string? returnUrl = null)
         {
@@ -116,21 +123,22 @@ namespace HotelBookingSystem.Controllers
                 return View(vm);
             }
 
-            // Tạo UserName từ FirstName + LastName (bỏ dấu, liền nhau, thường)
-            var userNameBase = ToUserName($"{vm.FirstName}{vm.LastName}");
+            // UserName: "FirstName LastName" (Title Case, giữ dấu, có khoảng trắng)
+            var userNameBase = ToUserName($"{vm.FirstName} {vm.LastName}");
             var userName = await EnsureUniqueUserNameAsync(userNameBase);
 
-            // Gộp FullName từ FirstName + LastName
-            var fullName = $"{vm.FirstName?.Trim()} {vm.LastName?.Trim()}".Trim();
+            // Gộp FullName từ FirstName + LastName (giữ nguyên dấu & khoảng trắng)
+            var fullName = ToUserName($"{vm.FirstName} {vm.LastName}");
 
             var user = new ApplicationUser
             {
                 Email = vm.Email,
                 PhoneNumber = vm.PhoneNumber,
                 UserName = userName,
-                FullName = fullName,
+                FullName = fullName, 
                 FirstName = vm.FirstName?.Trim() ?? "",
                 LastName = vm.LastName?.Trim() ?? "",
+                EmailConfirmed = false // buộc xác thực qua mã
             };
 
             var create = await _userManager.CreateAsync(user, vm.Password);
@@ -141,7 +149,9 @@ namespace HotelBookingSystem.Controllers
             }
 
             // Lưu claim "đã chấp nhận điều khoản"
-            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("terms.accepted", DateTime.UtcNow.ToString("o")));
+            await _userManager.AddClaimAsync(
+                user, new System.Security.Claims.Claim("terms.accepted", DateTime.UtcNow.ToString("o"))
+            );
 
             // Gán role mặc định
             const string defaultRole = "Customer";
@@ -149,44 +159,61 @@ namespace HotelBookingSystem.Controllers
                 await _roleManager.CreateAsync(new IdentityRole(defaultRole));
             await _userManager.AddToRoleAsync(user, defaultRole);
 
-            // Đăng nhập ngay (nếu bạn đặt RequireConfirmedEmail = true thì bỏ bước này)
-            await _signInManager.SignInAsync(user, isPersistent: true);
+            // Dùng hàm cấp lớp GenerateNumericCode
+            var code = GenerateNumericCode(6);
+            var expires = DateTimeOffset.UtcNow.AddMinutes(3);
+            var payloadJson = System.Text.Json.JsonSerializer.Serialize(new { c = code, e = expires });
 
-            return LocalRedirect(returnUrl ?? Url.Action("Index", "Home")!);
+            // Lưu vào AspNetUserTokens (provider "EmailCode", name "email_confirmation_code")
+            await _userManager.SetAuthenticationTokenAsync(
+                user, "EmailCode", "email_confirmation_code", payloadJson
+            );
+
+            // Gửi email
+            var subject = "Mã xác thực email - Hotel Booking System";
+            var body = $@"<p>Xin chào {(user.FullName ?? user.Email)},</p>
+                  <p>Mã xác thực email của bạn là:</p>
+                  <h2 style=""letter-spacing:2px;margin:8px 0"">{code}</h2>
+                  <p>Mã có hiệu lực trong <strong>3 phút</strong>.</p>
+                  <p>Nếu bạn không thực hiện đăng ký, vui lòng bỏ qua email này.</p>";
+
+            await _emailService.SendEmailAsync(user.Email!, subject, body, isHtml: true);
+
+            // KHÔNG đăng nhập ngay; chuyển sang bước nhập mã
+            return RedirectToAction(nameof(VerifyEmail), new { email = user.Email });
         }
+
+
 
         // ===== Helpers =====
 
         private async Task<string> EnsureUniqueUserNameAsync(string baseName)
         {
-            if (string.IsNullOrWhiteSpace(baseName)) baseName = "user";
             var candidate = baseName;
             var i = 0;
+
             while (await _userManager.FindByNameAsync(candidate) != null)
             {
                 i++;
-                candidate = $"{baseName}{i}";
+                candidate = $"{baseName} {i}";
             }
+
             return candidate;
         }
 
-        private static string ToUserName(string input)
+        private static string ToUserName(string? input)
         {
-            // Bỏ dấu tiếng Việt, giữ chữ/số, về lowercase
-            input = RemoveDiacritics(input ?? string.Empty).Trim();
-            var sb = new StringBuilder(input.Length);
-            foreach (var ch in input)
-                if (char.IsLetterOrDigit(ch)) sb.Append(char.ToLowerInvariant(ch));
-            return sb.ToString();
-        }
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
-        private static string RemoveDiacritics(string text)
-        {
-            var normalized = (text ?? string.Empty).Normalize(NormalizationForm.FormD);
-            var sb = new StringBuilder();
-            foreach (var c in normalized)
-                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark) sb.Append(c);
-            return sb.ToString().Normalize(NormalizationForm.FormC);
+            // Chuẩn hóa khoảng trắng: gộp nhiều khoảng trắng thành 1
+            var normalized = System.Text.RegularExpressions.Regex.Replace(input.Trim(), @"\s+", " ");
+
+            // Viết hoa chữ cái đầu theo văn hoá vi-VN (giữ nguyên dấu tiếng Việt)
+            var culture = new System.Globalization.CultureInfo("vi-VN");
+            var lower = culture.TextInfo.ToLower(normalized);
+            var titled = culture.TextInfo.ToTitleCase(lower);
+
+            return titled;
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -254,13 +281,330 @@ namespace HotelBookingSystem.Controllers
 
         // Helper tách họ tên
         private static (string first, string last) SplitFullName(string? fullName)
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult ForgotPassword()
         {
-            fullName = (fullName ?? "").Trim();
-            if (string.IsNullOrEmpty(fullName)) return ("", "");
-            var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 1) return (parts[0], "");
-            return (string.Join(' ', parts[..^1]), parts[^1]); // first = tất cả trừ từ cuối, last = từ cuối
+            return View();
         }
+
+        [AllowAnonymous]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+
+            var user = await _userManager.FindByEmailAsync(vm.Email!);
+
+            // Luôn hiển thị trang xác nhận để tránh lộ thông tin user có tồn tại hay không
+            if (user == null)
+            {
+                return View("ForgotPasswordConfirmation");
+            }
+
+            // Tạo token
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            // Tạo link ResetPassword
+            var callbackUrl = Url.Action(
+                "ResetPassword",
+                "Account",
+                new { token = encodedToken, email = user.Email },
+                Request.Scheme
+            )!;
+
+            var subject = "Đặt lại mật khẩu - Hotel Booking System";
+            var body = $@"
+        <p>Xin chào {(user.FullName ?? user.Email)}</p>
+        <p>Bạn vừa yêu cầu đặt lại mật khẩu cho tài khoản của mình.</p>
+        <p>Nhấn vào liên kết dưới đây để đặt lại mật khẩu:</p>
+        <p><a href=""{callbackUrl}"">Đặt lại mật khẩu</a></p>
+        <p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>";
+
+            await _emailService.SendEmailAsync(user.Email!, subject, body, isHtml: true);
+
+            return View("ForgotPasswordConfirmation");
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
+                return BadRequest("Token hoặc email không hợp lệ.");
+
+            var model = new ResetPasswordViewModel { Token = token, Email = email };
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel vm)
+        {
+            if (!ModelState.IsValid) return View(vm);
+
+            var user = await _userManager.FindByEmailAsync(vm.Email!);
+            if (user == null)
+            {
+                // Không tiết lộ người dùng có tồn tại
+                return View("ResetPasswordConfirmation");
+            }
+
+            // Decode token
+            var decodedTokenBytes = WebEncoders.Base64UrlDecode(vm.Token!);
+            var decodedToken = Encoding.UTF8.GetString(decodedTokenBytes);
+
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, vm.Password!);
+            if (result.Succeeded)
+            {
+                return View("ResetPasswordConfirmation");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return View(vm);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View(new ChangePasswordViewModel());
+        }
+
+        [Authorize]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy người dùng.";
+                return RedirectToAction("Login");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                // Giữ phiên đăng nhập sau khi đổi mật khẩu
+                await _signInManager.RefreshSignInAsync(user);
+                TempData["SuccessMessage"] = "Mật khẩu đã được cập nhật.";
+                return RedirectToAction("ChangePassword"); // hoặc RedirectToAction("Profile")
+            }
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError(string.Empty, error.Description);
+
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider); // chuyển qua Google
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+        {
+            returnUrl ??= Url.Action("Index", "Home");
+            if (!string.IsNullOrEmpty(remoteError))
+            {
+                TempData["ErrorMessage"] = $"Lỗi đăng nhập ngoài: {remoteError}";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                TempData["ErrorMessage"] = "Không lấy được thông tin đăng nhập ngoài.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            // Nếu đã liên kết -> đăng nhập luôn
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+            if (signInResult.Succeeded) return LocalRedirect(returnUrl!);
+
+            // Lấy email + tên từ claims của Google
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var given = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+            var family = info.Principal.FindFirstValue(ClaimTypes.Surname);
+            var nameFromClaim = info.Principal.FindFirstValue(ClaimTypes.Name);
+            var displayName = !string.IsNullOrWhiteSpace(nameFromClaim)
+                ? nameFromClaim
+                : $"{given} {family}".Trim();
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                TempData["ErrorMessage"] = "Google không trả email. Vui lòng dùng cách đăng nhập khác.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                // LẦN ĐẦU: tạo user, lưu FullName
+                user = new ApplicationUser
+                {
+                    UserName = email,          // vẫn để username = email cho unique
+                    Email = email,
+                    FullName = displayName,    // <-- lưu tên đầy đủ
+                    EmailConfirmed = true
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    foreach (var e in createResult.Errors) ModelState.AddModelError("", e.Description);
+                    TempData["ErrorMessage"] = "Không thể tạo tài khoản từ Google.";
+                    return RedirectToAction(nameof(Login));
+                }
+            }
+            else
+            {
+                // ĐÃ CÓ USER: nếu chưa có tên thì cập nhật
+                if (string.IsNullOrWhiteSpace(user.FullName) && !string.IsNullOrWhiteSpace(displayName))
+                {
+                    user.FullName = displayName;
+                    await _userManager.UpdateAsync(user);
+                }
+            }
+
+            // Liên kết Google login (nếu chưa)
+            var addLoginResult = await _userManager.AddLoginAsync(user, info);
+            // nếu đã liên kết từ trước, AddLoginAsync có thể trả lỗi LoginAlreadyAssociated -> bỏ qua
+
+            await _signInManager.SignInAsync(user, false);
+            return LocalRedirect(returnUrl!);
+        }
+
+        private static string GenerateNumericCode(int length = 6)
+        {
+            // Mã 6 số ngẫu nhiên
+            var bytes = new byte[4];
+            RandomNumberGenerator.Fill(bytes);
+            int value = BitConverter.ToInt32(bytes, 0) & int.MaxValue;
+            int min = (int)Math.Pow(10, length - 1);
+            int code = min + (value % (9 * min));
+            return code.ToString();
+        }
+
+        private async Task SendEmailVerificationCodeAsync(ApplicationUser user)
+        {
+            var code = GenerateNumericCode(6);
+            var expires = DateTimeOffset.UtcNow.AddMinutes(3);
+            var payload = JsonSerializer.Serialize(new { c = code, e = expires });
+
+            // Lưu mã vào AspNetUserTokens (provider/purpose tùy chọn)
+            await _userManager.SetAuthenticationTokenAsync(
+                user, "EmailCode", "email_confirmation_code", payload);
+
+            var subject = "Mã xác thực email - Hotel Booking System";
+            var body = $@"<p>Xin chào {(user.FullName ?? user.Email)}</p>
+                  <p>Mã xác thực email của bạn là:</p>
+                  <h2 style=""letter-spacing:2px"">{code}</h2>
+                  <p>Mã có hiệu lực trong 10 phút.</p>
+                  <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>";
+
+            await _emailService.SendEmailAsync(user.Email!, subject, body, isHtml: true);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult VerifyEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return RedirectToAction(nameof(Login));
+            return View(new VerifyEmailCodeViewModel { Email = email });
+        }
+
+        [AllowAnonymous]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailCodeViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Email không tồn tại.";
+                return View(model);
+            }
+
+            var tokenJson = await _userManager.GetAuthenticationTokenAsync(
+                user, "EmailCode", "email_confirmation_code");
+
+            if (string.IsNullOrWhiteSpace(tokenJson))
+            {
+                TempData["ErrorMessage"] = "Mã không hợp lệ hoặc đã hết hạn. Vui lòng bấm 'Gửi lại mã'.";
+                return View(model);
+            }
+
+            try
+            {
+                var payload = System.Text.Json.JsonSerializer.Deserialize<EmailCodePayload>(tokenJson);
+                if (payload == null || payload.c != model.Code)
+                {
+                    TempData["ErrorMessage"] = "Mã xác thực không chính xác.";
+                    return View(model);
+                }
+                if (DateTimeOffset.UtcNow > payload.e)
+                {
+                    TempData["ErrorMessage"] = "Mã đã hết hạn. Vui lòng bấm 'Gửi lại mã'.";
+                    return View(model);
+                }
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Mã không hợp lệ.";
+                return View(model);
+            }
+
+            user.EmailConfirmed = true;
+            await _userManager.UpdateAsync(user);
+
+            await _userManager.RemoveAuthenticationTokenAsync(
+                user, "EmailCode", "email_confirmation_code");
+
+            TempData["SuccessMessage"] = "Xác thực email thành công. Bạn có thể đăng nhập.";
+            return RedirectToAction(nameof(Login));
+        }
+
+        [AllowAnonymous]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendEmailCode(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return RedirectToAction(nameof(Login));
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return RedirectToAction(nameof(Login));
+
+            if (user.EmailConfirmed)
+            {
+                TempData["SuccessMessage"] = "Email đã được xác thực trước đó.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            await SendEmailVerificationCodeAsync(user);
+            TempData["SuccessMessage"] = "Đã gửi lại mã xác thực.";
+            return RedirectToAction(nameof(VerifyEmail), new { email });
+        }
+
+        // model record để deserialize token json (đặt cùng vùng helper nếu muốn)
+        private record EmailCodePayload(string c, DateTimeOffset e);
+
+        #region Helper Methods
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -425,6 +769,10 @@ namespace HotelBookingSystem.Controllers
             }
             return null;
         }
+
+        #endregion
+    }
+
 
         #endregion
     }

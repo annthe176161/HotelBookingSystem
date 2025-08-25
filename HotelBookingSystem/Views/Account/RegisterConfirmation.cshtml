@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Xác nhận email";
+    var email = (string?)ViewBag.Email;
+}
+<div class="container py-5" style="max-width:640px">
+    <h2 class="mb-3">Vui lòng kiểm tra hộp thư</h2>
+    <p>
+        Chúng tôi đã gửi mã xác thực đến địa chỉ <strong>@email</strong>.
+        Nhập mã trong vòng 10 phút để kích hoạt tài khoản.
+    </p>
+
+    <a class="btn btn-primary" asp-action="VerifyEmail" asp-route-email="@email">Nhập mã xác thực</a>
+
+    <form class="mt-3" asp-action="ResendEmailCode" method="post">
+        <input type="hidden" name="email" value="@email" />
+        <button type="submit" class="btn btn-outline-secondary">Gửi lại mã</button>
+    </form>
+</div>

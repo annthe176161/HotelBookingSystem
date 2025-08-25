@@ -5,6 +5,7 @@ using HotelBookingSystem.Infrastructure.Options;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Implementations;
 using HotelBookingSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -38,6 +39,8 @@ namespace HotelBookingSystem
                     opts.Password.RequiredLength = 6;
                     opts.SignIn.RequireConfirmedEmail = false;
                     opts.Lockout.MaxFailedAccessAttempts = 5;
+                    opts.User.AllowedUserNameCharacters = null;
+                    opts.User.RequireUniqueEmail = true;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -70,6 +73,14 @@ namespace HotelBookingSystem
             builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            //Add google authentication
+            builder.Services.AddAuthentication().AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["GoogleAuth:ClientId"] ?? "";
+                options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"] ?? "";
+                var cb = builder.Configuration["GoogleAuth:CallbackPath"];
+                if (!string.IsNullOrWhiteSpace(cb)) options.CallbackPath = cb;
+            });;
 
             var app = builder.Build();
 
