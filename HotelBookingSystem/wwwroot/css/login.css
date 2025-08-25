@@ -654,3 +654,25 @@ html, body {
         border: 2px solid #000;
     }
 }
+
+/* Logout button styling to look like a link */
+.logout-btn {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    font-family: inherit !important;
+    color: inherit !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    font-size: inherit !important;
+}
+
+.logout-btn:hover {
+    text-decoration: underline !important;
+    color: var(--accent-color) !important;
+}
+
+.logout-btn:focus {
+    outline: 1px dotted;
+    outline-offset: 2px;
+}
