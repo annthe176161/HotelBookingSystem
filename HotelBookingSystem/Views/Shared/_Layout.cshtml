@@ -1,5 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+    @inject Microsoft.AspNetCore.Identity.UserManager<HotelBookingSystem.Models.ApplicationUser> UserManager
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -72,10 +74,19 @@
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <div class="dropdown">
-                                    <button class="btn dropdown-toggle" type="button" id="userDropdown"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="~/images/avatar-placeholder.jpg" alt="Avatar" class="user-avatar" />
-                                        <span>@User.Identity.Name</span>
+                                    <button class="btn user-account-btn" type="button" id="userDropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user-circle user-icon"></i>
+                                        @* <span class="user-name">@User.Identity.Name</span> *@
+                                        @{
+                                            var _me = await UserManager.GetUserAsync(User);
+                                            var displayName = string.IsNullOrWhiteSpace(_me?.FullName)
+                                            ? (_me?.Email ?? User.Identity.Name)
+                                            : _me.FullName;
+                                        }
+                                        <span class="user-name">@displayName</span>
+
+                                        <i class="fas fa-chevron-down dropdown-arrow"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                         <li>

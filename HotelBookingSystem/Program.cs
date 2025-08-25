@@ -1,7 +1,9 @@
+﻿using CloudinaryDotNet;
 using HotelBookingSystem.Data;
 using HotelBookingSystem.Models;
 using HotelBookingSystem.Services.Implementations;
 using HotelBookingSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,21 +46,40 @@ namespace HotelBookingSystem
             });
 
             builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>(opts =>
-    {
-        opts.SignIn.RequireConfirmedAccount = false;
-        opts.User.RequireUniqueEmail = true;
-        opts.Password.RequiredLength = 6;
-        opts.SignIn.RequireConfirmedEmail = false;
-        opts.Lockout.MaxFailedAccessAttempts = 5;
-    })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+                .AddIdentity<ApplicationUser, IdentityRole>(opts =>
+                {
+                    opts.SignIn.RequireConfirmedAccount = false;
+                    opts.User.RequireUniqueEmail = true;
+                    opts.Password.RequiredLength = 6;
+                    opts.SignIn.RequireConfirmedEmail = false;
+                    opts.Lockout.MaxFailedAccessAttempts = 5;
+                    opts.User.AllowedUserNameCharacters = null;
+                    opts.User.RequireUniqueEmail = true;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IRoomService, RoomService>();
+            builder.Services.AddScoped<IAdminRoomService, AdminRoomService>();
+            builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+            builder.Services.AddScoped<IAdminBookingService, AdminBookingService>();
+            builder.Services.AddScoped<IAdminReviewService, AdminReviewService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+            //Add google authentication
+            builder.Services.AddAuthentication().AddGoogle(options =>
+     {
+         options.ClientId = builder.Configuration["GoogleAuth:ClientId"] ?? "";
+         options.ClientSecret = builder.Configuration["GoogleAuth:ClientSecret"] ?? "";
+         var cb = builder.Configuration["GoogleAuth:CallbackPath"];
+         if (!string.IsNullOrWhiteSpace(cb)) options.CallbackPath = cb;
+     });;
 
             var app = builder.Build();
 
