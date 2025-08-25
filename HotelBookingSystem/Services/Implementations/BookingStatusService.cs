@@ -164,9 +164,16 @@ namespace HotelBookingSystem.Services.Implementations
                     await _context.SaveChangesAsync();
                 }
 
-                // Cập nhật trạng thái
+                // Cập nhật trạng thái booking
                 booking.BookingStatusId = cancelledStatus.Id;
                 booking.BookingStatus = cancelledStatus;
+
+                // Cập nhật trạng thái phòng về Available khi hủy booking
+                if (booking.Room != null)
+                {
+                    booking.Room.IsAvailable = true;
+                    _logger.LogInformation($"Room {booking.Room.Id} set to available after booking {bookingId} cancellation");
+                }
 
                 // Lưu thay đổi
                 await _context.SaveChangesAsync();
