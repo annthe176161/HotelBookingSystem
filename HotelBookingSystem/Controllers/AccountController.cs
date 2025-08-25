@@ -277,10 +277,8 @@ namespace HotelBookingSystem.Controllers
             return View(vm);
         }
 
-        #region Helper Methods
+        
 
-        // Helper tách họ tên
-        private static (string first, string last) SplitFullName(string? fullName)
         [AllowAnonymous]
         [HttpGet]
         public IActionResult ForgotPassword()
@@ -604,8 +602,6 @@ namespace HotelBookingSystem.Controllers
         // model record để deserialize token json (đặt cùng vùng helper nếu muốn)
         private record EmailCodePayload(string c, DateTimeOffset e);
 
-        #region Helper Methods
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
@@ -733,6 +729,12 @@ namespace HotelBookingSystem.Controllers
             }
         }
 
+        // Helper tách họ tên
+        private static (string first, string last) SplitFullName(string? fullName)
+        {
+            return (first: "", last: "");
+        }
+
         private string? ExtractPublicIdFromUrl(string imageUrl)
         {
             try
@@ -769,12 +771,5 @@ namespace HotelBookingSystem.Controllers
             }
             return null;
         }
-
-        #endregion
-    }
-
-
-        #endregion
     }
 }
-
