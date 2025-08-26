@@ -15,9 +15,10 @@ namespace HotelBookingSystem.ViewModels.Account
         [Display(Name = "Mật khẩu mới")]
         public string NewPassword { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Vui lòng nhập xác nhận mật khẩu mới")]
         [DataType(DataType.Password)]
         [Display(Name = "Xác nhận mật khẩu mới")]
-        [Compare("NewPassword", ErrorMessage = "Mật khẩu xác nhận không khớp.")]
+        [Compare("NewPassword", ErrorMessage = "Mật khẩu không khớp")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

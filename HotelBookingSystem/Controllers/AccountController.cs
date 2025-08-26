@@ -398,8 +398,8 @@ namespace HotelBookingSystem.Controllers
             {
                 // Giữ phiên đăng nhập sau khi đổi mật khẩu
                 await _signInManager.RefreshSignInAsync(user);
-                TempData["SuccessMessage"] = "Mật khẩu đã được cập nhật.";
-                return RedirectToAction("ChangePassword"); // hoặc RedirectToAction("Profile")
+                TempData["SuccessMessage"] = "Mật khẩu đã được cập nhật thành công.";
+                return RedirectToAction("Profile");
             }
 
             foreach (var error in result.Errors)

@@ -143,6 +143,12 @@ document.addEventListener('DOMContentLoaded', function () {
             existingIndicator.remove();
         }
 
+        // Hide default validation message
+        const validationSpan = confirmPasswordInput.parentNode.querySelector('.text-danger');
+        if (validationSpan) {
+            validationSpan.style.display = 'none';
+        }
+
         if (confirmPassword.length > 0) {
             const matchIndicator = document.createElement('div');
             matchIndicator.className = 'password-match show';
@@ -150,18 +156,22 @@ document.addEventListener('DOMContentLoaded', function () {
             if (newPassword === confirmPassword) {
                 matchIndicator.className += ' match';
                 matchIndicator.innerHTML = '<i class="fas fa-check me-1"></i>Mật khẩu khớp';
-                confirmPasswordInput.classList.remove('is-invalid');
-                confirmPasswordInput.classList.add('is-valid');
+                // confirmPasswordInput.classList.remove('is-invalid');
+                // confirmPasswordInput.classList.add('is-valid');
             } else {
                 matchIndicator.className += ' no-match';
                 matchIndicator.innerHTML = '<i class="fas fa-times me-1"></i>Mật khẩu không khớp';
-                confirmPasswordInput.classList.remove('is-valid');
-                confirmPasswordInput.classList.add('is-invalid');
+                // confirmPasswordInput.classList.remove('is-valid');
+                // confirmPasswordInput.classList.add('is-invalid');
             }
 
             confirmPasswordInput.parentNode.appendChild(matchIndicator);
         } else {
-            confirmPasswordInput.classList.remove('is-valid', 'is-invalid');
+            // Show validation message again if field is empty
+            if (validationSpan) {
+                validationSpan.style.display = 'block';
+            }
+            // confirmPasswordInput.classList.remove('is-valid', 'is-invalid');
         }
     }
 
@@ -222,6 +232,24 @@ function togglePassword(toggleIcon) {
     }
 }
 
+// New password toggle function for field-specific IDs
+function togglePasswordField(fieldName) {
+    const passwordField = document.getElementById(fieldName);
+    const eyeIcon = document.getElementById(fieldName + '-eye-icon');
+
+    if (passwordField && eyeIcon) {
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+}
+
 // Password generation suggestion (optional feature)
 function generateStrongPassword() {
     const length = 12;
@@ -242,3 +270,28 @@ function generateStrongPassword() {
     // Shuffle the password
     return password.split('').sort(() => Math.random() - 0.5).join('');
 }
+
+// Vietnamese validation messages override
+document.addEventListener('DOMContentLoaded', function () {
+    // Override HTML5 validation messages for Vietnamese
+    const inputs = document.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('invalid', function (e) {
+            if (this.validity.valueMissing) {
+                if (this.name === 'CurrentPassword') {
+                    this.setCustomValidity('Vui lòng nhập mật khẩu hiện tại.');
+                } else if (this.name === 'NewPassword') {
+                    this.setCustomValidity('Vui lòng nhập mật khẩu mới.');
+                } else if (this.name === 'ConfirmPassword') {
+                    this.setCustomValidity('Vui lòng nhập xác nhận mật khẩu mới.');
+                } else {
+                    this.setCustomValidity('Vui lòng nhập thông tin này.');
+                }
+            }
+        });
+
+        input.addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+    });
+});
