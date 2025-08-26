@@ -240,6 +240,9 @@ namespace HotelBookingSystem.Controllers
                 return RedirectToAction("Login");
             }
 
+            // AccountActiveFilter sẽ tự động chuyển hướng nếu tài khoản bị khóa
+            // Không cần thông báo thêm ở đây
+
             // Tách FirstName / LastName từ FullName nếu có
             var firstName = user.FirstName ?? "";
             var lastName = user.LastName ?? "";
