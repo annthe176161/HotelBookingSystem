@@ -301,31 +301,6 @@ html, body {
     margin-right: 8px;
 }
 
-/* Loading state for submit button */
-.btn-loading {
-    position: relative;
-    pointer-events: none;
-}
-
-.btn-loading::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    border: 2px solid transparent;
-    border-top: 2px solid #fff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 /* Enhanced mobile responsiveness for forgot password */
 @media (max-width: 768px) {
     .login-container .row {
@@ -582,20 +557,6 @@ html, body {
     box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
 }
 
-/* Loading state enhancements */
-.btn-loading {
-    position: relative;
-    color: transparent !important;
-}
-
-.btn-loading .spinner-border {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-}
-
 /* Tooltip styles for password requirements */
 .password-requirements {
     background-color: #f8f9fa;
@@ -675,4 +636,21 @@ html, body {
 .logout-btn:focus {
     outline: 1px dotted;
     outline-offset: 2px;
+}
+
+/* Button loading state improvements */
+.btn:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.btn .spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+.btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
 }

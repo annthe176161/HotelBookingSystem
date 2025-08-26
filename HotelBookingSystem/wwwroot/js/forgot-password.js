@@ -7,18 +7,27 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add loading state to submit button
     form.addEventListener('submit', function (e) {
         if (form.checkValidity()) {
-            submitBtn.classList.add('btn-loading');
+            // Prevent double submission
+            if (submitBtn.disabled) {
+                e.preventDefault();
+                return false;
+            }
+
             submitBtn.disabled = true;
 
-            // Store original text
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Đang gửi...';
+            // Store original content
+            const originalContent = submitBtn.innerHTML;
+
+            // Replace content with single spinner
+            submitBtn.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Đang gửi...
+            `;
 
             // Re-enable button after 30 seconds (in case of network issues)
             setTimeout(() => {
-                submitBtn.classList.remove('btn-loading');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
+                submitBtn.innerHTML = originalContent;
             }, 30000);
         }
     });
