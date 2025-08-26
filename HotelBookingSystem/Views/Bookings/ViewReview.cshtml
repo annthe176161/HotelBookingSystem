@@ -1,0 +1,108 @@
+@model HotelBookingSystem.ViewModels.Booking.BookingReviewViewModel
+
+@{
+    ViewData["Title"] = "Xem đánh giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/review-form.css" />
+</head>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>
+                <i class="fas fa-comment-alt me-2"></i>
+                Đánh giá của bạn
+            </h3>
+        </div>
+        <div class="card-body">
+            @if (TempData["ReviewError"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    @TempData["ReviewError"]
+                </div>
+            }
+
+            <!-- Thông tin phòng -->
+            <div class="room-info mb-4">
+                <h5>
+                    <i class="fas fa-bed me-2"></i>
+                    Phòng: @Model.RoomName
+                </h5>
+                <p class="text-muted">Booking #@Model.BookingId</p>
+            </div>
+
+            <!-- Hiển thị đánh giá -->
+            <div class="review-display">
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Đánh giá:</label>
+                    <div class="rating-display">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Model.Rating)
+                            {
+                                <i class="fas fa-star text-warning"></i>
+                            }
+                            else
+                            {
+                                <i class="far fa-star text-muted"></i>
+                            }
+                        }
+                        <span class="ms-2 text-muted">(@Model.Rating/5 sao)</span>
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold">Nhận xét:</label>
+                    <div class="comment-display p-3 border rounded bg-light">
+                        @if (!string.IsNullOrEmpty(Model.Comment))
+                        {
+                            <p class="mb-0">@Model.Comment</p>
+                        }
+                        else
+                        {
+                            <p class="mb-0 text-muted"><em>Không có nhận xét</em></p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Details", new { id = Model.BookingId })" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Quay lại chi tiết booking
+                </a>
+                
+                <a href="@Url.Action("EditReview", new { bookingId = Model.BookingId })" class="btn btn-primary">
+                    <i class="fas fa-edit me-2"></i>
+                    Chỉnh sửa đánh giá
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating-display {
+        font-size: 1.5rem;
+    }
+    
+    .comment-display {
+        min-height: 80px;
+        line-height: 1.6;
+    }
+    
+    .room-info {
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 1rem;
+    }
+    
+    .review-display .form-label {
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+</style>

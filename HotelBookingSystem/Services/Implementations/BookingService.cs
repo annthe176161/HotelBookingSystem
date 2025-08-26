@@ -345,7 +345,7 @@ namespace HotelBookingSystem.Services.Implementations
 
                 // Chính sách hủy phòng
                 IsCancellable = canCancel,
-                FreeCancellationDeadline = booking.CheckIn.AddDays(-1), // Có thể hủy miễn phí trước 1 ngày
+                FreeCancellationDeadline = booking.CheckIn.Date.AddDays(-1), // Hủy miễn phí trước 00:00 ngày hôm trước check-in
 
                 // Đánh giá
                 CanReview = booking.BookingStatus.Name == "Hoàn thành" && booking.CheckOut < DateTime.Now && !hasReview,
@@ -562,17 +562,32 @@ namespace HotelBookingSystem.Services.Implementations
 
         public async Task<BookingReviewViewModel?> GetBookingReviewAsync(int bookingId, string userId)
         {
-            var review = await _context.Reviews
-                .FirstOrDefaultAsync(r => r.BookingId == bookingId && r.UserId == userId);
+            var booking = await _context.Bookings
+                .Include(b => b.Room)
+                .Include(b => b.Review)
+                .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
 
+            if (booking == null)
+                return null;
+
+            var review = booking.Review;
             if (review == null)
                 return null;
 
             return new BookingReviewViewModel
             {
-                BookingId = review.BookingId,
+                BookingId = booking.Id,
+                BookingNumber = $"BK{booking.Id:D6}",
+                CheckInDate = booking.CheckIn,
+                CheckOutDate = booking.CheckOut,
+                RoomId = booking.Room.Id,
+                RoomName = booking.Room.Name,
+                RoomType = booking.Room.RoomType,
+                RoomImageUrl = booking.Room.ImageUrl,
                 Rating = review.Rating,
-                Comment = review.Comment
+                Comment = review.Comment ?? "",
+                ReviewDate = review.CreatedDate,
+                CanEdit = true
             };
         }
 

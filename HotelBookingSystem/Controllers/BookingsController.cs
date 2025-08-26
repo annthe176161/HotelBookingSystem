@@ -495,5 +495,26 @@ namespace HotelBookingSystem.Controllers
                 return View(model);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewReview(int bookingId)
+        {
+            // Lấy user hiện tại đang đăng nhập
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                TempData["ReviewError"] = "Bạn cần đăng nhập để xem đánh giá.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var reviewData = await _bookingService.GetBookingReviewAsync(bookingId, currentUser.Id);
+            if (reviewData == null)
+            {
+                TempData["ReviewError"] = "Không tìm thấy đánh giá hoặc bạn không có quyền xem.";
+                return RedirectToAction("Details", new { id = bookingId });
+            }
+
+            return View(reviewData);
+        }
     }
 }
