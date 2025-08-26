@@ -146,9 +146,9 @@
         </div>
     </div>
 
-    <!-- Recent Bookings & Availability -->
+    <!-- Recent Bookings -->
     <div class="row mb-4">
-        <div class="col-xl-8 mb-4">
+        <div class="col-xl-12 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Đặt phòng gần đây</h5>
@@ -223,68 +223,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="col-xl-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Tình trạng phòng</h5>
-                    <a href="/Admin/Rooms" class="btn btn-sm btn-primary">Quản lý phòng</a>
-                </div>
-                <div class="card-body">
-                    <div class="room-status-chart mb-4">
-                        <canvas id="roomStatusChart" height="200"></canvas>
-                    </div>
-                    <div class="room-status-summary">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="status-item">
-                                    <div class="status-icon available">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <div class="status-details">
-                                        <h4>@Model.AvailableRooms</h4>
-                                        <p>Phòng trống</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="status-item">
-                                    <div class="status-icon occupied">
-                                        <i class="fas fa-bed"></i>
-                                    </div>
-                                    <div class="status-details">
-                                        <h4>@Model.OccupiedRooms</h4>
-                                        <p>Phòng đã đặt</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="status-item">
-                                    <div class="status-icon cleaning">
-                                        <i class="fas fa-broom"></i>
-                                    </div>
-                                    <div class="status-details">
-                                        <h4>@Model.CleaningRooms</h4>
-                                        <p>Đang dọn dẹp</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="status-item">
-                                    <div class="status-icon maintenance">
-                                        <i class="fas fa-tools"></i>
-                                    </div>
-                                    <div class="status-details">
-                                        <h4>@Model.MaintenanceRooms</h4>
-                                        <p>Bảo trì</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Bottom Row -->
@@ -328,7 +266,7 @@
             </div>
         </div>
 
-        <div class="col-xl-4 mb-4">
+        <div class="col-xl-8 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Khách hàng hàng đầu</h5>
@@ -365,48 +303,6 @@
                                 }
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Thông báo gần đây</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div class="notifications-list">
-                        @foreach (var notification in Model.RecentNotifications)
-                        {
-                            <a href="#" class="notification-item @(notification.IsUnread ? "unread" : "")">
-                                <div class="notification-icon @(notification.Type switch {
-                                    "booking" => "bg-primary",
-                                    "review" => "bg-warning",
-                                    "cancel" => "bg-danger",
-                                    "success" => "bg-success",
-                                    "user" => "bg-info",
-                                    _ => "bg-secondary"
-                                })">
-                                    <i class="fas @(notification.Type switch {
-                                        "booking" => "fa-calendar-check",
-                                        "review" => "fa-star",
-                                        "cancel" => "fa-times-circle",
-                                        "success" => "fa-check-circle",
-                                        "user" => "fa-user-plus",
-                                        _ => "fa-bell"
-                                    })"></i>
-                                </div>
-                                <div class="notification-content">
-                                    <div class="notification-title">@notification.Title</div>
-                                    <div class="notification-text">@notification.Message</div>
-                                    <div class="notification-time">@FormatTimeAgo(notification.Time)</div>
-                                </div>
-                            </a>
-                        }
-                    </div>
-                    <div class="card-footer text-center">
-                        <a href="/Admin/Notifications" class="btn btn-sm btn-outline-primary">Xem tất cả thông báo</a>
                     </div>
                 </div>
             </div>
@@ -498,40 +394,6 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: '70%'
-                }
-            });
-
-            // Room Status Chart
-            const roomStatusCtx = document.getElementById('roomStatusChart').getContext('2d');
-            const roomStatusChart = new Chart(roomStatusCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Trống', 'Đã đặt', 'Đang dọn dẹp', 'Bảo trì'],
-                    datasets: [{
-                        data: [
-                            @Model.AvailableRooms,
-                            @Model.OccupiedRooms,
-                            @Model.CleaningRooms,
-                            @Model.MaintenanceRooms
-                        ],
-                        backgroundColor: [
-                            'rgba(28, 200, 138, 0.8)',
-                            'rgba(246, 194, 62, 0.8)',
-                            'rgba(54, 185, 204, 0.8)',
-                            'rgba(231, 74, 59, 0.8)'
-                        ],
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    responsive: true,
-                    maintainAspectRatio: false
                 }
             });
         });
