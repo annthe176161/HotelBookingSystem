@@ -250,25 +250,12 @@ html, body {
 }
 
 /* Enhanced Forgot Password Styles */
-.login-form .btn-primary i {
-    transition: transform 0.3s ease;
-}
-
-.login-form .btn-primary:hover i {
-    transform: translateX(3px);
-}
-
 .text-info {
     color: var(--primary-color) !important;
 }
 
 .login-form .form-floating input:focus + label {
     color: var(--primary-color);
-}
-
-.login-header .login-logo:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
 }
 
 /* Animation for validation messages */
@@ -381,7 +368,6 @@ html, body {
     cursor: pointer;
     color: #6c757d;
     z-index: 10;
-    transition: color 0.3s ease;
 }
 
 .password-toggle:hover {
@@ -653,4 +639,43 @@ html, body {
 .btn:disabled:hover {
     transform: none;
     box-shadow: none;
+}
+
+/* Password toggle button styles */
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent !important;
+    border: none !important;
+    color: #6c757d;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.password-toggle:focus {
+    outline: none;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.password-toggle i {
+    font-size: 1rem;
+}
+
+.form-floating.position-relative .form-control {
+    padding-right: 3rem;
 }
