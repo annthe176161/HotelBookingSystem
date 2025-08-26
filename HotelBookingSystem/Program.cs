@@ -39,7 +39,11 @@ namespace HotelBookingSystem
                 {
                     opts.SignIn.RequireConfirmedAccount = false;
                     opts.User.RequireUniqueEmail = true;
-                    opts.Password.RequiredLength = 6;
+                    opts.Password.RequiredLength = 8;
+                    opts.Password.RequireDigit = true;
+                    opts.Password.RequireUppercase = true;
+                    opts.Password.RequireLowercase = true;
+                    opts.Password.RequireNonAlphanumeric = true;
                     opts.SignIn.RequireConfirmedEmail = false;
                     opts.Lockout.MaxFailedAccessAttempts = 5;
                     opts.User.AllowedUserNameCharacters = null;

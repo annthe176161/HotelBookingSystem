@@ -22,7 +22,7 @@ namespace HotelBookingSystem.ViewModels.Account
         public string? PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
-        [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự", MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = "Mật khẩu")]
         public string? Password { get; set; }

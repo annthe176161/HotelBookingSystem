@@ -100,6 +100,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// Password toggle functionality
+function togglePassword(fieldName) {
+    const passwordField = document.getElementById(fieldName);
+    const eyeIcon = document.getElementById(fieldName + '-eye-icon');
+
+    if (passwordField && eyeIcon) {
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+}
+
 // Add some helpful tooltips
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize Bootstrap tooltips if available
@@ -109,4 +127,26 @@ document.addEventListener('DOMContentLoaded', function () {
             new bootstrap.Tooltip(tooltip);
         });
     }
+
+    // Override HTML5 validation messages for Vietnamese
+    const inputs = document.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('invalid', function (e) {
+            if (this.validity.valueMissing) {
+                if (this.type === 'email') {
+                    this.setCustomValidity('Vui lòng nhập địa chỉ email.');
+                } else if (this.type === 'password') {
+                    this.setCustomValidity('Vui lòng nhập mật khẩu.');
+                } else {
+                    this.setCustomValidity('Vui lòng nhập thông tin này.');
+                }
+            } else if (this.validity.typeMismatch && this.type === 'email') {
+                this.setCustomValidity('Vui lòng nhập địa chỉ email hợp lệ.');
+            }
+        });
+
+        input.addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+    });
 });
