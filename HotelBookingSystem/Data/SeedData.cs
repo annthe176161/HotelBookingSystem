@@ -373,23 +373,186 @@ namespace HotelBookingSystem.Data
             logger.LogInformation("Status descriptions updated successfully with new business logic.");
         }
 
+        private static async Task SeedTestBookingsAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger logger)
+        {
+            // Skip if already seeded
+            if (context.Bookings.Any())
+            {
+                logger.LogInformation("Test bookings already exist.");
+                return;
+            }
+
+            // Create test users if they don't exist
+            if (context.Bookings.Any())
+            {
+                logger.LogInformation("Test bookings already exist.");
+                return;
+            }
+
+            // Ensure test users exist and collect their references
+            var testUserEmails = Enumerable.Range(1, 5).Select(i => $"test.user{i}@example.com").ToList();
+            var testUsers = new List<ApplicationUser>();
+            var userRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Guest");
+
+            foreach (var email in testUserEmails)
+            {
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserName = email,
+                        Email = email,
+                        EmailConfirmed = true,
+                        FullName = $"Test User {email.Split('@')[0].Split('.').Last()}",
+                        PhoneNumber = $"0123456{email.GetHashCode() % 1000:D3}",
+                        FirstName = "Test",
+                        LastName = email.Split('@')[0].Split('.').Last(),
+                        IsActivated = true
+                    };
+                    context.Users.Add(user);
+                    await context.SaveChangesAsync();
+
+                    if (userRole != null && !context.UserRoles.Any(ur => ur.UserId == user.Id && ur.RoleId == userRole.Id))
+                    {
+                        context.UserRoles.Add(new IdentityUserRole<string>
+                        {
+                            UserId = user.Id,
+                            RoleId = userRole.Id
+                        });
+                        await context.SaveChangesAsync();
+                    }
+                }
+                testUsers.Add(user);
+            }
+
+            await context.SaveChangesAsync();
+
+            // Get all rooms
+            var rooms = await context.Rooms.ToListAsync();
+            if (!rooms.Any())
+            {
+                logger.LogWarning("No rooms found to create bookings.");
+                return;
+            }
+
+            // Get booking statuses
+            var pendingStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Chờ xác nhận");
+            var confirmedStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Đã xác nhận");
+            var completedStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Hoàn thành");
+            var cancelledStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Đã hủy");
+
+            // Get payment statuses
+            var pendingPayment = await context.PaymentStatuses.FirstOrDefaultAsync(ps => ps.Name == "Đang xử lý");
+            var successPayment = await context.PaymentStatuses.FirstOrDefaultAsync(ps => ps.Name == "Thành công");
+
+            var random = new Random();
+            var bookings = new List<Booking>();
+
+            // Create 20 bookings with various scenarios
+            for (int i = 0; i < 20; i++)
+            {
+                var room = rooms[random.Next(rooms.Count)];
+                var user = testUsers[random.Next(testUsers.Count)];
+                var daysOffset = random.Next(-30, 30); // Bookings from past 30 days to next 30 days
+                var lengthOfStay = random.Next(1, 5);
+
+                var checkIn = DateTime.Today.AddDays(daysOffset);
+                var checkOut = checkIn.AddDays(lengthOfStay);
+                var createdDate = checkIn.AddDays(-random.Next(1, 10));
+
+                var booking = new Booking
+                {
+                    UserId = user.Id,
+                    RoomId = room.Id,
+                    CheckIn = checkIn,
+                    CheckOut = checkOut,
+                    Guests = random.Next(1, room.Capacity + 1),
+                    TotalPrice = room.PricePerNight * lengthOfStay,
+                    CreatedDate = createdDate
+                };
+
+                // Assign status based on dates
+                if (checkIn < DateTime.Today && checkOut < DateTime.Today)
+                {
+                    // Past booking
+                    booking.BookingStatusId = completedStatus?.Id ?? 1;
+                    booking.CompletedDate = checkOut;
+                }
+                else if (checkIn > DateTime.Today)
+                {
+                    // Future booking
+                    booking.BookingStatusId = random.Next(0, 10) < 8
+                        ? (confirmedStatus?.Id ?? 2) // 80% confirmed
+                        : (pendingStatus?.Id ?? 1);  // 20% pending
+                }
+                else
+                {
+                    // Current booking
+                    booking.BookingStatusId = confirmedStatus?.Id ?? 2;
+                }
+
+                bookings.Add(booking);
+                context.Bookings.Add(booking);
+            }
+
+            await context.SaveChangesAsync();
+
+            // Create payments for bookings
+            foreach (var booking in bookings)
+            {
+                var payment = new Payment
+                {
+                    BookingId = booking.Id,
+                    Amount = booking.TotalPrice,
+                    PaymentMethod = "Cash",
+                    TransactionId = $"TXN_{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}",
+                    PaymentDate = booking.CreatedDate.AddMinutes(30),
+                    PaymentStatusId = booking.BookingStatusId == completedStatus?.Id
+                        ? (successPayment?.Id ?? 2)
+                        : (pendingPayment?.Id ?? 1)
+                };
+
+                context.Payments.Add(payment);
+
+                // Add review for completed bookings (70% chance)
+                if (booking.BookingStatusId == completedStatus?.Id && random.Next(0, 10) < 7)
+                {
+                    var review = new Review
+                    {
+                        BookingId = booking.Id,
+                        UserId = booking.UserId,
+                        RoomId = booking.RoomId,
+                        Rating = random.Next(3, 6), // 3-5 stars
+                        Comment = $"Great stay at {booking.Room.Name}! Would recommend.",
+                        CreatedDate = booking.CheckOut.AddDays(random.Next(1, 5))
+                    };
+
+                    context.Reviews.Add(review);
+                }
+            }
+
+            await context.SaveChangesAsync();
+            logger.LogInformation("Created test bookings, payments, and reviews successfully.");
+        }
+
         private static async Task UpdateRoomsToVietnameseAsync(ApplicationDbContext context, ILogger logger)
         {
             logger.LogInformation("Updating rooms to Vietnamese data...");
 
-            // Xóa tất cả rooms hiện tại
+            // Remove existing rooms
             var existingRooms = context.Rooms.ToList();
             if (existingRooms.Any())
             {
                 context.Rooms.RemoveRange(existingRooms);
                 await context.SaveChangesAsync();
-                logger.LogInformation("Removed {Count} existing rooms.", existingRooms.Count);
             }
 
-            // Thêm rooms tiếng Việt
-            var vietnameseRooms = new List<Room>
-    {
-        new Room
+            // Add 20 Vietnamese rooms
+            var rooms = new List<Room>
+            {
+                new Room
         {
             Name = "Phòng Deluxe Hướng Biển",
             Description = "Phòng sang trọng với tầm nhìn tuyệt đẹp ra biển và các tiện nghi hiện đại.",
@@ -443,123 +606,60 @@ namespace HotelBookingSystem.Data
             RoomType = "Presidential",
             IsAvailable = true,
             AverageRating = 5.0
-        }
-    };
+        },
+                // Original 5 rooms plus 15 more...
+                // (Previous room definitions)
+                new Room
+                {
+                    Name = "Phòng Deluxe Hướng Biển",
+                    Description = "Phòng sang trọng với tầm nhìn tuyệt đẹp ra biển.",
+                    PricePerNight = 2000000m,
+                    ImageUrl = "https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=",
+                    Capacity = 2,
+                    RoomType = "Deluxe",
+                    IsAvailable = true,
+                    AverageRating = 4.5
+                },
+                // Add more rooms here...
+                new Room
+                {
+                    Name = "Phòng Suite Gia Đình Cao Cấp",
+                    Description = "Suite rộng rãi dành cho gia đình với view panorama.",
+                    PricePerNight = 3500000m,
+                    ImageUrl = "https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=",
+                    Capacity = 4,
+                    RoomType = "Suite",
+                    IsAvailable = true,
+                    AverageRating = 4.8
+                },
+                // Continue adding more rooms...
+            };
 
-            context.Rooms.AddRange(vietnameseRooms);
+            // Add 15 more rooms with variations
+            var roomTypes = new[] { "Standard", "Deluxe", "Suite", "Executive", "Family" };
+            var random = new Random();
+
+            for (int i = 6; i <= 20; i++)
+            {
+                var roomType = roomTypes[random.Next(roomTypes.Length)];
+                var room = new Room
+                {
+                    Name = $"Phòng {roomType} {i}",
+                    Description = $"Phòng {roomType.ToLower()} tiện nghi với thiết kế hiện đại.",
+                    PricePerNight = (decimal)(1000000 + random.Next(500, 5000) * 1000),
+                    ImageUrl = "https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU=",
+                    Capacity = random.Next(1, 5),
+                    RoomType = roomType,
+                    IsAvailable = true,
+                    AverageRating = Math.Round(3.5 + random.NextDouble() * 1.5, 1)
+                };
+                rooms.Add(room);
+            }
+
+            context.Rooms.AddRange(rooms);
             await context.SaveChangesAsync();
 
-            logger.LogInformation("Added {Count} Vietnamese rooms successfully.", vietnameseRooms.Count);
-        }
-
-        private static async Task SeedTestBookingsAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger logger)
-        {
-            // Kiểm tra xem đã có booking test chưa
-            if (context.Bookings.Any())
-            {
-                logger.LogInformation("Test bookings already exist.");
-                return;
-            }
-
-            logger.LogInformation("Creating test bookings...");
-
-            // Lấy test user
-            var testUser = await userManager.FindByEmailAsync("test.customer@example.com");
-            if (testUser == null)
-            {
-                logger.LogWarning("Test user not found, cannot create test bookings.");
-                return;
-            }
-
-            // Lấy rooms
-            var rooms = await context.Rooms.Take(3).ToListAsync();
-            if (!rooms.Any())
-            {
-                logger.LogWarning("No rooms found, cannot create test bookings.");
-                return;
-            }
-
-            // Lấy booking statuses
-            var pendingStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Pending");
-            var confirmedStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Confirmed");
-            var completedStatus = await context.BookingStatuses.FirstOrDefaultAsync(bs => bs.Name == "Completed");
-
-            // Lấy payment statuses
-            var pendingPayment = await context.PaymentStatuses.FirstOrDefaultAsync(ps => ps.Name == "Pending");
-            var completedPayment = await context.PaymentStatuses.FirstOrDefaultAsync(ps => ps.Name == "Completed");
-
-            var testBookings = new List<Booking>();
-
-            // Booking 1: Sắp tới
-            if (rooms.Count > 0 && confirmedStatus != null)
-            {
-                var booking1 = new Booking
-                {
-                    UserId = testUser.Id,
-                    RoomId = rooms[0].Id,
-                    CheckIn = DateTime.Today.AddDays(5),
-                    CheckOut = DateTime.Today.AddDays(8),
-                    TotalPrice = rooms[0].PricePerNight * 3,
-                    Guests = 2,
-                    CreatedDate = DateTime.Now.AddDays(-2),
-                    BookingStatusId = confirmedStatus.Id
-                };
-                testBookings.Add(booking1);
-            }
-
-            // Booking 2: Đã hoàn thành
-            if (rooms.Count > 1 && completedStatus != null)
-            {
-                var booking2 = new Booking
-                {
-                    UserId = testUser.Id,
-                    RoomId = rooms[1].Id,
-                    CheckIn = DateTime.Today.AddDays(-10),
-                    CheckOut = DateTime.Today.AddDays(-7),
-                    TotalPrice = rooms[1].PricePerNight * 3,
-                    Guests = 1,
-                    CreatedDate = DateTime.Now.AddDays(-15),
-                    BookingStatusId = completedStatus.Id
-                };
-                testBookings.Add(booking2);
-            }
-
-            // Booking 3: Đang chờ
-            if (rooms.Count > 2 && pendingStatus != null)
-            {
-                var booking3 = new Booking
-                {
-                    UserId = testUser.Id,
-                    RoomId = rooms[2].Id,
-                    CheckIn = DateTime.Today.AddDays(15),
-                    CheckOut = DateTime.Today.AddDays(17),
-                    TotalPrice = rooms[2].PricePerNight * 2,
-                    Guests = 2,
-                    CreatedDate = DateTime.Now.AddHours(-3),
-                    BookingStatusId = pendingStatus.Id
-                };
-                testBookings.Add(booking3);
-            }
-
-            context.Bookings.AddRange(testBookings);
-
-            // Tạo payments tương ứng
-            foreach (var booking in testBookings)
-            {
-                var payment = new Payment
-                {
-                    BookingId = booking.Id,
-                    Amount = booking.TotalPrice,
-                    PaymentMethod = "Credit Card",
-                    TransactionId = $"TXN_{Guid.NewGuid().ToString("N")[..8].ToUpper()}",
-                    PaymentDate = booking.BookingStatusId == completedStatus?.Id ? booking.CreatedDate.AddMinutes(30) : DateTime.Now,
-                    PaymentStatusId = booking.BookingStatusId == completedStatus?.Id ? completedPayment?.Id ?? 1 : pendingPayment?.Id ?? 1
-                };
-                context.Payments.Add(payment);
-            }
-
-            await context.SaveChangesAsync();
-            logger.LogInformation("Created {Count} test bookings successfully.", testBookings.Count);
+            logger.LogInformation($"Added {rooms.Count} Vietnamese rooms successfully.");
         }
     }
 }
